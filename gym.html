@@ -1263,7 +1263,6 @@ img, video, canvas, svg { max-width: 100%; }
 
 .hidden { display: none !important; }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -1434,6 +1433,7 @@ img, video, canvas, svg { max-width: 100%; }
 
   <div class="po-header">
     <h1 class="po-title" id="appTitle">Progressive Overload Coach</h1>
+    <div id="user-menu" style="margin-left:auto;margin-right:8px"></div>
     <button class="po-icon-btn" id="settingsBtn" title="Settings" aria-label="Settings">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
@@ -1688,12 +1688,17 @@ img, video, canvas, svg { max-width: 100%; }
   </div>
 </div>
 
-<script>
-(function() {
+<script type="module">
+import { requireAuth } from './js/auth.js';
+import { initUserMenu } from './js/user-menu.js';
+import * as GymData from './js/gym-data.js';
+
+await requireAuth();
+await initUserMenu();
+
   // ============================================================
-  // STATE — all logs + edits live in browser localStorage. Each
-  // device has its own copy. Export JSON from settings if you
-  // want to back up or move to another device.
+  // STATE — exercises and progress data live in Supabase.
+  // Gyms and days are config-level and stored in localStorage.
   // ============================================================
   const LS_KEY = 'po_coach_v1';
 
@@ -1701,13 +1706,6 @@ img, video, canvas, svg { max-width: 100%; }
     return CONFIG.defaultExercises.map((e, i) => Object.assign({
       id: 'seed_' + i + '_' + Date.now()
     }, e));
-  }
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (raw) return normalize(JSON.parse(raw));
-    } catch (e) {}
-    return normalize({});
   }
   function normalize(s) {
     s = s || {};
@@ -1744,10 +1742,31 @@ img, video, canvas, svg { max-width: 100%; }
     }
     return s;
   }
-  function saveState() {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+  // Gyms and days are config-level; store in localStorage so exercises can
+  // reference them by stable string IDs across devices.
+  const LS_CONFIG_KEY = 'po_coach_config_v1';
+  function loadConfig() {
+    try { const r = localStorage.getItem(LS_CONFIG_KEY); if (r) return JSON.parse(r); } catch {}
+    return null;
   }
-  let state = loadState();
+  function saveConfig() {
+    try { localStorage.setItem(LS_CONFIG_KEY, JSON.stringify({ gyms: state.gyms, days: state.days })); } catch {}
+  }
+
+  let _saveTimer = null;
+  function saveState() {
+    saveConfig();
+    clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(() => {
+      Promise.all([
+        GymData.saveGymProfile({ units: state.units }),
+        GymData.saveSplitRotation(state.splitRotation, state.splitAnchor)
+      ]).catch(console.error);
+    }, 300);
+  }
+
+  // Defer initialization — state filled in by initState() at boot
+  let state = normalize({});
   document.getElementById('appTitle').textContent = CONFIG.appTitle || 'Progressive Overload Coach';
 
   // ============================================================
@@ -1768,7 +1787,7 @@ img, video, canvas, svg { max-width: 100%; }
     const f = getFiltered();
     if (!f.length) return null;
     let ex = f.find(e => e.id === state.currentEx);
-    if (!ex) { ex = f[0]; state.currentEx = ex.id; saveState(); }
+    if (!ex) { ex = f[0]; state.currentEx = ex.id; }
     return ex;
   }
   function getLogs() { return (state.logs[state.currentEx] || []).slice(); }
@@ -1980,12 +1999,19 @@ img, video, canvas, svg { max-width: 100%; }
         if (!confirm('Delete this log?')) return;
         const realIdx = parseInt(b.dataset.idx, 10);
         const arr = state.logs[state.currentEx] || [];
-        // realIdx is index in REVERSED list; map back to original
         const origIdx = arr.length - 1 - realIdx;
-        arr.splice(origIdx, 1);
+        const removed = arr.splice(origIdx, 1)[0];
         if (!arr.length) delete state.logs[state.currentEx];
         else state.logs[state.currentEx] = arr;
-        saveState(); renderAll();
+        // Re-upsert the day's remaining sets (or pass empty array to clear)
+        if (removed) {
+          const dateStr = (removed.date || '').slice(0, 10);
+          if (dateStr) {
+            const remainingSets = arr.filter(l => l.date.slice(0,10) === dateStr).map(l => ({ weight: l.weight, reps: l.reps }));
+            GymData.logExercise(state.currentEx, dateStr, remainingSets).catch(console.error);
+          }
+        }
+        renderAll();
       });
     });
   }
@@ -2086,15 +2112,7 @@ img, video, canvas, svg { max-width: 100%; }
   // with the 1RM trend) — more weekly volume + strength gain = more of
   // recent body-weight delta gets attributed to muscle.
   // ============================================================
-  const WORKOUT_DONE_KEY = 'po_coach_workout_done';
-  function loadDoneDays() {
-    try { const raw = localStorage.getItem(WORKOUT_DONE_KEY); return raw ? JSON.parse(raw) : {}; }
-    catch (e) { return {}; }
-  }
-  function saveDoneDays(d) {
-    try { localStorage.setItem(WORKOUT_DONE_KEY, JSON.stringify(d)); } catch (e) {}
-  }
-  let doneDays = loadDoneDays();
+  let doneDays = {};
 
   function logsByDay() {
     const byDay = {};
@@ -2211,12 +2229,10 @@ img, video, canvas, svg { max-width: 100%; }
 
   $('poTwDoneBtn').addEventListener('click', () => {
     const todayKey = wtDateKey(new Date());
-    if (doneDays[todayKey]) {
-      delete doneDays[todayKey];
-    } else {
-      doneDays[todayKey] = new Date().toISOString();
-    }
-    saveDoneDays(doneDays);
+    const nowDone = !doneDays[todayKey];
+    if (nowDone) doneDays[todayKey] = new Date().toISOString();
+    else delete doneDays[todayKey];
+    GymData.setWorkoutDone(todayKey, nowDone).catch(console.error);
     renderTodaysWorkout();
     renderPastWorkouts();
   });
@@ -2249,7 +2265,7 @@ img, video, canvas, svg { max-width: 100%; }
   })();
 
   $('exSelect').addEventListener('change', e => {
-    state.currentEx = e.target.value; saveState(); renderAll();
+    state.currentEx = e.target.value; renderAll();
   });
   $('weightDownBtn').addEventListener('click', () => {
     const ex = getCurrentEx(); if (!ex || ex.bw) return;
@@ -2278,10 +2294,13 @@ img, video, canvas, svg { max-width: 100%; }
     if (reps <= 0) { alert('Pick a rep count.'); return; }
     const w = ex.bw ? 0 : (parseFloat($('weightInput').value) || 0);
     if (!ex.bw && w <= 0) { alert('Enter a weight.'); return; }
+    const dateStr = new Date().toISOString().slice(0, 10);
     const arr = state.logs[ex.id] || [];
     arr.push({ weight: w, reps: reps, date: new Date().toISOString() });
     state.logs[ex.id] = arr;
-    saveState(); renderAll();
+    const todaySets = arr.filter(l => l.date.slice(0,10) === dateStr).map(l => ({ weight: l.weight, reps: l.reps }));
+    GymData.logExercise(ex.id, dateStr, todaySets).catch(console.error);
+    renderAll();
     // Strength changed → composition estimate may shift
     if (typeof wtRender === 'function') wtRender();
     // Tiny pulse on the button so the user feels the save
@@ -2376,25 +2395,35 @@ img, video, canvas, svg { max-width: 100%; }
     if (editingExId) {
       const ex = state.exercises.find(e => e.id === editingExId);
       if (ex) Object.assign(ex, data);
+      GymData.updateExercise(editingExId, data).catch(console.error);
     } else {
-      const ex = Object.assign({ id: uid() }, data);
+      // Optimistically add with temp id, then replace with Supabase id
+      const tempId = 'tmp_' + Date.now();
+      const ex = Object.assign({ id: tempId }, data);
       state.exercises.push(ex);
-      state.currentEx = ex.id;
+      state.currentEx = tempId;
       state.filterGym = (modalGym === 'both') ? state.filterGym : modalGym;
       state.filterDay = modalDay;
+      GymData.addExercise({ ...data, position: state.exercises.length - 1 }).then(saved => {
+        // Swap temp id for real UUID in state
+        const idx = state.exercises.findIndex(e => e.id === tempId);
+        if (idx >= 0) { state.exercises[idx].id = saved.id; if (state.currentEx === tempId) state.currentEx = saved.id; }
+        state.logs[saved.id] = state.logs[tempId] || [];
+        delete state.logs[tempId];
+      }).catch(console.error);
     }
-    saveState();
     $('exModalBg').classList.remove('show');
     renderAll();
   });
   $('exDelete').addEventListener('click', () => {
     if (!editingExId) return;
     if (!confirm('Delete this exercise and all its logs?')) return;
-    state.exercises = state.exercises.filter(e => e.id !== editingExId);
-    delete state.logs[editingExId];
-    if (state.currentEx === editingExId) state.currentEx = null;
+    const idToDelete = editingExId;
+    state.exercises = state.exercises.filter(e => e.id !== idToDelete);
+    delete state.logs[idToDelete];
+    if (state.currentEx === idToDelete) state.currentEx = null;
     editingExId = null;
-    saveState();
+    GymData.deleteExercise(idToDelete).catch(console.error);
     $('exModalBg').classList.remove('show');
     renderAll();
   });
@@ -2600,9 +2629,10 @@ img, video, canvas, svg { max-width: 100%; }
     reader.readAsText(file);
   });
   $('setReset').addEventListener('click', () => {
-    if (!confirm('Delete EVERYTHING (logs, edits, gyms, days)? This cannot be undone.')) return;
-    localStorage.removeItem(LS_KEY);
-    state = loadState();
+    if (!confirm('Delete EVERYTHING (logs, exercises, weight, settings)? This cannot be undone.')) return;
+    localStorage.removeItem(LS_CONFIG_KEY);
+    state = normalize({});
+    GymData.saveGymProfile({ units: state.units }).catch(console.error);
     $('setModalBg').classList.remove('show');
     renderAll();
   });
@@ -2617,19 +2647,8 @@ img, video, canvas, svg { max-width: 100%; }
   //   po_coach_weights : [{ dateKey:'YYYY-MM-DD', weight:Number }]
   //   po_coach_photos  : [{ id, dataUrl, dateKey, weight }]
   // ============================================================
-  const WT_KEY = 'po_coach_weights';
   const PHOTO_KEY = 'po_coach_photos';
 
-  function wtLoad() {
-    try {
-      const raw = localStorage.getItem(WT_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      return Array.isArray(arr) ? arr.sort((a,b) => a.dateKey.localeCompare(b.dateKey)) : [];
-    } catch (e) { return []; }
-  }
-  function wtSave(arr) {
-    try { localStorage.setItem(WT_KEY, JSON.stringify(arr)); } catch (e) {}
-  }
   function wtDateKey(d) {
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
@@ -2650,14 +2669,14 @@ img, video, canvas, svg { max-width: 100%; }
     return d;
   }
 
-  let wtEntries = wtLoad();
+  let wtEntries = [];  // loaded in initState()
 
   function wtSaveEntry(weight) {
     const key = wtDateKey(new Date());
     const existing = wtEntries.find(e => e.dateKey === key);
     if (existing) existing.weight = weight;
     else { wtEntries.push({ dateKey: key, weight }); wtEntries.sort((a,b) => a.dateKey.localeCompare(b.dateKey)); }
-    wtSave(wtEntries);
+    GymData.logWeight(key, weight, state.units).catch(console.error);
     wtRender();
   }
 
@@ -2949,24 +2968,10 @@ img, video, canvas, svg { max-width: 100%; }
   // ============================================================
   // PROGRESS PHOTOS
   // ============================================================
-  let photos = [];
-  try {
-    const raw = localStorage.getItem(PHOTO_KEY);
-    if (raw) photos = JSON.parse(raw);
-  } catch (e) { photos = []; }
+  let photos = [];  // loaded in initState() from Supabase Storage
 
-  function photosSave() {
-    try {
-      localStorage.setItem(PHOTO_KEY, JSON.stringify(photos));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
   // Downscale a dataURL to a max longest-side dimension and re-encode as
-  // JPEG. Phone camera photos are often 2–5MB which blows the ~5MB
-  // localStorage quota after one or two saves. Compressing to ~1080px /
-  // q=0.75 typically drops each photo to <100KB.
+  // JPEG before uploading to Supabase Storage.
   function compressPhotoDataUrl(dataUrl, maxDim, quality) {
     maxDim = maxDim || 1080;
     quality = quality == null ? 0.75 : quality;
@@ -3005,7 +3010,7 @@ img, video, canvas, svg { max-width: 100%; }
     } else {
       grid.innerHTML = photos.map(p =>
         '<button class="wt-photo-card" data-id="' + p.id + '" type="button">' +
-          '<img src="' + p.dataUrl + '" alt="">' +
+          '<img src="' + (p.signedUrl || p.dataUrl || '') + '" alt="">' +
           '<div class="wt-photo-overlay"></div>' +
           '<div class="wt-photo-meta">' +
             '<span class="wt-photo-date">' + photoFmtDate(p.dateKey) + '</span>' +
@@ -3017,7 +3022,6 @@ img, video, canvas, svg { max-width: 100%; }
         card.addEventListener('click', () => openPhoto(card.dataset.id));
       });
     }
-    // Update count on the link
     if (!photos.length) $('wtProgressCount').textContent = '0 photos';
     else if (photos.length === 1) $('wtProgressCount').textContent = '1 photo · latest ' + photoFmtDate(photos[0].dateKey);
     else $('wtProgressCount').textContent = photos.length + ' photos · latest ' + photoFmtDate(photos[0].dateKey);
@@ -3025,32 +3029,43 @@ img, video, canvas, svg { max-width: 100%; }
   async function photosAdd(dataUrl) {
     let compressed = dataUrl;
     try { compressed = await compressPhotoDataUrl(dataUrl); } catch {}
-    const id = 'p' + Date.now() + '_' + Math.floor(Math.random() * 999);
-    const entry = {
-      id,
-      dataUrl: compressed,
-      dateKey: wtDateKey(new Date()),
-      weight: photoCurrentWeight()
-    };
-    photos.unshift(entry);
-    if (!photosSave()) {
-      // Storage was full even after compression — try once more at lower
-      // quality before giving up.
-      try {
-        entry.dataUrl = await compressPhotoDataUrl(dataUrl, 800, 0.6);
-      } catch {}
-      if (!photosSave()) {
-        photos.shift();
-        alert('Phone storage is full — delete some older progress photos before adding a new one.');
-        return;
-      }
+    // Convert dataURL to File for Supabase Storage upload
+    const blob = await fetch(compressed).then(r => r.blob());
+    const file = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
+    const dateStr = wtDateKey(new Date());
+    try {
+      const uploaded = await GymData.uploadPhoto(dateStr, file);
+      const entry = {
+        id: uploaded.path,
+        signedUrl: uploaded.signedUrl,
+        storage_path: uploaded.path,
+        dateKey: dateStr,
+        date: dateStr,
+        weight: photoCurrentWeight()
+      };
+      photos.unshift(entry);
+      photosRender();
+    } catch (e) {
+      alert('Photo upload failed: ' + (e.message || e));
     }
-    photosRender();
   }
-  function fileToPhoto(file) {
-    const r = new FileReader();
-    r.onload = (e) => photosAdd(e.target.result);
-    r.readAsDataURL(file);
+  async function fileToPhoto(file) {
+    const dateStr = wtDateKey(new Date());
+    try {
+      const uploaded = await GymData.uploadPhoto(dateStr, file);
+      const entry = {
+        id: uploaded.path,
+        signedUrl: uploaded.signedUrl,
+        storage_path: uploaded.path,
+        dateKey: dateStr,
+        date: dateStr,
+        weight: photoCurrentWeight()
+      };
+      photos.unshift(entry);
+      photosRender();
+    } catch (e) {
+      alert('Photo upload failed: ' + (e.message || e));
+    }
   }
 
   $('wtProgressLink').addEventListener('click', () => {
@@ -3097,13 +3112,13 @@ img, video, canvas, svg { max-width: 100%; }
   });
   $('wtFileCamera').addEventListener('change', (e) => {
     const f = e.target.files && e.target.files[0];
-    if (f) fileToPhoto(f);
+    if (f) fileToPhoto(f).catch(console.error);
     e.target.value = '';
   });
   $('wtFromLibraryBtn').addEventListener('click', () => $('wtFileLibrary').click());
   $('wtFileLibrary').addEventListener('change', (e) => {
     const f = e.target.files && e.target.files[0];
-    if (f) fileToPhoto(f);
+    if (f) fileToPhoto(f).catch(console.error);
     e.target.value = '';
   });
   $('wtCamCancel').addEventListener('click', closeCam);
@@ -3119,7 +3134,7 @@ img, video, canvas, svg { max-width: 100%; }
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
     closeCam();
-    photosAdd(dataUrl);
+    photosAdd(dataUrl).catch(console.error);
   });
 
   // Photo viewer
@@ -3130,7 +3145,7 @@ img, video, canvas, svg { max-width: 100%; }
     const p = photos.find(x => x.id === id);
     if (!p) return;
     activePhotoId = id;
-    $('wtViewerImg').src = p.dataUrl;
+    $('wtViewerImg').src = p.signedUrl || p.dataUrl || '';
     $('wtViewerDate').textContent = photoFmtDate(p.dateKey).toUpperCase();
     $('wtViewerWeight').textContent = p.weight || '—';
     $('wtViewer').dataset.mode = 'single';
@@ -3180,8 +3195,8 @@ img, video, canvas, svg { max-width: 100%; }
     if (!A || !B) return;
     activePhotoId = activeId;
     comparePhotoId = otherId;
-    $('wtCmpImgA').src = A.dataUrl;
-    $('wtCmpImgB').src = B.dataUrl;
+    $('wtCmpImgA').src = A.signedUrl || A.dataUrl || '';
+    $('wtCmpImgB').src = B.signedUrl || B.dataUrl || '';
     $('wtCmpMetaA').textContent = photoFmtDate(A.dateKey) + ' · ' + (A.weight || '—');
     $('wtCmpMetaB').textContent = photoFmtDate(B.dateKey) + ' · ' + (B.weight || '—');
     // Headline — date arrow + weight delta
@@ -3227,8 +3242,9 @@ img, video, canvas, svg { max-width: 100%; }
       }, 3000);
       return;
     }
+    const toDelete = photos.find(p => p.id === activePhotoId);
     photos = photos.filter(p => p.id !== activePhotoId);
-    photosSave();
+    if (toDelete) GymData.deletePhoto(toDelete.id, toDelete.storage_path || toDelete.id).catch(console.error);
     photosRender();
     closePhoto();
   }
@@ -3254,216 +3270,93 @@ img, video, canvas, svg { max-width: 100%; }
   $('wtCmpSideB').addEventListener('click', cycleCompareTarget);
 
   // ============================================================
+  // ASYNC INIT — load all data from Supabase, then boot
+  // ============================================================
+  async function initState() {
+    const [gymProfile, splitData, exercises, allLogs, doneDaysData, weights, photoData] = await Promise.all([
+      GymData.loadGymProfile(),
+      GymData.loadSplitRotation(),
+      GymData.loadExercises(),
+      GymData.loadAllLogs(),
+      GymData.loadDoneDays(),
+      GymData.loadWeights(),
+      GymData.loadPhotos()
+    ]);
+
+    // Load config (gyms, days) from localStorage; exercises/logs from Supabase
+    const cfg = loadConfig();
+    state = normalize({
+      units: gymProfile ? gymProfile.units : undefined,
+      gyms: cfg ? cfg.gyms : undefined,
+      days: cfg ? cfg.days : undefined,
+      splitRotation: splitData ? splitData.rotation : undefined,
+      splitAnchor: splitData ? splitData.anchor : undefined,
+      logs: {}
+    });
+
+    // Exercises from Supabase (UUIDs as IDs)
+    if (exercises.length) {
+      state.exercises = exercises;
+    } else {
+      // First run: seed defaults
+      const defaults = buildDefaultExercises().map(e => ({ name: e.name, gym: e.gym, day: e.day, bw: e.bw || false, startWeight: e.startWeight || 0, repMin: e.repMin || 5, repMax: e.repMax || 8, step: e.step || 2.5 }));
+      state.exercises = await GymData.seedExercises(defaults);
+    }
+
+    // Convert Supabase logs format {[exId]: [{date, sets}]} to flat array {[exId]: [{date, weight, reps}]}
+    Object.entries(allLogs).forEach(([exId, entries]) => {
+      state.logs[exId] = [];
+      entries.forEach(({ date, sets }) => {
+        (sets || []).forEach(s => {
+          state.logs[exId].push({ weight: s.weight || 0, reps: s.reps || 0, date });
+        });
+      });
+      state.logs[exId].sort((a, b) => new Date(a.date) - new Date(b.date));
+    });
+
+    doneDays = doneDaysData;
+
+    // Weight entries: [{dateKey, weight}]
+    wtEntries = (weights || []).map(w => ({ dateKey: w.date, weight: w.weight }))
+      .sort((a, b) => a.dateKey.localeCompare(b.dateKey));
+
+    // Photos from Supabase Storage
+    photos = (photoData || []).map(p => ({
+      id: p.id,
+      signedUrl: p.signedUrl,
+      storage_path: p.storage_path,
+      dateKey: p.date,
+      date: p.date,
+      weight: null
+    }));
+  }
+
+  // ============================================================
   // BOOT
   // ============================================================
+  await initState();
   renderAll();
   wtRender();
   photosRender();
 
-  // ============================================================
-  // CLOUD SYNC via Supabase  (OPTIONAL — leave blank for local-only)
-  // ------------------------------------------------------------
-  // Stores your gym state as one JSONB row in the public.app_state
-  // table, keyed by APP_KEY. Supabase's realtime channel pushes
-  // changes to every device the instant they happen.
-  //
-  // SETUP (5 minutes, all in a browser):
-  //   1. Make a free account at https://supabase.com
-  //   2. Create a new project
-  //   3. In your project: Settings → API → copy your Project URL +
-  //      "Publishable" key (the one starting with `sb_publishable_`)
-  //   4. Paste them below, replacing the two placeholder strings
-  //   5. Open the SQL Editor and run the SQL block from README.md
-  //
-  // If you leave the placeholders unchanged the app still works,
-  // just only on this device (data stays in your browser).
-  // ============================================================
-  const SUPABASE_URL = 'PASTE-YOUR-SUPABASE-PROJECT-URL-HERE';
-  const SUPABASE_KEY = 'PASTE-YOUR-SUPABASE-PUBLISHABLE-KEY-HERE';
-  const APP_KEY = 'po-coach';
-  const PC_SYNCED_KEYS = ['po_coach_v1', 'po_coach_workout_done', 'po_coach_weights', 'po_coach_photos'];
-
-  let pcSupa = null;
-  let pcPushTimer = null;
-  let pcSuppressSync = false;
-  let pcPendingRemote = null;
-  // JSON of the last state we sent or received — used to ignore
-  // realtime echoes of our own pushes so we don't infinite-loop.
-  let pcLastSyncedJson = null;
-
-  const _pcOrigSet = localStorage.setItem.bind(localStorage);
-  const _pcOrigRemove = localStorage.removeItem.bind(localStorage);
-  // Wrap setItem/removeItem so a sync-side error can NEVER prevent the
-  // underlying write from happening. The original call always runs;
-  // any error in the sync scheduling is swallowed.
-  localStorage.setItem = function(k, v) {
-    _pcOrigSet(k, v);
-    try {
-      if (!pcSuppressSync && PC_SYNCED_KEYS.indexOf(k) !== -1) pcSchedulePush();
-    } catch (e) {}
-  };
-  localStorage.removeItem = function(k) {
-    _pcOrigRemove(k);
-    try {
-      if (!pcSuppressSync && PC_SYNCED_KEYS.indexOf(k) !== -1) pcSchedulePush();
-    } catch (e) {}
-  };
-
-  function pcCollectState() {
-    const out = {};
-    for (const k of PC_SYNCED_KEYS) {
-      const v = localStorage.getItem(k);
-      if (v == null) continue;
-      try { out[k] = JSON.parse(v); } catch {}
-    }
-    return out;
-  }
-
-  function pcIsUserEditing() {
-    const ae = document.activeElement;
-    if (!ae) return false;
-    const tag = ae.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
-    if (ae.getAttribute && ae.getAttribute('contenteditable') === 'true') return true;
-    return false;
-  }
-
-  function pcRerender() {
-    // Reload every closure variable that mirrors a synced localStorage
-    // key — otherwise renderAll/wtRender/photosRender would read stale
-    // in-memory copies from before the remote pull.
-    try { state = loadState(); } catch {}
-    try { wtEntries = wtLoad(); } catch {}
-    try {
-      const raw = localStorage.getItem(PHOTO_KEY);
-      photos = raw ? JSON.parse(raw) : [];
-    } catch { photos = []; }
-    try { renderAll(); } catch {}
-    try { wtRender(); } catch {}
-    try { photosRender(); } catch {}
-  }
-
-  function pcApplyRemoteState(remote) {
-    if (!remote || typeof remote !== 'object') return false;
-    pcSuppressSync = true;
-    let changed = false;
-    try {
-      for (const k of PC_SYNCED_KEYS) {
-        if (k in remote) {
-          const incoming = JSON.stringify(remote[k]);
-          const local = localStorage.getItem(k);
-          if (local !== incoming) { try { _pcOrigSet(k, incoming); changed = true; } catch {} }
-        } else if (localStorage.getItem(k) != null) {
-          try { _pcOrigRemove(k); changed = true; } catch {}
-        }
-      }
-    } finally {
-      pcSuppressSync = false;
-    }
-    if (changed) { try { pcRerender(); } catch (e) {} }
-    return changed;
-  }
-
-  function pcMaybeApplyRemote(remote) {
-    if (pcIsUserEditing()) { pcPendingRemote = remote; return; }
-    pcApplyRemoteState(remote);
-  }
-
-  function pcApplyPendingIfReady() {
-    if (pcPendingRemote && !pcIsUserEditing()) {
-      const r = pcPendingRemote;
-      pcPendingRemote = null;
-      pcApplyRemoteState(r);
-    }
-  }
-
-  async function pcPushNow() {
-    if (!pcSupa) return;
-    const state = pcCollectState();
-    const json = JSON.stringify(state);
-    if (json === pcLastSyncedJson) return;
-    try {
-      const { error } = await pcSupa
-        .from('app_state')
-        .upsert(
-          { key: APP_KEY, data: state, updated_at: new Date().toISOString() },
-          { onConflict: 'key' }
-        );
-      if (!error) pcLastSyncedJson = json;
-    } catch (_) {}
-  }
-
-  function pcSchedulePush() {
-    if (pcSuppressSync) return;
-    clearTimeout(pcPushTimer);
-    pcPushTimer = setTimeout(pcPushNow, 250);
-  }
-
-  // Backup push on unload via fetch keepalive so a fast refresh
-  // doesn't lose the latest change before the debounced push fires.
-  function pcFlushPushOnUnload() {
-    if (!pcSupa) return;
-    const state = pcCollectState();
-    const json = JSON.stringify(state);
-    if (json === pcLastSyncedJson) return;
-    try {
-      fetch(SUPABASE_URL + '/rest/v1/app_state?on_conflict=key', {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY,
-          'Content-Type': 'application/json',
-          'Prefer': 'resolution=merge-duplicates',
-        },
-        body: JSON.stringify({ key: APP_KEY, data: state, updated_at: new Date().toISOString() }),
-        keepalive: true,
-      }).catch(() => {});
-      pcLastSyncedJson = json;
-    } catch (_) {}
-  }
-
-  // Initial sync: connect Supabase, pull current state, subscribe to
-  // realtime updates so other devices' changes appear instantly.
-  (async function pcInitCloudSync() {
-    if (!window.supabase || !SUPABASE_URL || !SUPABASE_KEY) return;
-    // Skip if the placeholder values are still in place (local-only mode)
-    if (SUPABASE_URL.indexOf('PASTE-') === 0 || SUPABASE_KEY.indexOf('PASTE-') === 0) return;
-    pcSupa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    try {
-      const { data, error } = await pcSupa
-        .from('app_state').select('data').eq('key', APP_KEY).maybeSingle();
-      if (!error && data && data.data && Object.keys(data.data).length > 0) {
-        pcLastSyncedJson = JSON.stringify(data.data);
-        pcMaybeApplyRemote(data.data);
-      } else if (Object.keys(pcCollectState()).length > 0) {
-        pcSchedulePush();
-      }
-    } catch (_) {}
-    pcSupa.channel('app_state_' + APP_KEY)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'app_state',
-        filter: 'key=eq.' + APP_KEY,
-      }, (payload) => {
-        if (!payload.new || !payload.new.data) return;
-        const incoming = JSON.stringify(payload.new.data);
-        if (incoming === pcLastSyncedJson) return; // echo of our own push
-        pcLastSyncedJson = incoming;
-        pcMaybeApplyRemote(payload.new.data);
-      })
-      .subscribe();
-  })();
-
-  document.addEventListener('focusout', () => {
-    setTimeout(pcApplyPendingIfReady, 0);
-  }, true);
-  window.addEventListener('pagehide', pcFlushPushOnUnload);
-  window.addEventListener('beforeunload', pcFlushPushOnUnload);
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) pcFlushPushOnUnload();
+  GymData.subscribeExerciseLogs(() => {
+    GymData.loadAllLogs().then(allLogs => {
+      Object.entries(allLogs).forEach(([exId, entries]) => {
+        state.logs[exId] = [];
+        entries.forEach(({ date, sets }) => {
+          (sets || []).forEach(s => {
+            state.logs[exId].push({ weight: s.weight || 0, reps: s.reps || 0, date });
+          });
+        });
+        state.logs[exId].sort((a, b) => new Date(a.date) - new Date(b.date));
+      });
+      renderAll();
+    }).catch(console.error);
   });
-})();
+
+
+
+
 </script>
 
 </body>

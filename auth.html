@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#050506">
+<title>ROW — Sign In</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  background: #050506;
+  color: #FAFAFA;
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  min-height: 100dvh;
+}
+.card {
+  width: 100%;
+  max-width: 360px;
+  background: #0a0a0b;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 36px 28px 32px;
+}
+.logo {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #6ee7b7;
+  margin-bottom: 3px;
+}
+.tagline {
+  font-size: 10px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+.mode-tabs {
+  display: flex;
+  gap: 2px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 9px;
+  padding: 3px;
+  margin-bottom: 28px;
+}
+.mode-tab {
+  flex: 1;
+  padding: 7px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.mode-tab.active {
+  background: rgba(255,255,255,0.08);
+  color: #FAFAFA;
+}
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 7px;
+}
+.field input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 9px;
+  padding: 11px 13px;
+  font-size: 14px;
+  color: #FAFAFA;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.field input:focus {
+  border-color: rgba(110,231,183,0.45);
+  background: rgba(255,255,255,0.06);
+}
+.field input::placeholder { color: rgba(255,255,255,0.18); }
+.submit-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: linear-gradient(135deg, #6ee7b7 0%, #4A9EFF 100%);
+  border: none;
+  border-radius: 9px;
+  color: #050506;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.submit-btn:hover { opacity: 0.88; }
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+.msg {
+  margin-top: 14px;
+  padding: 10px 13px;
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 1.5;
+  display: none;
+}
+.msg.show { display: block; }
+.msg.error {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.2);
+  color: #fca5a5;
+}
+.msg.success {
+  background: rgba(110,231,183,0.08);
+  border: 1px solid rgba(110,231,183,0.2);
+  color: #6ee7b7;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">ROW</div>
+  <div class="tagline">Personal dashboard</div>
+
+  <div class="mode-tabs">
+    <div class="mode-tab active" data-mode="signin">Sign In</div>
+    <div class="mode-tab" data-mode="signup">Sign Up</div>
+  </div>
+
+  <form id="auth-form" autocomplete="on">
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com"
+             autocomplete="email" required>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="••••••••"
+             autocomplete="current-password" required>
+    </div>
+    <button type="submit" class="submit-btn" id="submit-btn">Sign In</button>
+    <div class="msg error" id="error-msg"></div>
+    <div class="msg success" id="success-msg"></div>
+  </form>
+</div>
+
+<script type="module">
+  import { signIn, signUp } from './js/auth.js';
+
+  let mode = 'signin';
+
+  const tabs      = document.querySelectorAll('.mode-tab');
+  const submitBtn = document.getElementById('submit-btn');
+  const errorMsg  = document.getElementById('error-msg');
+  const successMsg = document.getElementById('success-msg');
+  const pwInput   = document.getElementById('password');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      mode = tab.dataset.mode;
+      tabs.forEach(t => t.classList.toggle('active', t === tab));
+      submitBtn.textContent = mode === 'signin' ? 'Sign In' : 'Create Account';
+      pwInput.autocomplete = mode === 'signin' ? 'current-password' : 'new-password';
+      errorMsg.classList.remove('show');
+      successMsg.classList.remove('show');
+    });
+  });
+
+  document.getElementById('auth-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email    = document.getElementById('email').value.trim();
+    const password = pwInput.value;
+
+    errorMsg.classList.remove('show');
+    successMsg.classList.remove('show');
+    submitBtn.disabled = true;
+    submitBtn.textContent = mode === 'signin' ? 'Signing in…' : 'Creating account…';
+
+    try {
+      if (mode === 'signin') {
+        const { error } = await signIn(email, password);
+        if (error) throw error;
+        const returnUrl = sessionStorage.getItem('auth_return') || 'index.html';
+        sessionStorage.removeItem('auth_return');
+        location.replace(returnUrl);
+      } else {
+        const { error } = await signUp(email, password);
+        if (error) throw error;
+        successMsg.textContent = 'Account created! Sign in now (or check email if confirmation is enabled).';
+        successMsg.classList.add('show');
+        submitBtn.textContent = 'Create Account';
+        submitBtn.disabled = false;
+      }
+    } catch (err) {
+      errorMsg.textContent = err.message || 'Something went wrong.';
+      errorMsg.classList.add('show');
+      submitBtn.disabled = false;
+      submitBtn.textContent = mode === 'signin' ? 'Sign In' : 'Create Account';
+    }
+  });
+</script>
+</body>
+</html>

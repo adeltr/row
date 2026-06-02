@@ -2,20 +2,13 @@
 // Persistent dashboard top bar.
 // Drop this on any page with:
 //     <script src="topbar.js" defer></script>
-// It self-injects HTML + CSS, reads progress from the same
-// localStorage keys the dashboard's tabs already use, and a
-// water "+1" button writes to localStorage and (if configured)
-// pushes a merged update to the Supabase health row so the
-// new bottle appears on every device within ~1 second.
+// Reads progress from window.__rowProgress (set by each page's
+// module script). Listens for 'rowprogress' CustomEvent to
+// re-render when any page updates its counts.
+// Water "+1" uses window.__supabase (set by supabase.js module).
 // =============================================================
 (function () {
   'use strict';
-
-  // -------- Supabase config (same project as the rest of the dashboard) --------
-  // For your audience's standalone, replace these with placeholders
-  // and have them paste their own values, just like the other pages.
-  const TOPBAR_SUPABASE_URL = 'https://tdejigjzeqzjghjzhsvd.supabase.co';
-  const TOPBAR_SUPABASE_KEY = 'sb_publishable_K6jdrlBrO1TEv8l7cerbAQ_5R3W_N4F';
 
   // -------- CSS --------
   const css = `
@@ -226,52 +219,15 @@ body.topbar-modal-open {
       String(d.getDate()).padStart(2, '0');
   }
 
-  // -------- Read progress from localStorage --------
+  // -------- Read progress from window.__rowProgress (set by each page's module) --------
   function getGoalsProgress() {
-    const key = 'goals:' + activeDateKey();
-    let goals = [];
-    try { goals = JSON.parse(localStorage.getItem(key)) || []; } catch (e) {}
-    const total = Array.isArray(goals) ? goals.length : 0;
-    const done = total ? goals.filter(g => g && g.done).length : 0;
-    return { done, total };
+    return (window.__rowProgress && window.__rowProgress.goals) || { done: 0, total: 0 };
   }
-
   function getStackProgress() {
-    let items = [];
-    try { items = JSON.parse(localStorage.getItem('stack:items')) || []; } catch (e) {}
-    let taken = {};
-    try { taken = JSON.parse(localStorage.getItem('stack:taken:' + activeDateKey())) || {}; } catch (e) {}
-    const total = Array.isArray(items) ? items.length : 0;
-    const done = total ? items.filter(i => i && taken[i.id]).length : 0;
-    return { done, total };
+    return (window.__rowProgress && window.__rowProgress.stack) || { done: 0, total: 0 };
   }
-
   function getWaterProgress() {
-    let state = null;
-    try { state = JSON.parse(localStorage.getItem('po_water_v1')); } catch (e) {}
-    if (!state) return { done: 0, total: 0 };
-    const todayKey = calendarDateKey();
-    const done = (state.logs || {})[todayKey] || 0;
-    const p = state.profile || { weightKg: 75 };
-    const wKg = state.weightUnit === 'lb' ? (p.weightKg || 0) / 2.20462 : (p.weightKg || 0);
-    const base = wKg * 35;
-    const exercise = (p.activityHrsPerWeek || 0) / 7 * 500;
-    const caffeine = Math.max(0, (state.caffeineMgPerDay || 0) - 200) * 1.5;
-    const subs = (state.substances || []).reduce((s, x) => {
-      const dose = (x && x.dose != null ? x.dose : (x && x.defaultDose)) || 0;
-      return s + Math.max(0, dose * ((x && x.mlPerUnit) || 0));
-    }, 0);
-    let adjust = 0;
-    if (p.sex === 'm') adjust += 200;
-    if ((p.age || 0) >= 50) adjust += 100;
-    const totalMl = base + exercise + caffeine + subs + adjust;
-    let unitVol;
-    if (state.unit === 'glass') unitVol = state.glassMl || 250;
-    else if (state.unit === 'oz') unitVol = 30;
-    else if (state.unit === 'ml') unitVol = 1;
-    else unitVol = state.bottleMl || 500;
-    const total = Math.max(1, Math.ceil(totalMl / unitVol));
-    return { done, total };
+    return (window.__rowProgress && window.__rowProgress.water) || { done: 0, total: 0 };
   }
 
   function classifyStatus(done, total) {
@@ -300,56 +256,26 @@ body.topbar-modal-open {
     const w = getWaterProgress();
 
     document.getElementById('topbarGoalsCount').textContent =
-      g.total ? g.done + '/' + g.total : '0/0';
+      (window.__rowProgress && window.__rowProgress.goals) ? (g.done + '/' + g.total) : '—/—';
     document.getElementById('topbarStackCount').textContent =
-      s.total ? s.done + '/' + s.total : '0/0';
+      (window.__rowProgress && window.__rowProgress.stack) ? (s.done + '/' + s.total) : '—/—';
     document.getElementById('topbarWaterCount').textContent =
-      w.total ? w.done + '/' + w.total : '0/0';
+      (window.__rowProgress && window.__rowProgress.water) ? (w.done + '/' + w.total) : '—/—';
 
     setPillStatus(goalsEl, classifyStatus(g.done, g.total));
     setPillStatus(stackEl, classifyStatus(s.done, s.total));
     setPillStatus(waterEl, classifyStatus(w.done, w.total));
   }
 
-  // -------- Water +1 (works from any page) --------
-  function defaultWaterState() {
-    return {
-      unit: 'bottle', bottleMl: 500, glassMl: 250, weightUnit: 'kg',
-      profile: { weightKg: 75, age: 25, sex: 'm', activityHrsPerWeek: 5 },
-      caffeineMgPerDay: 200, substances: [], logs: {}
-    };
-  }
-
-  async function pushWaterMergedToSupabase(localWater) {
-    // Only do this when we're NOT on the health page — health page
-    // has its own sync that already detects the localStorage change.
-    if (window.location.pathname.endsWith('/health.html') ||
-        window.location.pathname.endsWith('health.html')) return;
-
-    if (!window.supabase || !TOPBAR_SUPABASE_URL || !TOPBAR_SUPABASE_KEY) return;
-    if (TOPBAR_SUPABASE_URL.indexOf('PASTE-') === 0) return;
-
-    try {
-      const supa = window.supabase.createClient(TOPBAR_SUPABASE_URL, TOPBAR_SUPABASE_KEY);
-      const { data } = await supa
-        .from('app_state').select('data').eq('key', 'health').maybeSingle();
-      const current = (data && data.data) || {};
-      const merged = Object.assign({}, current, { po_water_v1: localWater });
-      await supa.from('app_state').upsert(
-        { key: 'health', data: merged, updated_at: new Date().toISOString() },
-        { onConflict: 'key' }
-      );
-    } catch (e) { /* offline — local change will sync next time user visits health */ }
-  }
-
-  function addWater() {
-    let state = null;
-    try { state = JSON.parse(localStorage.getItem('po_water_v1')); } catch (e) {}
-    if (!state || typeof state !== 'object') state = defaultWaterState();
-    state.logs = state.logs || {};
+  // -------- Water +1 (works from any page via window.__supabase) --------
+  async function addWater() {
     const k = calendarDateKey();
-    state.logs[k] = (state.logs[k] || 0) + 1;
-    try { localStorage.setItem('po_water_v1', JSON.stringify(state)); } catch (e) {}
+    const rp = window.__rowProgress;
+
+    // Optimistically increment the display
+    if (!window.__rowProgress) window.__rowProgress = {};
+    if (!window.__rowProgress.water) window.__rowProgress.water = { done: 0, total: 1 };
+    window.__rowProgress.water.done += 1;
     render();
 
     const btn = document.getElementById('topbarWaterAdd');
@@ -358,7 +284,16 @@ body.topbar-modal-open {
       setTimeout(() => btn.classList.remove('flash'), 220);
     }
 
-    pushWaterMergedToSupabase(state);
+    // Persist to Supabase if available (set by the page's module import of supabase.js)
+    if (window.__supabase) {
+      try {
+        const { data: { user } } = await window.__supabase.auth.getUser();
+        const newCount = window.__rowProgress.water.done;
+        await window.__supabase
+          .from('water_logs')
+          .upsert({ user_id: user.id, log_key: k, count: newCount }, { onConflict: 'user_id,log_key' });
+      } catch (e) { /* offline — next page visit will re-load from Supabase */ }
+    }
   }
 
   // -------- Mobile lockdown helpers --------
@@ -417,9 +352,8 @@ body.topbar-modal-open {
     lockGestures();
     startModalLock();
 
-    // Re-render when localStorage changes from another tab/window OR when
-    // the page becomes visible (sync may have pulled in the background).
-    window.addEventListener('storage', render);
+    // Re-render when the page's module script updates progress data.
+    window.addEventListener('rowprogress', render);
     window.addEventListener('focus', render);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
 

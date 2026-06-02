@@ -6,8 +6,6 @@
 <meta name="theme-color" content="#0a0a0b">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Finances</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="sync.js" defer></script>
 <script src="topbar.js" defer></script>
 <style>
 :root {
@@ -1573,11 +1571,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 <body>
 <div class="shell">
 
-<!-- ===== BACK BUTTON ===== -->
-<a href="index.html" class="fin-back-btn" aria-label="Back to dashboard">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-  <span>Back</span>
-</a>
+<!-- ===== BACK BUTTON + USER MENU ===== -->
+<div style="display:flex;align-items:center;margin-bottom:14px">
+  <a href="index.html" class="fin-back-btn" style="margin-bottom:0" aria-label="Back to dashboard">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    <span>Back</span>
+  </a>
+  <div id="user-menu" style="margin-left:auto"></div>
+</div>
 
 <!-- ===== FINANCE TICKER (rotating subscription renewals) ===== -->
 <div class="finance-ticker hidden" id="financeTicker">
@@ -1886,19 +1887,32 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   </button>
 </nav>
 
-<script>
-(function() {
+<script type="module">
+import { requireAuth } from './js/auth.js';
+import { initUserMenu } from './js/user-menu.js';
+import * as FinanceData from './js/finance-data.js';
+await requireAuth();
+await initUserMenu();
 
   // ============================================================
-  // STORAGE — localStorage shim. Same interface as the dashboard's
-  // storeGet/storeSet so the existing render code drops straight in.
+  // STORAGE — in-memory CACHE backed by Supabase.
+  // UI prefs (tab, currency) stay in localStorage for instant reads.
   // ============================================================
+  const UI_PREFS = new Set(['finance_active_tab', 'nw_currency']);
+  const CACHE = {};
+
   function storeGet(key) {
-    try { const raw = localStorage.getItem(key); return raw == null ? null : JSON.parse(raw); }
-    catch (e) { return null; }
+    if (UI_PREFS.has(key)) {
+      try { const r = localStorage.getItem(key); return r == null ? null : JSON.parse(r); } catch { return null; }
+    }
+    return CACHE[key] !== undefined ? CACHE[key] : null;
   }
   function storeSet(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+    if (UI_PREFS.has(key)) {
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+      return;
+    }
+    CACHE[key] = value;
   }
 
   // ============================================================
@@ -1966,7 +1980,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       }
     } catch (e) {}
   }
-  loadExchangeRates();
 
   function fmtMoney(amountCHF) {
     const symbol = currencyEl ? currencyEl.value : 'CHF';
@@ -1999,7 +2012,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       del.addEventListener('click', () => {
         const removed = items[idx];
         items.splice(idx, 1); storeSet('nw:' + cat.key, items);
-        if (removed) logActivity(cat.key, removed.name, -(Number(removed.amount) || 0), 'delete');
+        if (removed) {
+          logActivity(cat.key, removed.name, -(Number(removed.amount) || 0), 'delete');
+          if (removed.id) FinanceData.deleteAsset(removed.id).catch(console.error);
+        }
         renderAllNetWorth();
       });
       row.appendChild(name); row.appendChild(amt); row.appendChild(del);
@@ -2045,6 +2061,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       if (Math.abs(deltaCHF) > 0.005) {
         logActivity(catKey, items[idx].name, deltaCHF, 'edit');
       }
+      if (items[idx].id) FinanceData.updateAsset(items[idx].id, { amount: nextCHF }).catch(console.error);
       renderAllNetWorth();
     }
     input.addEventListener('keydown', (e) => {
@@ -2067,7 +2084,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     function save() {
       if (saved) return; saved = true;
       const v = input.value.trim();
-      if (v) { items[idx].name = v; storeSet('nw:' + catKey, items); }
+      if (v) {
+        items[idx].name = v; storeSet('nw:' + catKey, items);
+        if (items[idx].id) FinanceData.updateAsset(items[idx].id, { name: v }).catch(console.error);
+      }
       renderAllNetWorth();
     }
     input.addEventListener('keydown', (e) => {
@@ -2109,6 +2129,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     arr.push({ ts: Date.now(), cat: catKey, name: String(name || ''), delta: Number(deltaCHF) || 0, kind: kind || 'add' });
     if (arr.length > ACTIVITY_MAX) arr.splice(0, arr.length - ACTIVITY_MAX);
     storeSet(ACTIVITY_KEY, arr);
+    FinanceData.addActivity('nw:' + catKey, { cat: catKey, name: String(name || ''), delta: Number(deltaCHF) || 0, kind: kind || 'add' }).catch(console.error);
   }
   function fmtActivityDate(ts) {
     const d = new Date(ts);
@@ -2264,6 +2285,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // Net-worth history chart
   const NW_HISTORY_KEY = 'nw:history';
   const NW_HISTORY_MAX = 500;
+  let _histSaveTimer = null;
   function logNetWorthSnapshot(grandCHF) {
     const v = Number(grandCHF) || 0;
     const hist = storeGet(NW_HISTORY_KEY) || [];
@@ -2272,6 +2294,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     hist.push({ t: Date.now(), v: v });
     if (hist.length > NW_HISTORY_MAX) hist.splice(0, hist.length - NW_HISTORY_MAX);
     storeSet(NW_HISTORY_KEY, hist);
+    clearTimeout(_histSaveTimer);
+    _histSaveTimer = setTimeout(() => {
+      const today = new Date().toISOString().slice(0, 10);
+      FinanceData.recordHistory(today, v).catch(console.error);
+    }, 2000);
   }
   function nwSmoothPath(points) {
     if (points.length < 2) return '';
@@ -2397,9 +2424,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       const rate = exchangeRates[symbol] || 1;
       const amountCHF = a / rate;
       const items = storeGet('nw:' + cat.key) || [];
-      items.push({ name: n, amount: amountCHF });
+      const newItem = { name: n, amount: amountCHF };
+      items.push(newItem);
       storeSet('nw:' + cat.key, items);
       logActivity(cat.key, n, amountCHF, 'add');
+      FinanceData.addAsset(cat.key, n, amountCHF)
+        .then(row => { newItem.id = row.id; })
+        .catch(console.error);
       nameInput.value = ''; amtInput.value = '';
       renderAllNetWorth();
     }
@@ -2417,7 +2448,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       renderSubs();
     });
   }
-  renderAllNetWorth();
 
   // ============================================================
   // SUBSCRIPTIONS
@@ -2541,6 +2571,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       del.textContent = '×';
       del.addEventListener('click', () => {
         if (!confirm('Delete "' + it.name + '"?')) return;
+        if (it.id) FinanceData.deleteSub(it.id).catch(console.error);
         items.splice(idx, 1); storeSet('subs', items); renderSubs();
       });
       actions.appendChild(editBtn);
@@ -2561,6 +2592,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         }
         arr[i].autoDeduct = !arr[i].autoDeduct;
         storeSet('subs', arr);
+        if (arr[i].id) FinanceData.updateSub(arr[i].id, { auto_deduct: arr[i].autoDeduct }).catch(console.error);
         renderSubs();
       });
     });
@@ -2608,6 +2640,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const now = new Date();
     const todayMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     let changed = false;
+    const changedSubIds = new Set();
     items.forEach(it => {
       if (!it.autoDeduct || !it.renewal || !it.fromCat || !it.fromAccount) return;
       const isoSafe = (typeof it.renewal === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(it.renewal)) ? it.renewal + 'T00:00' : it.renewal;
@@ -2624,8 +2657,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
           nwItems[idx].amount = (Number(nwItems[idx].amount) || 0) - cost;
           storeSet('nw:' + it.fromCat, nwItems);
           logActivity(it.fromCat, nwItems[idx].name, -cost, 'edit');
+          if (nwItems[idx].id) FinanceData.updateAsset(nwItems[idx].id, { amount: nwItems[idx].amount }).catch(console.error);
           it.lastDeductedAt = renewalMs;
           changed = true;
+          if (it.id) changedSubIds.add(it.id);
         }
         if (it.period === 'weekly') renewalDate.setDate(renewalDate.getDate() + 7);
         else if (it.period === 'yearly') renewalDate.setFullYear(renewalDate.getFullYear() + 1);
@@ -2635,9 +2670,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       if (newRenewal !== it.renewal) {
         it.renewal = newRenewal;
         changed = true;
+        if (it.id) changedSubIds.add(it.id);
       }
     });
-    if (changed) storeSet('subs', items);
+    if (changed) {
+      storeSet('subs', items);
+      items.filter(it => it.id && changedSubIds.has(it.id)).forEach(it => {
+        FinanceData.updateSub(it.id, {
+          renewal: it.renewal,
+          last_deducted_at: it.lastDeductedAt ? new Date(it.lastDeductedAt).toISOString() : null
+        }).catch(console.error);
+      });
+    }
     return changed;
   }
 
@@ -2699,8 +2743,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       }
       if (!newName || isNaN(newAmtRaw)) return;
       const rate = exchangeRates[newCcy] || 1;
-      items[idx] = { ...it, name: newName, amount: newAmtRaw / rate, period: newPer, renewal: newRen, entered_amount: newAmtRaw, entered_currency: newCcy, fromCat: newFromCat, fromAccount: newFromAccount, autoDeduct: newAuto };
-      storeSet('subs', items); renderSubs();
+      const updatedSub = { ...it, name: newName, amount: newAmtRaw / rate, period: newPer, renewal: newRen, entered_amount: newAmtRaw, entered_currency: newCcy, fromCat: newFromCat, fromAccount: newFromAccount, autoDeduct: newAuto };
+      items[idx] = updatedSub;
+      storeSet('subs', items);
+      if (it.id) FinanceData.updateSub(it.id, {
+        name: newName, amount: newAmtRaw / rate, period: newPer, renewal: newRen,
+        entered_amount: newAmtRaw, entered_currency: newCcy,
+        from_cat: newFromCat, from_account: newFromAccount, auto_deduct: newAuto
+      }).catch(console.error);
+      renderSubs();
     };
     const cancel = () => renderSubs();
     row.querySelector('.se-save').addEventListener('click', save);
@@ -2743,18 +2794,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         return;
       }
       const items = storeGet('subs') || [];
-      items.push({
+      const newSub = {
         name: n, amount: amountCHF,
         period: pEl ? pEl.value : 'monthly',
         renewal: rEl && rEl.value ? rEl.value : null,
-        entered_amount: aRaw,
-        entered_currency: enteredCcy,
-        fromCat: fromCat,
-        fromAccount: fromAccount,
-        autoDeduct: autoDeduct,
-        lastDeductedAt: null
-      });
+        entered_amount: aRaw, entered_currency: enteredCcy,
+        fromCat: fromCat, fromAccount: fromAccount,
+        autoDeduct: autoDeduct, lastDeductedAt: null
+      };
+      items.push(newSub);
       storeSet('subs', items);
+      FinanceData.addSub({
+        name: newSub.name, amount: newSub.amount, period: newSub.period,
+        renewal: newSub.renewal, entered_amount: newSub.entered_amount, entered_currency: newSub.entered_currency,
+        from_cat: newSub.fromCat, from_account: newSub.fromAccount,
+        auto_deduct: newSub.autoDeduct, last_deducted_at: null
+      }).then(row => { newSub.id = row.id; }).catch(console.error);
       nEl.value = ''; aEl.value = '';
       if (rEl) rEl.value = '';
       if (tEl) tEl.checked = false;
@@ -2765,7 +2820,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // Enter key on the inputs still triggers add directly.
   if (subName)   subName.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSubAdd(); });
   if (subAmount) subAmount.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSubAdd(); });
-  renderSubs();
 
   // ============================================================
   // WISHLIST — items with % of net worth.
@@ -2854,8 +2908,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       b.addEventListener('click', () => {
         const i = parseInt(b.dataset.i, 10);
         const arr = storeGet('wishlist') || [];
+        const removed = arr[i];
         arr.splice(i, 1);
         storeSet('wishlist', arr);
+        if (removed && removed.id) FinanceData.deleteWishlistItem(removed.id).catch(console.error);
         renderWishlist();
       });
     });
@@ -2873,11 +2929,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       const rate = exchangeRates[enteredCcy] || 1;
       const amountCHF = aRaw / rate;
       const arr = storeGet('wishlist') || [];
-      arr.push({
+      const newWish = {
         name: n, amount: amountCHF, ts: Date.now(),
         entered_amount: aRaw, entered_currency: enteredCcy
-      });
+      };
+      arr.push(newWish);
       storeSet('wishlist', arr);
+      FinanceData.addWishlistItem({
+        name: newWish.name, amount: newWish.amount,
+        entered_amount: newWish.entered_amount, entered_currency: newWish.entered_currency
+      }).then(row => { newWish.id = row.id; }).catch(console.error);
       nEl.value = ''; aEl.value = '';
       renderWishlist();
     } catch (e) { console.error('wishAdd failed', e); }
@@ -2887,7 +2948,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   const _wishAmount = document.getElementById('wishAmount');
   if (_wishName)   _wishName.addEventListener('keydown', (e) => { if (e.key === 'Enter') doWishAdd(); });
   if (_wishAmount) _wishAmount.addEventListener('keydown', (e) => { if (e.key === 'Enter') doWishAdd(); });
-  renderWishlist();
 
   // ============================================================
   // ADD-BUTTON BULLETPROOFING — three independent paths:
@@ -3053,6 +3113,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         const id = b.dataset.id;
         const arr = (storeGet('incoming_orders') || []).filter(x => x.id !== id);
         storeSet('incoming_orders', arr);
+        if (!id.startsWith('tmp_')) FinanceData.deleteOrder(id).catch(console.error);
         renderOrders();
       });
     });
@@ -3131,14 +3192,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     items[itemIdx].amount = (Number(items[itemIdx].amount) || 0) - cost;
     storeSet('nw:' + catKey, items);
     logActivity(catKey, items[itemIdx].name, -cost, 'edit');
+    if (items[itemIdx].id) FinanceData.updateAsset(items[itemIdx].id, { amount: items[itemIdx].amount }).catch(console.error);
     // Mark the order as deducted with frozen %
-    orders[oIdx] = {
-      ...order,
-      deductedAt: Date.now(),
-      pctAtDeduction: pctAtDeduction,
-      deductedFrom: { cat: catKey, name: items[itemIdx].name }
-    };
+    const deductedAt = Date.now();
+    const deductedFrom = { cat: catKey, name: items[itemIdx].name };
+    orders[oIdx] = { ...order, deductedAt, pctAtDeduction, deductedFrom };
     storeSet('incoming_orders', orders);
+    if (order.id && !String(order.id).startsWith('tmp_')) FinanceData.updateOrder(order.id, {
+      deducted_at: new Date(deductedAt).toISOString(),
+      pct_at_deduction: pctAtDeduction,
+      deducted_from: deductedFrom
+    }).catch(console.error);
     renderAllNetWorth();   // re-paints NW totals, donut, activity, and orders
   }
   function undoDeduct(orderId) {
@@ -3154,13 +3218,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       items[itemIdx].amount = (Number(items[itemIdx].amount) || 0) + cost;
       storeSet('nw:' + order.deductedFrom.cat, items);
       logActivity(order.deductedFrom.cat, items[itemIdx].name, cost, 'edit');
+      if (items[itemIdx].id) FinanceData.updateAsset(items[itemIdx].id, { amount: items[itemIdx].amount }).catch(console.error);
     }
     orders[oIdx] = { ...order, deductedAt: null, pctAtDeduction: null, deductedFrom: null };
     storeSet('incoming_orders', orders);
+    if (order.id && !String(order.id).startsWith('tmp_')) FinanceData.updateOrder(order.id, { deducted_at: null, pct_at_deduction: null, deducted_from: null }).catch(console.error);
     renderAllNetWorth();
   }
   // Wire renderOrders into the global render so it stays in sync with NW changes
-  const _prevRenderAll = (typeof renderAllNetWorth === 'function') ? renderAllNetWorth : null;
   // The "From" select uses values like "bank::star one". Split into parts.
   function parseFromValue(v) {
     const s = String(v || '');
@@ -3213,21 +3278,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       const amountCHF = aRaw / rate;
       const parsed = parseFromValue(fEl ? fEl.value : '');
       const arr = storeGet('incoming_orders') || [];
-      arr.push({
-        id: 'o_' + Date.now() + '_' + Math.floor(Math.random() * 9999),
-        name: n,
-        amount: amountCHF,
-        entered_amount: aRaw,
-        entered_currency: ccy,
-        fromCat: parsed.cat || 'bank',
-        fromAccount: parsed.name || null,    // the actual NW item the user picked
-        date: dEl && dEl.value ? dEl.value : null,
-        ts: Date.now(),
-        deductedAt: null,
-        pctAtDeduction: null,
-        deductedFrom: null
-      });
+      const newOrd = {
+        id: 'tmp_' + Date.now(),
+        name: n, amount: amountCHF, entered_amount: aRaw, entered_currency: ccy,
+        fromCat: parsed.cat || 'bank', fromAccount: parsed.name || null,
+        date: dEl && dEl.value ? dEl.value : null, ts: Date.now(),
+        deductedAt: null, pctAtDeduction: null, deductedFrom: null
+      };
+      arr.push(newOrd);
       storeSet('incoming_orders', arr);
+      FinanceData.addOrder({
+        name: newOrd.name, amount: newOrd.amount, entered_amount: newOrd.entered_amount,
+        entered_currency: newOrd.entered_currency, from_cat: newOrd.fromCat,
+        from_account: newOrd.fromAccount, date: newOrd.date
+      }).then(row => { newOrd.id = row.id; }).catch(console.error);
       nEl.value = ''; aEl.value = '';
       if (dEl) dEl.value = '';
       updateOrdPreview();
@@ -3245,8 +3309,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const el = document.getElementById(id);
     if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') doOrdAdd(); });
   });
-  renderOrders();
-  updateOrdPreview();
 
   // ============================================================
   // FINANCE TICKER — rotates through upcoming subscription renewals
@@ -3372,21 +3434,77 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   function safeRenderTicker() {
     try { renderTicker(); } catch (e) { console.error('ticker render failed', e); }
   }
+
+  // ============================================================
+  // BOOT — load all data from Supabase, then render everything.
+  // ============================================================
+  async function initFinance() {
+    const [allAssets, activityRows, historyRows, subs, wishlist, orders] = await Promise.all([
+      FinanceData.loadAllAssets().catch(() => ({ bank: [], stocks: [], crypto: [], other: [] })),
+      FinanceData.loadActivity().catch(() => []),
+      FinanceData.loadHistory().catch(() => []),
+      FinanceData.loadSubs().catch(() => []),
+      FinanceData.loadWishlist().catch(() => []),
+      FinanceData.loadOrders().catch(() => [])
+    ]);
+
+    // Assets: keep {id, name, amount} per item
+    Object.entries(allAssets).forEach(([cat, rows]) => {
+      CACHE['nw:' + cat] = (rows || []).map(r => ({ id: r.id, name: r.name, amount: Number(r.amount) || 0 }));
+    });
+
+    // Activity: convert {action, details, date} → {ts, cat, name, delta, kind}
+    CACHE['nw:activity'] = (activityRows || []).map(r => ({
+      ts: new Date(r.date || r.created_at).getTime(),
+      cat: (r.details && r.details.cat) || 'bank',
+      name: String((r.details && r.details.name) || ''),
+      delta: Number((r.details && r.details.delta) || 0),
+      kind: (r.details && r.details.kind) || 'edit'
+    })).slice(0, ACTIVITY_MAX);
+
+    // History: convert {date, total} → {t: ms, v: total}
+    CACHE['nw:history'] = (historyRows || []).map(r => ({
+      t: new Date(r.date + 'T00:00').getTime(),
+      v: Number(r.total) || 0
+    }));
+
+    // Subs: snake_case → camelCase
+    CACHE['subs'] = (subs || []).map(r => ({
+      id: r.id, name: r.name, amount: Number(r.amount) || 0, period: r.period || 'monthly',
+      renewal: r.renewal || null, entered_amount: r.entered_amount, entered_currency: r.entered_currency || 'CHF',
+      fromCat: r.from_cat || null, fromAccount: r.from_account || null,
+      autoDeduct: !!r.auto_deduct,
+      lastDeductedAt: r.last_deducted_at ? new Date(r.last_deducted_at).getTime() : null
+    }));
+
+    // Wishlist: snake_case → camelCase
+    CACHE['wishlist'] = (wishlist || []).map(r => ({
+      id: r.id, name: r.name, amount: Number(r.amount) || 0, ts: new Date(r.created_at).getTime(),
+      entered_amount: r.entered_amount, entered_currency: r.entered_currency || 'CHF'
+    }));
+
+    // Orders: snake_case → camelCase
+    CACHE['incoming_orders'] = (orders || []).map(r => ({
+      id: r.id, name: r.name, amount: Number(r.amount) || 0,
+      entered_amount: r.entered_amount, entered_currency: r.entered_currency || 'CHF',
+      fromCat: r.from_cat || 'bank', fromAccount: r.from_account || null,
+      date: r.date || null, ts: new Date(r.created_at).getTime(),
+      deductedAt: r.deducted_at ? new Date(r.deducted_at).getTime() : null,
+      pctAtDeduction: r.pct_at_deduction != null ? Number(r.pct_at_deduction) : null,
+      deductedFrom: r.deducted_from || null
+    }));
+  }
+
+  await initFinance();
+  renderAllNetWorth();
+  renderSubs();
+  renderWishlist();
+  renderOrders();
+  updateOrdPreview();
   safeRenderTicker();
   setInterval(safeRenderTicker, 1500);
+  loadExchangeRates();
 
-})();
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  if (typeof initCloudSync !== 'function') return;
-  initCloudSync({
-    appKey: 'finance',
-    syncedKeys: ['subs', 'wishlist', 'incoming_orders', 'nw_currency', 'nw:activity', 'nw:history'],
-    syncedPrefixes: ['nw:'],
-    onApplied: function () { window.dispatchEvent(new Event('storage')); }
-  });
-});
 </script>
 
 </body>

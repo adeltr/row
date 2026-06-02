@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#050506">
 <title>My Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="sync.js" defer></script>
 <script src="topbar.js" defer></script>
 <script src="time-blocking.js" defer></script>
 <style>
@@ -79,6 +77,8 @@ body::after {
   color: transparent;
 }
 @media (max-width: 480px) { .dash-title { font-size: 22px; } }
+.dash-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.dash-top .dash-title { margin-bottom: 0; flex: 1; }
 
 /* ===== Component 2: Goal Ticker ===== */
 .ticker-row {
@@ -885,7 +885,10 @@ body.tb-no-scroll { overflow: hidden; }
 <body>
 <div class="page">
 
-  <h1 class="dash-title">My Dashboard</h1>
+  <div class="dash-top">
+    <h1 class="dash-title">My Dashboard</h1>
+    <div id="user-menu" style="padding-top:6px"></div>
+  </div>
 
   <div class="ticker-row">
     <div class="goal-ticker" id="goalTicker" aria-live="polite" aria-atomic="true">
@@ -980,46 +983,28 @@ body.tb-no-scroll { overflow: hidden; }
 
 </div>
 
-<script>
-(function () {
-  'use strict';
+<script type="module">
+import { requireAuth } from './js/auth.js';
+import { initUserMenu } from './js/user-menu.js';
+import * as GoalsData from './js/goals-data.js';
+import { supabase } from './js/supabase.js';
 
-  // Paste your Anthropic key here to enable ✨ Polish. Empty = falls back to plain add.
-  const ANTHROPIC_API_KEY = '';
+// ── Boot ──────────────────────────────────────────────────────
+const user = await requireAuth();
+await initUserMenu();
+
+// ── Constants ─────────────────────────────────────────────────
+const ANTHROPIC_API_KEY = '';
 
   const WAKE_HOUR  = 8;
   const SLEEP_HOUR = 24;
 
-  // ---------- storage helpers ----------
-  function storeGet(key) {
-    try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; }
-  }
-  function storeSet(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
-    if (typeof key === 'string' && key.indexOf('goals:') === 0) {
-      window.dispatchEvent(new CustomEvent('goals-changed'));
-    }
-  }
-  function storeDelete(key) { try { localStorage.removeItem(key); } catch (e) {} }
-  function storeListKeys(prefix) {
-    const out = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (k && k.indexOf(prefix) === 0) out.push(k);
-    }
-    return out;
-  }
-
-  // ---------- date helpers ----------
+  // ── Date helpers ─────────────────────────────────────────────
   function pad2(n) { return String(n).padStart(2, '0'); }
   function dateToKey(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
   function getActiveDateString() {
     const now = new Date();
-    if (now.getHours() < 6) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - 1);
-      return dateToKey(d);
-    }
+    if (now.getHours() < 6) { const d = new Date(now); d.setDate(d.getDate() - 1); return dateToKey(d); }
     return dateToKey(now);
   }
   function getTomorrowDateString() {
@@ -1036,71 +1021,66 @@ body.tb-no-scroll { overflow: hidden; }
     return wk + ', ' + mo + ' ' + d.getDate();
   }
 
-  function todayKey()    { return 'goals:' + getActiveDateString(); }
-  function tomorrowKey() { return 'goals:' + getTomorrowDateString(); }
+  const todayDateStr    = getActiveDateString();
+  const tomorrowDateStr = getTomorrowDateString();
 
-  function getGoals(key) {
-    const g = storeGet(key);
-    return Array.isArray(g) ? g : [];
-  }
-  function setGoals(key, list) { storeSet(key, list); }
-
-  // ---------- rollover: pull undone older goals into today ----------
-  function rollover() {
-    const todayDateStr = getActiveDateString();
-    const todayK = 'goals:' + todayDateStr;
-    let today = getGoals(todayK);
-    const texts = new Set(today.map(g => g.text));
-
-    storeListKeys('goals:').forEach(k => {
-      const dateStr = k.slice('goals:'.length);
-      if (dateStr >= todayDateStr) return;
-      const old = getGoals(k);
-      old.forEach(g => {
-        if (!g.done && g.text && !texts.has(g.text)) {
-          today.push({ text: g.text, done: false });
-          texts.add(g.text);
-        }
-      });
-      storeDelete(k);
-    });
-    setGoals(todayK, today);
+  // ── Rollover ──────────────────────────────────────────────────
+  async function rollover() {
+    const sessionKey = 'row_rolled_' + todayDateStr;
+    if (sessionStorage.getItem(sessionKey)) return;
+    sessionStorage.setItem(sessionKey, '1');
+    const todayGoals = await GoalsData.loadGoals(todayDateStr);
+    const texts = new Set(todayGoals.map(g => g.text));
+    const oldUndone = await GoalsData.loadGoalsBefore(todayDateStr);
+    if (!oldUndone.length) return;
+    let pos = todayGoals.length;
+    for (const g of oldUndone) {
+      if (g.text && !texts.has(g.text)) {
+        await GoalsData.addGoal(todayDateStr, g.text, pos++);
+        texts.add(g.text);
+      }
+      await GoalsData.deleteGoal(g.id);
+    }
   }
 
-  // ---------- streak ----------
-  function loadStreak() {
-    const s = storeGet('goal_streak_v1');
-    if (s && typeof s.count === 'number') return s;
-    return { count: 0, lastProcessedDate: '' };
-  }
-  function saveStreak(s) { storeSet('goal_streak_v1', s); }
-
-  function processStreak() {
-    const s = loadStreak();
-    const todayDateStr = getActiveDateString();
-    const keys = storeListKeys('goals:')
-      .map(k => k.slice('goals:'.length))
-      .filter(d => d < todayDateStr)
-      .sort();
-    keys.forEach(dateStr => {
-      if (s.lastProcessedDate && dateStr <= s.lastProcessedDate) return;
-      const list = getGoals('goals:' + dateStr);
-      if (list.length === 0) { /* don't break the streak on empty days */ }
-      else if (list.every(g => g.done)) s.count += 1;
+  // ── Streak ────────────────────────────────────────────────────
+  async function processStreak() {
+    const s = await GoalsData.loadStreak();
+    const { data } = await supabase
+      .from('goals').select('date, done').lt('date', todayDateStr).order('date');
+    const byDate = {};
+    (data || []).forEach(g => { if (!byDate[g.date]) byDate[g.date] = []; byDate[g.date].push(g); });
+    const dates = Object.keys(byDate).sort();
+    for (const d of dates) {
+      if (s.lastProcessedDate && d <= s.lastProcessedDate) continue;
+      const goals = byDate[d];
+      if (!goals.length) continue;
+      if (goals.every(g => g.done)) s.count += 1;
       else s.count = 0;
-      s.lastProcessedDate = dateStr;
-    });
-    saveStreak(s);
+      s.lastProcessedDate = d;
+    }
+    await GoalsData.saveStreak(s.count, s.lastProcessedDate);
+    return s;
   }
 
-  // ---------- Goal Ticker ----------
+  // ── Topbar ────────────────────────────────────────────────────
+  function updateTopbarGoals(goals) {
+    const done = goals.filter(g => g.done).length;
+    const total = goals.length;
+    window.__rowProgress = window.__rowProgress || {};
+    window.__rowProgress.goals = { done, total };
+    window.dispatchEvent(new CustomEvent('rowprogress'));
+  }
+
+  // ── Goal Ticker ───────────────────────────────────────────────
   const tickerStage = document.getElementById('goalTickerStage');
   const tickerMeta  = document.getElementById('goalTickerMeta');
   let cycleIdx = 0;
   let tickerTimer = null;
+  let currentTodayGoals = [];
 
   function buildTickerItems() {
-    const goals = getGoals(todayKey());
+    const goals = currentTodayGoals;
     const total = goals.length;
     const done  = goals.filter(g => g.done).length;
     if (total === 0) return { items: [{ status: 'empty',   text: 'No goals set for today — add one to get rolling.' }], done, total };
@@ -1154,10 +1134,7 @@ body.tb-no-scroll { overflow: hidden; }
     tickerTimer = setInterval(tick, 5000);
   }
 
-  window.addEventListener('goals-changed', () => {
-    cycleIdx = 0;
-    tick();
-  });
+  // ticker refreshes when loadToday() updates currentTodayGoals
 
   // ---------- Day Ring ----------
   const PALETTE = [
@@ -1257,8 +1234,9 @@ body.tb-no-scroll { overflow: hidden; }
     remainingEl.textContent = formatRemaining(minsLeft) + ' awake time left';
   }
 
-  // ---------- Row building ----------
-  function makeInlineEdit(textEl, goals, idx, key, reload) {
+  // ── Row building ──────────────────────────────────────────────
+
+  function makeInlineEdit(textEl, goal, dateStr, reload) {
     textEl.addEventListener('click', () => {
       if (textEl.getAttribute('contenteditable') === 'true') return;
       const original = textEl.textContent;
@@ -1269,22 +1247,17 @@ body.tb-no-scroll { overflow: hidden; }
       range.collapse(false);
       const sel = window.getSelection();
       sel.removeAllRanges(); sel.addRange(range);
-
-      function commit() {
+      async function commit() {
         const next = textEl.textContent.trim();
         textEl.removeAttribute('contenteditable');
         if (next && next !== original) {
-          const list = getGoals(key);
-          if (list[idx]) { list[idx].text = next; setGoals(key, list); }
+          await GoalsData.updateGoal(goal.id, { text: next });
           reload();
         } else {
           textEl.textContent = original;
         }
       }
-      function cancel() {
-        textEl.removeAttribute('contenteditable');
-        textEl.textContent = original;
-      }
+      function cancel() { textEl.removeAttribute('contenteditable'); textEl.textContent = original; }
       textEl.addEventListener('blur', commit, { once: true });
       textEl.addEventListener('keydown', function onKey(e) {
         if (e.key === 'Enter') { e.preventDefault(); textEl.removeEventListener('keydown', onKey); textEl.blur(); }
@@ -1293,32 +1266,29 @@ body.tb-no-scroll { overflow: hidden; }
     });
   }
 
-  function wireDragReorder(row, listEl, key, reload) {
+  function wireDragReorder(row, dateStr, reload) {
     row.setAttribute('draggable', 'true');
     row.addEventListener('dragstart', (e) => {
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/plain', row.dataset.idx);
     });
-    row.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      row.classList.add('is-drag-over');
-    });
+    row.addEventListener('dragover', (e) => { e.preventDefault(); row.classList.add('is-drag-over'); });
     row.addEventListener('dragleave', () => row.classList.remove('is-drag-over'));
-    row.addEventListener('drop', (e) => {
+    row.addEventListener('drop', async (e) => {
       e.preventDefault();
       row.classList.remove('is-drag-over');
       const from = parseInt(e.dataTransfer.getData('text/plain'), 10);
       const to   = parseInt(row.dataset.idx, 10);
       if (isNaN(from) || isNaN(to) || from === to) return;
-      const list = getGoals(key);
-      const [moved] = list.splice(from, 1);
-      list.splice(to, 0, moved);
-      setGoals(key, list);
+      const goals = await GoalsData.loadGoals(dateStr);
+      const [moved] = goals.splice(from, 1);
+      goals.splice(to, 0, moved);
+      await Promise.all(goals.map((g, i) => GoalsData.updateGoal(g.id, { position: i })));
       reload();
     });
   }
 
-  function buildGoalRow(goal, idx, key, readOnly, reload) {
+  function buildGoalRow(goal, idx, dateStr, readOnly, reload) {
     const li = document.createElement('li');
     li.className = 'gm-row';
     li.dataset.idx = String(idx);
@@ -1335,13 +1305,11 @@ body.tb-no-scroll { overflow: hidden; }
     cb.className = 'gm-check';
     cb.checked = !!goal.done;
     if (readOnly) { cb.disabled = true; cb.title = 'Activates at 6 AM tomorrow'; }
-    cb.addEventListener('change', () => {
-      const list = getGoals(key);
-      if (!list[idx]) return;
-      list[idx].done = cb.checked;
-      if (cb.checked) list[idx].doneAt = Date.now();
-      else delete list[idx].doneAt;
-      setGoals(key, list);
+    cb.addEventListener('change', async () => {
+      await GoalsData.updateGoal(goal.id, {
+        done: cb.checked,
+        done_at: cb.checked ? new Date().toISOString() : null
+      });
       reload();
     });
     li.appendChild(cb);
@@ -1350,7 +1318,7 @@ body.tb-no-scroll { overflow: hidden; }
     text.className = 'gm-text';
     text.textContent = goal.text;
     li.appendChild(text);
-    makeInlineEdit(text, null, idx, key, reload);
+    makeInlineEdit(text, goal, dateStr, reload);
 
     const queueBtn = document.createElement('button');
     queueBtn.type = 'button';
@@ -1358,11 +1326,8 @@ body.tb-no-scroll { overflow: hidden; }
     queueBtn.textContent = '⚡';
     queueBtn.title = 'Queue for productivity window';
     if (readOnly) queueBtn.disabled = true;
-    queueBtn.addEventListener('click', () => {
-      const list = getGoals(key);
-      if (!list[idx]) return;
-      list[idx].queued = !list[idx].queued;
-      setGoals(key, list);
+    queueBtn.addEventListener('click', async () => {
+      await GoalsData.updateGoal(goal.id, { queued: !goal.queued });
       li.classList.add('is-queue-flashing');
       setTimeout(reload, 480);
     });
@@ -1373,33 +1338,28 @@ body.tb-no-scroll { overflow: hidden; }
     del.className = 'goal-delete';
     del.setAttribute('aria-label', 'Delete goal');
     del.textContent = '×';
-    del.addEventListener('click', () => {
-      const list = getGoals(key);
-      list.splice(idx, 1);
-      setGoals(key, list);
+    del.addEventListener('click', async () => {
+      await GoalsData.deleteGoal(goal.id);
       reload();
     });
     li.appendChild(del);
 
-    wireDragReorder(li, null, key, reload);
+    wireDragReorder(li, dateStr, reload);
     return li;
   }
 
-  // ---------- Renderers ----------
-  function renderTodayHeader() {
-    const goals = getGoals(todayKey());
+  // ── Renderers ─────────────────────────────────────────────────
+
+  function renderTodayHeader(goals) {
     const total = goals.length;
     const done  = goals.filter(g => g.done).length;
     document.getElementById('gmProgressNum').textContent   = done;
     document.getElementById('gmProgressTotal').textContent = '/ ' + total;
     const label = document.getElementById('gmProgressLabel');
-    if (total === 0)        label.textContent = 'no goals yet';
+    if (total === 0)         label.textContent = 'no goals yet';
     else if (done === total) label.textContent = 'all done — solid day';
     else                     label.textContent = 'complete';
-
-    document.getElementById('todayLabel').textContent =
-      'Today — ' + formatDate(getActiveDateString());
-
+    document.getElementById('todayLabel').textContent = 'Today — ' + formatDate(todayDateStr);
     const bar = document.getElementById('gmBar');
     bar.innerHTML = '';
     goals.forEach(g => {
@@ -1407,35 +1367,26 @@ body.tb-no-scroll { overflow: hidden; }
       seg.className = 'gm-bar-seg' + (g.done ? ' gm-bar-seg-done' : '');
       bar.appendChild(seg);
     });
-
-    const card = document.getElementById('gmCardToday');
-    card.classList.toggle('gm-all-done', total > 0 && done === total);
-
-    const pushBtn = document.getElementById('gmPushBtn');
-    pushBtn.style.display = (total > 0 && done < total) ? 'block' : 'none';
+    document.getElementById('gmCardToday').classList.toggle('gm-all-done', total > 0 && done === total);
+    document.getElementById('gmPushBtn').style.display = (total > 0 && done < total) ? 'block' : 'none';
   }
 
-  function renderStreak() {
-    const s = loadStreak();
+  async function renderStreak() {
+    const s = await GoalsData.loadStreak();
     document.getElementById('gmStreakNum').textContent = s.count;
     document.getElementById('gmStreak').classList.toggle('gm-streak-active', s.count > 0);
   }
 
-  function renderTomorrowCount() {
-    const list = getGoals(tomorrowKey());
-    document.getElementById('gmTomorrowCount').textContent = list.length + ' planned';
-    document.getElementById('tomorrowLabel').textContent =
-      'Plan tomorrow — ' + formatDate(getTomorrowDateString());
+  function renderTomorrowHeader(goals) {
+    document.getElementById('gmTomorrowCount').textContent = goals.length + ' planned';
+    document.getElementById('tomorrowLabel').textContent = 'Plan tomorrow — ' + formatDate(tomorrowDateStr);
   }
 
-  function renderListInto(goals, listEl, emptyEl, key, readOnly) {
+  function renderListInto(goals, listEl, emptyEl, dateStr, readOnly, onReload) {
     listEl.innerHTML = '';
     emptyEl.style.display = goals.length === 0 ? 'block' : 'none';
-    const reload = () => (key === todayKey() ? loadToday() : loadTomorrow());
-
     const visible = goals.length > 5 ? goals.slice(0, 5) : goals;
-    visible.forEach((g, i) => listEl.appendChild(buildGoalRow(g, i, key, readOnly, reload)));
-
+    visible.forEach((g, i) => listEl.appendChild(buildGoalRow(g, i, dateStr, readOnly, onReload)));
     if (goals.length > 5) {
       let expanded = false;
       const toggle = document.createElement('button');
@@ -1449,7 +1400,7 @@ body.tb-no-scroll { overflow: hidden; }
         expanded = !expanded;
         if (expanded) {
           goals.slice(5).forEach((g, i) => {
-            const row = buildGoalRow(g, i + 5, key, readOnly, reload);
+            const row = buildGoalRow(g, i + 5, dateStr, readOnly, onReload);
             listEl.insertBefore(row, toggle);
           });
         } else {
@@ -1459,37 +1410,39 @@ body.tb-no-scroll { overflow: hidden; }
       });
       listEl.appendChild(toggle);
     }
-
-    if (key === todayKey()) renderTodayHeader();
-    else                    renderTomorrowCount();
   }
 
-  function loadToday() {
-    const goals = getGoals(todayKey());
-    renderListInto(goals, document.getElementById('goalList'), document.getElementById('emptyState'), todayKey(), false);
+  async function loadToday() {
+    const goals = await GoalsData.loadGoals(todayDateStr);
+    currentTodayGoals = goals;
+    renderListInto(goals, document.getElementById('goalList'), document.getElementById('emptyState'), todayDateStr, false, loadToday);
+    renderTodayHeader(goals);
+    updateTopbarGoals(goals);
+    cycleIdx = 0; tick();
   }
-  function loadTomorrow() {
-    const goals = getGoals(tomorrowKey());
-    renderListInto(goals, document.getElementById('tomorrowList'), document.getElementById('tomorrowEmpty'), tomorrowKey(), true);
+  async function loadTomorrow() {
+    const goals = await GoalsData.loadGoals(tomorrowDateStr);
+    renderListInto(goals, document.getElementById('tomorrowList'), document.getElementById('tomorrowEmpty'), tomorrowDateStr, true, loadTomorrow);
+    renderTomorrowHeader(goals);
   }
 
-  // ---------- Push remaining ----------
-  document.getElementById('gmPushBtn').addEventListener('click', () => {
-    const today    = getGoals(todayKey());
+  // ── Push remaining ────────────────────────────────────────────
+  document.getElementById('gmPushBtn').addEventListener('click', async () => {
+    const today = await GoalsData.loadGoals(todayDateStr);
     const remaining = today.filter(g => !g.done);
-    if (remaining.length === 0) return;
+    if (!remaining.length) return;
     if (!confirm('Move ' + remaining.length + ' unchecked goal' + (remaining.length === 1 ? '' : 's') + ' to tomorrow?')) return;
-    const tomorrow = getGoals(tomorrowKey());
+    const tomorrow = await GoalsData.loadGoals(tomorrowDateStr);
     const seen = new Set(tomorrow.map(g => g.text));
-    remaining.forEach(g => {
-      if (!seen.has(g.text)) { tomorrow.push({ text: g.text, done: false }); seen.add(g.text); }
-    });
-    setGoals(tomorrowKey(), tomorrow);
-    setGoals(todayKey(), today.filter(g => g.done));
+    let pos = tomorrow.length;
+    for (const g of remaining) {
+      if (!seen.has(g.text)) { await GoalsData.addGoal(tomorrowDateStr, g.text, pos++); seen.add(g.text); }
+      await GoalsData.deleteGoal(g.id);
+    }
     loadToday(); loadTomorrow();
   });
 
-  // ---------- Add + Polish handlers ----------
+  // ── Add + Polish ──────────────────────────────────────────────
   function showStatus(el, message, isError) {
     el.textContent = message;
     el.classList.toggle('gm-status-error', !!isError);
@@ -1524,88 +1477,41 @@ body.tb-no-scroll { overflow: hidden; }
     return arr[0].trim();
   }
 
-  function makeAddHandlers(input, addBtn, polishBtn, key, statusEl, reload) {
-    function plainAdd(text) {
-      const list = getGoals(key);
-      list.push({ text, done: false });
-      setGoals(key, list);
-      input.value = '';
+  function makeAddHandlers(inputEl, addBtn, polishBtn, dateStr, statusEl, reload) {
+    async function plainAdd(text) {
+      const goals = await GoalsData.loadGoals(dateStr);
+      await GoalsData.addGoal(dateStr, text, goals.length);
+      inputEl.value = '';
       reload();
     }
-    addBtn.addEventListener('click', () => {
-      const text = input.value.trim();
-      if (!text) return;
-      plainAdd(text);
-    });
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); addBtn.click(); }
-    });
+    addBtn.addEventListener('click', () => { const text = inputEl.value.trim(); if (!text) return; plainAdd(text); });
+    inputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addBtn.click(); } });
     polishBtn.addEventListener('click', async () => {
-      const text = input.value.trim();
+      const text = inputEl.value.trim();
       if (!text) return;
-      if (!ANTHROPIC_API_KEY) {
-        plainAdd(text);
-        showStatus(statusEl, 'Polish needs an Anthropic API key — added as-typed.', false);
-        return;
-      }
+      if (!ANTHROPIC_API_KEY) { plainAdd(text); showStatus(statusEl, 'Polish needs an Anthropic API key — added as-typed.', false); return; }
       polishBtn.disabled = true;
-      try {
-        const polished = await polishOne(text);
-        plainAdd(polished);
-      } catch (e) {
-        plainAdd(text);
-        showStatus(statusEl, 'Polish failed — added as-typed.', true);
-      } finally {
-        polishBtn.disabled = false;
-      }
+      try { const polished = await polishOne(text); plainAdd(polished); }
+      catch (e) { plainAdd(text); showStatus(statusEl, 'Polish failed — added as-typed.', true); }
+      finally { polishBtn.disabled = false; }
     });
   }
 
-  makeAddHandlers(
-    document.getElementById('goalInput'),
-    document.getElementById('goalAddBtn'),
-    document.getElementById('goalPolishBtn'),
-    todayKey(),
-    document.getElementById('polishStatus'),
-    loadToday
-  );
-  makeAddHandlers(
-    document.getElementById('tomorrowInput'),
-    document.getElementById('tomorrowAddBtn'),
-    document.getElementById('tomorrowPolishBtn'),
-    tomorrowKey(),
-    document.getElementById('tomorrowStatus'),
-    loadTomorrow
-  );
+  makeAddHandlers(document.getElementById('goalInput'), document.getElementById('goalAddBtn'), document.getElementById('goalPolishBtn'), todayDateStr, document.getElementById('polishStatus'), loadToday);
+  makeAddHandlers(document.getElementById('tomorrowInput'), document.getElementById('tomorrowAddBtn'), document.getElementById('tomorrowPolishBtn'), tomorrowDateStr, document.getElementById('tomorrowStatus'), loadTomorrow);
 
-  // ---------- Boot ----------
-  rollover();
-  processStreak();
-  loadToday();
-  loadTomorrow();
-  renderStreak();
+  // ── Realtime ──────────────────────────────────────────────────
+  GoalsData.subscribeGoals(() => { loadToday(); loadTomorrow(); });
+
+  // ── Boot ──────────────────────────────────────────────────────
+  await rollover();
+  await processStreak();
+  await loadToday();
+  await loadTomorrow();
+  await renderStreak();
   updateDayRing();
   setInterval(updateDayRing, 60 * 1000);
   startTicker();
-
-  // Re-render when storage changes from another tab (or our bridged parent).
-  window.addEventListener('storage', () => {
-    loadToday(); loadTomorrow(); renderStreak();
-  });
-})();
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  if (typeof initCloudSync !== 'function') return;
-  initCloudSync({
-    appKey: 'goals',
-    syncedPrefixes: ['goals:'],
-    onApplied: function () {
-      window.dispatchEvent(new CustomEvent('goals-changed'));
-      window.dispatchEvent(new Event('storage'));
-    }
-  });
-});
 </script>
 </body>
 </html>

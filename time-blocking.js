@@ -1,9 +1,7 @@
 // time-blocking.js — Structured-inspired time blocking for the Goals dashboard
+// Uses window.__supabase (set by supabase.js module) for all persistence.
 (function () {
   'use strict';
-
-  var TB_URL = 'https://tdejigjzeqzjghjzhsvd.supabase.co';
-  var TB_KEY = 'sb_publishable_K6jdrlBrO1TEv8l7cerbAQ_5R3W_N4F';
 
   var START_HOUR  = 6;
   var END_HOUR    = 24;   // midnight
@@ -100,18 +98,30 @@
 
   var Store = {
     supa:      null,
+    userId:    null,
     blocks:    [],
     dateStr:   '',
     _cbs:      [],
 
     init: function (dateStr) {
+      var self = this;
       this.dateStr = dateStr;
       this._loadLocal();
-      if (window.supabase) {
-        try { this.supa = window.supabase.createClient(TB_URL, TB_KEY); } catch(e) {}
+
+      function tryConnect() {
+        if (window.__supabase) {
+          self.supa = window.__supabase;
+          self.supa.auth.getUser().then(function(res) {
+            self.userId = res.data && res.data.user ? res.data.user.id : null;
+            self.fetch();
+            self._subscribe();
+          }).catch(function() { self.fetch(); });
+        } else {
+          // Module script hasn't set __supabase yet — wait
+          setTimeout(tryConnect, 300);
+        }
       }
-      this.fetch();
-      this._subscribe();
+      tryConnect();
     },
 
     on: function (fn) { this._cbs.push(fn); },
@@ -158,7 +168,8 @@
 
     createBlock: async function (fields) {
       if (this.supa) {
-        var res = await this.supa.from('time_blocks').insert(fields).select().single();
+        var insert = this.userId ? Object.assign({ user_id: this.userId }, fields) : fields;
+        var res = await this.supa.from('time_blocks').insert(insert).select().single();
         if (!res.error) { await this.fetch(); return res.data; }
       }
       var block = Object.assign({ id: (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)), completed: false, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, fields);
