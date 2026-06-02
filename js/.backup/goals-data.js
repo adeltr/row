@@ -1,13 +1,7 @@
 import { supabase } from './supabase.js';
 
-// ── Helper ─────────────────────────────────────────────────────
-async function getUserId() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-  return user.id;
-}
-
 // ── Goals ──────────────────────────────────────────────────────
+
 export async function loadGoals(dateStr) {
   const { data, error } = await supabase
     .from('goals')
@@ -30,10 +24,9 @@ export async function loadGoalsBefore(dateStr) {
 }
 
 export async function addGoal(dateStr, text, position) {
-  const user_id = await getUserId();
   const { data, error } = await supabase
     .from('goals')
-    .insert({ user_id, date: dateStr, text, position: position ?? 0 })
+    .insert({ date: dateStr, text, position: position ?? 0 })
     .select()
     .single();
   if (error) throw error;
@@ -71,9 +64,7 @@ export async function upsertGoals(dateStr, goalsArr) {
   // Replaces all goals for a date — used for rollover.
   await deleteGoalsForDate(dateStr);
   if (!goalsArr.length) return [];
-  const user_id = await getUserId();
   const rows = goalsArr.map((g, i) => ({
-    user_id,
     date: dateStr,
     text: g.text,
     done: g.done ?? false,
@@ -90,6 +81,7 @@ export async function upsertGoals(dateStr, goalsArr) {
 }
 
 // ── Streak ─────────────────────────────────────────────────────
+
 export async function loadStreak() {
   const { data } = await supabase
     .from('goal_streaks')
@@ -99,17 +91,18 @@ export async function loadStreak() {
 }
 
 export async function saveStreak(count, lastProcessedDate) {
-  const user_id = await getUserId();
+  const { data: { user } } = await supabase.auth.getUser();
   const { error } = await supabase
     .from('goal_streaks')
     .upsert(
-      { user_id, count, last_processed_date: lastProcessedDate || null },
+      { user_id: user.id, count, last_processed_date: lastProcessedDate || null },
       { onConflict: 'user_id' }
     );
   if (error) throw error;
 }
 
 // ── Realtime ────────────────────────────────────────────────────
+
 export function subscribeGoals(callback) {
   return supabase
     .channel('goals_rt')

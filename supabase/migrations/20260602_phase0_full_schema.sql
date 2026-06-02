@@ -1,13 +1,11 @@
--- =============================================================
--- Phase 0 full schema migration
--- Run in Supabase SQL Editor: Dashboard → SQL Editor → New query → paste → Run
---
--- NOTE: Run ONLY this file. Skip migrations/001_time_blocks.sql —
---       this migration creates time_blocks correctly with user_id.
--- =============================================================
-
--- ── GOALS ─────────────────────────────────────────────────────
-
+drop table if exists 
+  goals, goal_streaks, stack_items, stack_logs,
+  water_profile, water_logs, gym_profile, gyms,
+  workout_days, exercises, exercise_logs, workout_completion,
+  body_weight_logs, gym_photos, split_rotation,
+  finance_profile, finance_assets, finance_activity, finance_history,
+  finance_subscriptions, finance_wishlist, finance_orders
+cascade;
 create table if not exists goals (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references auth.users(id) on delete cascade,
@@ -29,17 +27,17 @@ create table if not exists goal_streaks (
 -- ── SUPPLEMENT STACK ──────────────────────────────────────────
 
 create table if not exists stack_items (
-  id         uuid primary key default gen_random_uuid(),
-  user_id    uuid not null references auth.users(id) on delete cascade,
-  name       text not null,
-  dose       text,
-  window     text default 'anytime' check (window in ('morning','lunch','evening','anytime')),
-  note       text,
-  tag        text,
-  ordered    boolean default true,
-  low_stock  boolean default false,
-  position   int default 0,
-  created_at timestamptz default now()
+  id            uuid primary key default gen_random_uuid(),
+  user_id       uuid not null references auth.users(id) on delete cascade,
+  name          text not null,
+  dose          text,
+  intake_window text default 'anytime' check (intake_window in ('morning','lunch','evening','anytime')),
+  note          text,
+  tag           text,
+  ordered       boolean default true,
+  low_stock     boolean default false,
+  position      int default 0,
+  created_at    timestamptz default now()
 );
 
 create table if not exists stack_logs (
@@ -97,12 +95,18 @@ create table if not exists workout_days (
 );
 
 create table if not exists exercises (
-  id         uuid primary key default gen_random_uuid(),
-  user_id    uuid not null references auth.users(id) on delete cascade,
-  name       text not null,
-  day_id     uuid references workout_days(id) on delete set null,
-  position   int default 0,
-  created_at timestamptz default now()
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null references auth.users(id) on delete cascade,
+  name         text not null,
+  gym          text not null default 'both',
+  day          text not null default '',
+  bw           boolean default false,
+  start_weight numeric default 0,
+  rep_min      int default 5,
+  rep_max      int default 8,
+  step         numeric default 2.5,
+  position     int default 0,
+  created_at   timestamptz default now()
 );
 
 create table if not exists exercise_logs (

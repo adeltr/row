@@ -1,11 +1,5 @@
 import { supabase } from './supabase.js';
 
-async function getUserId() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-  return user.id;
-}
-
 // ── Stack items ────────────────────────────────────────────────
 
 export async function loadItems() {
@@ -18,10 +12,9 @@ export async function loadItems() {
 }
 
 export async function addItem(fields) {
-  const user_id = await getUserId();
   const { data, error } = await supabase
     .from('stack_items')
-    .insert({ user_id, ...fields })
+    .insert(fields)
     .select()
     .single();
   if (error) throw error;
@@ -73,11 +66,10 @@ export async function loadTaken(dateStr) {
 
 export async function setTaken(stackItemId, dateStr, taken) {
   if (taken) {
-    const user_id = await getUserId();
     const { error } = await supabase
       .from('stack_logs')
       .upsert(
-        { user_id, stack_item_id: stackItemId, date: dateStr, taken_at: new Date().toISOString() },
+        { stack_item_id: stackItemId, date: dateStr, taken_at: new Date().toISOString() },
         { onConflict: 'user_id,stack_item_id,date' }
       );
     if (error) throw error;

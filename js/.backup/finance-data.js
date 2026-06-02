@@ -1,9 +1,5 @@
 import { supabase } from './supabase.js';
-async function getUserId() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-  return user.id;
-}
+
 // ── Profile ────────────────────────────────────────────────────
 
 export async function loadProfile() {
@@ -30,10 +26,9 @@ export async function loadAssets(category) {
 }
 
 export async function addAsset(category, name, amount) {
-  const user_id = await getUserId();
   const { data, error } = await supabase
     .from('finance_assets')
-    .insert({ user_id, category, name, amount })
+    .insert({ category, name, amount })
     .select()
     .single();
   if (error) throw error;
@@ -81,10 +76,9 @@ export async function loadActivity() {
 }
 
 export async function addActivity(action, details) {
-  const user_id = await getUserId();
   const { error } = await supabase
     .from('finance_activity')
-    .insert({ user_id, action, details });
+    .insert({ action, details });
   if (error) throw error;
 }
 
@@ -122,10 +116,9 @@ export async function loadSubs() {
 }
 
 export async function addSub(fields) {
-  const user_id = await getUserId();
   const { data, error } = await supabase
     .from('finance_subscriptions')
-    .insert({ user_id, ...fields })
+    .insert(fields)
     .select()
     .single();
   if (error) throw error;
@@ -160,10 +153,9 @@ export async function loadWishlist() {
 }
 
 export async function addWishlistItem(fields) {
-  const user_id = await getUserId();
   const { data, error } = await supabase
     .from('finance_wishlist')
-    .insert({ user_id, ...fields })
+    .insert(fields)
     .select()
     .single();
   if (error) throw error;
@@ -187,10 +179,9 @@ export async function loadOrders() {
 }
 
 export async function addOrder(fields) {
-  const user_id = await getUserId();
   const { data, error } = await supabase
     .from('finance_orders')
-    .insert({ user_id, ...fields })
+    .insert(fields)
     .select()
     .single();
   if (error) throw error;

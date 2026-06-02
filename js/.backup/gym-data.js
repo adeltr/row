@@ -1,29 +1,5 @@
 import { supabase } from './supabase.js';
 
-async function getUserId() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-  return user.id;
-}
-
-// camelCase ↔ snake_case for exercise fields
-function exToRow(f) {
-  const { startWeight, repMin, repMax, ...rest } = f;
-  const r = { ...rest };
-  if (startWeight !== undefined) r.start_weight = startWeight;
-  if (repMin     !== undefined) r.rep_min       = repMin;
-  if (repMax     !== undefined) r.rep_max       = repMax;
-  return r;
-}
-function exFromRow(r) {
-  const { start_weight, rep_min, rep_max, ...rest } = r;
-  const f = { ...rest };
-  if (start_weight !== undefined) f.startWeight = start_weight;
-  if (rep_min      !== undefined) f.repMin      = rep_min;
-  if (rep_max      !== undefined) f.repMax      = rep_max;
-  return f;
-}
-
 // ── Gym profile ────────────────────────────────────────────────
 
 export async function loadGymProfile() {
@@ -47,29 +23,28 @@ export async function loadExercises() {
     .select('*')
     .order('position');
   if (error) throw error;
-  return (data || []).map(exFromRow);
+  return data;
 }
 
 export async function addExercise(fields) {
-  const user_id = await getUserId();
   const { data, error } = await supabase
     .from('exercises')
-    .insert({ user_id, ...exToRow(fields) })
+    .insert(fields)
     .select()
     .single();
   if (error) throw error;
-  return exFromRow(data);
+  return data;
 }
 
 export async function updateExercise(id, fields) {
   const { data, error } = await supabase
     .from('exercises')
-    .update(exToRow(fields))
+    .update(fields)
     .eq('id', id)
     .select()
     .single();
   if (error) throw error;
-  return exFromRow(data);
+  return data;
 }
 
 export async function deleteExercise(id) {
@@ -79,10 +54,10 @@ export async function deleteExercise(id) {
 
 export async function seedExercises(exerciseList) {
   const { data: { user } } = await supabase.auth.getUser();
-  const rows = exerciseList.map((e, i) => ({ ...exToRow(e), user_id: user.id, position: i }));
+  const rows = exerciseList.map((e, i) => ({ ...e, user_id: user.id, position: i }));
   const { data, error } = await supabase.from('exercises').insert(rows).select();
   if (error) throw error;
-  return (data || []).map(exFromRow);
+  return data;
 }
 
 // ── Exercise logs ──────────────────────────────────────────────

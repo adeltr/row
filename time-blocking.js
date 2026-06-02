@@ -168,7 +168,7 @@
 
     createBlock: async function (fields) {
       if (this.supa) {
-        var insert = this.userId ? Object.assign({ user_id: this.userId }, fields) : fields;
+        if (!this.userId) { console.warn("[time-blocking] Cannot insert: user not authenticated yet"); return Promise.reject(new Error("User not authenticated")); } var insert = Object.assign({ user_id: this.userId }, fields);
         var res = await this.supa.from('time_blocks').insert(insert).select().single();
         if (!res.error) { await this.fetch(); return res.data; }
       }
