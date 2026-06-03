@@ -311,15 +311,6 @@ body::after {
   color: var(--text-tertiary);
   margin-left: 4px;
 }
-.gm-tomorrow-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
-.gm-tomorrow-count {
-  font-family: var(--font-mono);
-  font-size: 11px; font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em; text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-.gm-card-tomorrow .gm-progress-row { display: none; }
 
 .gm-streak {
   display: inline-flex; align-items: center; gap: 6px;
@@ -880,6 +871,270 @@ body.tb-no-scroll { overflow: hidden; }
 @media (max-width: 480px) {
   .tb-scroll { max-height: 420px; }
 }
+
+/* ===== Goal link-to-objective toggle ===== */
+.gm-link-toggle {
+  flex-basis: 100%;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text-tertiary);
+  cursor: pointer; padding: 0 2px;
+  border: 0; background: transparent;
+  font-family: inherit;
+  transition: color 0.2s;
+  margin-top: 2px;
+}
+.gm-link-toggle:hover { color: var(--text-secondary); }
+.gm-link-panel { flex-basis: 100%; display: none; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.gm-link-panel.open { display: flex; }
+.gm-link-sel {
+  flex: 1; min-width: 140px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  background: rgba(0,0,0,0.28);
+  color: var(--text-primary);
+  font-family: inherit; font-size: 12px;
+  outline: none; cursor: pointer;
+  -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+.gm-link-sel:focus { border-color: rgba(255,255,255,0.24); }
+.gm-link-col { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 4px; }
+.gm-link-label { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); }
+
+/* ===== Objectives Section ===== */
+.obj-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.obj-tab {
+  padding: 7px 18px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-tertiary);
+  font-family: inherit; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.obj-tab.active {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.20);
+  color: var(--text-primary);
+}
+.obj-tab-panel { display: none; }
+.obj-tab-panel.active { display: block; }
+.obj-new-btn {
+  width: 100%; margin-bottom: 14px; padding: 10px;
+  border: 1px dashed rgba(255,255,255,0.14); border-radius: 12px;
+  background: transparent; color: var(--text-tertiary);
+  font-family: inherit; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; transition: color 0.2s, border-color 0.2s;
+}
+.obj-new-btn:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.26); }
+.obj-card {
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px; padding: 16px; margin-bottom: 10px;
+  transition: background 0.2s;
+}
+.obj-card:hover { background: rgba(255,255,255,0.05); }
+.obj-card.obj-done { opacity: 0.55; }
+.obj-card-hd { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+.obj-card-main { flex: 1; min-width: 0; }
+.obj-title {
+  font-size: 14px; font-weight: 600; color: var(--text-primary);
+  margin-bottom: 4px; display: flex; align-items: center; gap: 8px;
+}
+.obj-done-badge { font-size: 13px; color: var(--success); filter: drop-shadow(0 0 4px rgba(107,227,164,0.5)); }
+.obj-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.04em; margin-bottom: 8px; }
+.obj-meta span { margin-right: 10px; }
+.obj-prog-row { display: flex; align-items: center; gap: 10px; }
+.obj-prog-bar-wrap { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.obj-prog-bar-fill { height: 100%; background: #6BE3A4; border-radius: 2px; box-shadow: 0 0 6px rgba(107,227,164,0.4); transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+.obj-prog-pct { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--text-secondary); min-width: 32px; text-align: right; }
+.obj-todo-count { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); margin-top: 5px; }
+.obj-expand-btn {
+  border: 0; background: transparent; color: var(--text-tertiary); font-size: 13px;
+  cursor: pointer; padding: 4px; flex-shrink: 0;
+  transition: color 0.2s, transform 0.2s;
+}
+.obj-expand-btn.open { transform: rotate(180deg); color: var(--text-secondary); }
+.obj-children { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); }
+.obj-children.open { display: block; }
+.obj-child-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; margin-bottom: 5px;
+  background: rgba(255,255,255,0.025); border-radius: 9px;
+  font-size: 13px; color: var(--text-secondary);
+}
+.obj-child-row.done-todo { text-decoration: line-through; opacity: 0.5; }
+.obj-child-check {
+  appearance: none; -webkit-appearance: none;
+  width: 18px; height: 18px; flex-shrink: 0;
+  border: 1.5px solid rgba(255,255,255,0.16);
+  background: rgba(0,0,0,0.28); border-radius: 5px;
+  cursor: pointer; transition: background 0.2s, border-color 0.2s;
+}
+.obj-child-check:checked { background: #6BE3A4; border-color: #6BE3A4; }
+.obj-child-date { margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
+.obj-card-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+.obj-action-btn {
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+  background: rgba(255,255,255,0.04); color: var(--text-tertiary);
+  font-family: inherit; font-size: 11px; font-weight: 600;
+  padding: 5px 12px; cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.obj-action-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+.obj-action-btn.danger { color: var(--danger); border-color: rgba(255,107,107,0.22); }
+.obj-action-btn.danger:hover { background: rgba(255,107,107,0.10); }
+/* Objective modal */
+.obj-modal-bg {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.obj-modal {
+  background: #131316; border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 18px; width: 100%; max-width: 420px;
+  max-height: 90vh; overflow-y: auto; padding: 22px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+}
+.obj-modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.obj-modal-ttl { font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.01em; }
+.obj-modal-x { border: 0; background: transparent; color: var(--text-tertiary); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 4px; transition: color 0.2s; }
+.obj-modal-x:hover { color: var(--text-primary); }
+.obj-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.obj-label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); }
+.obj-input {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+  background: rgba(0,0,0,0.32); color: var(--text-primary);
+  font-family: inherit; font-size: 13px; outline: none;
+  transition: border-color 0.2s; -webkit-appearance: none;
+}
+.obj-input:focus { border-color: rgba(255,255,255,0.28); }
+.obj-input::placeholder { color: var(--text-tertiary); }
+.obj-textarea { resize: vertical; min-height: 60px; }
+.obj-row { flex-direction: row; gap: 10px; }
+.obj-half { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.obj-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+.obj-mbtn { padding: 9px 18px; border-radius: 10px; border: 1px solid transparent; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
+.obj-mbtn:hover { filter: brightness(1.1); }
+.obj-mbtn-pri { background: linear-gradient(180deg, #fff 0%, #E8E5DD 100%); color: #0A0A0B; box-shadow: 0 2px 8px rgba(0,0,0,0.35); }
+.obj-mbtn-sec { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.10); color: var(--text-secondary); }
+.obj-mbtn-danger { background: rgba(255,107,107,0.12); border-color: rgba(255,107,107,0.30); color: var(--danger); }
+
+/* ===== Routine Tracker ===== */
+.rt-challenge {
+  background: linear-gradient(135deg, rgba(107,227,164,0.08), rgba(74,158,255,0.08));
+  border: 1px solid rgba(107,227,164,0.20); border-radius: 14px;
+  padding: 16px; margin-bottom: 14px;
+}
+.rt-challenge-hd { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.rt-challenge-name { font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+.rt-challenge-badge { font-family: var(--font-mono); font-size: 9.5px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--success); background: rgba(107,227,164,0.12); border-radius: 999px; padding: 3px 8px; }
+.rt-challenge-stats { display: flex; gap: 14px; flex-wrap: wrap; }
+.rt-cstat { display: flex; flex-direction: column; align-items: center; font-family: var(--font-mono); }
+.rt-cstat-num { font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+.rt-cstat-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); margin-top: 2px; }
+.rt-challenge-prog { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; margin-top: 10px; }
+.rt-challenge-prog-fill { height: 100%; background: #6BE3A4; border-radius: 2px; transition: width 0.4s; }
+.rt-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.rt-add-habit-btn, .rt-start-btn {
+  padding: 7px 14px; border-radius: 10px;
+  font-family: inherit; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.rt-add-habit-btn { border: 1px dashed rgba(255,255,255,0.14); background: transparent; color: var(--text-tertiary); }
+.rt-add-habit-btn:hover { border-color: rgba(255,255,255,0.28); color: var(--text-primary); }
+.rt-start-btn { border: 1px solid rgba(107,227,164,0.28); background: rgba(107,227,164,0.08); color: var(--success); }
+.rt-start-btn:hover { background: rgba(107,227,164,0.15); }
+.rt-load-more {
+  width: 100%; margin-top: 8px; padding: 9px;
+  border: 1px dashed rgba(255,255,255,0.10); border-radius: 10px;
+  background: transparent; color: var(--text-tertiary);
+  font-family: inherit; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer; transition: color 0.2s, border-color 0.2s;
+}
+.rt-load-more:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.20); }
+.rt-grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.rt-grid { display: grid; min-width: 0; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+.rt-hd-date, .rt-hd-habit, .rt-hd-day-pct {
+  background: rgba(0,0,0,0.35); padding: 8px 10px;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary);
+  border-bottom: 1px solid rgba(255,255,255,0.06); user-select: none;
+}
+.rt-hd-habit { text-align: center; cursor: pointer; }
+.rt-hd-habit:hover { color: var(--text-secondary); }
+.rt-hd-habit-inner { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.rt-hd-habit-icon { font-size: 14px; line-height: 1; }
+.rt-hd-habit-name { font-size: 8.5px; max-width: 56px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rt-hd-habit-streak { font-size: 9px; color: var(--warning); white-space: nowrap; }
+.rt-cell-date, .rt-cell, .rt-cell-pct {
+  padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.015); transition: background 0.15s; min-width: 0;
+}
+.rt-row-last .rt-cell-date, .rt-row-last .rt-cell, .rt-row-last .rt-cell-pct { border-bottom: none; }
+.rt-row-today .rt-cell-date, .rt-row-today .rt-cell, .rt-row-today .rt-cell-pct { background: rgba(107,227,164,0.04); }
+.rt-cell-date { font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--text-tertiary); white-space: nowrap; cursor: pointer; }
+.rt-cell-date:hover { color: var(--text-secondary); }
+.rt-cell-date.today-lbl { color: var(--success); }
+.rt-cell { display: flex; align-items: center; justify-content: center; position: relative; }
+.rt-cell-pct { display: flex; align-items: center; gap: 6px; min-width: 64px; }
+.rt-pct-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.rt-pct-bar-fill { height: 100%; background: #6BE3A4; border-radius: 2px; transition: width 0.3s; }
+.rt-pct-num { font-family: var(--font-mono); font-size: 9px; font-weight: 700; color: var(--text-tertiary); min-width: 22px; text-align: right; }
+.rt-hb-check {
+  appearance: none; -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border: 1.5px solid rgba(255,255,255,0.14); background: rgba(0,0,0,0.28); border-radius: 6px;
+  cursor: pointer; transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+.rt-hb-check:checked { background: #6BE3A4; border-color: #6BE3A4; box-shadow: 0 0 8px rgba(107,227,164,0.35); }
+/* Habit/challenge modal */
+.rt-modal-bg {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.rt-modal {
+  background: #131316; border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 18px; width: 100%; max-width: 420px;
+  max-height: 90vh; overflow-y: auto; padding: 22px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+}
+.rt-modal-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.rt-modal-ttl { font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.01em; }
+.rt-modal-x { border: 0; background: transparent; color: var(--text-tertiary); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 4px; transition: color 0.2s; }
+.rt-modal-x:hover { color: var(--text-primary); }
+.rt-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.rt-label { font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); }
+.rt-input {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+  background: rgba(0,0,0,0.32); color: var(--text-primary);
+  font-family: inherit; font-size: 13px; outline: none;
+  transition: border-color 0.2s; -webkit-appearance: none;
+}
+.rt-input:focus { border-color: rgba(255,255,255,0.28); }
+.rt-input::placeholder { color: var(--text-tertiary); }
+.rt-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+.rt-mbtn { padding: 9px 18px; border-radius: 10px; border: 1px solid transparent; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
+.rt-mbtn:hover { filter: brightness(1.1); }
+.rt-mbtn-pri { background: linear-gradient(180deg, #fff 0%, #E8E5DD 100%); color: #0A0A0B; box-shadow: 0 2px 8px rgba(0,0,0,0.35); }
+.rt-mbtn-sec { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.10); color: var(--text-secondary); }
+.rt-mbtn-danger { background: rgba(255,107,107,0.12); border-color: rgba(255,107,107,0.30); color: var(--danger); }
+.rt-chal-habits { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.rt-chal-habit-opt {
+  display: flex; align-items: center; gap: 6px; padding: 5px 10px;
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 999px;
+  background: rgba(255,255,255,0.04); font-size: 12px; color: var(--text-secondary);
+  cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s; user-select: none;
+}
+.rt-chal-habit-opt.selected { background: rgba(107,227,164,0.12); border-color: rgba(107,227,164,0.30); color: var(--success); }
+.rt-note-btn { background: transparent; border: 0; font-size: 12px; cursor: pointer; color: var(--text-tertiary); opacity: 0.5; padding: 0 2px; transition: opacity 0.15s; }
+.rt-note-btn:hover, .rt-note-btn.has-note { opacity: 1; color: var(--warning); }
 </style>
 </head>
 <body>
@@ -958,26 +1213,53 @@ body.tb-no-scroll { overflow: hidden; }
         <button type="button" id="goalAddBtn"    class="gm-add">+ Add</button>
         <button type="button" id="goalPolishBtn" class="gm-polish">✨ Polish</button>
         <div class="gm-status" id="polishStatus"></div>
+        <button type="button" class="gm-link-toggle" id="gmLinkToggle">▸ Link to objective</button>
+        <div class="gm-link-panel" id="gmLinkPanel">
+          <div class="gm-link-col">
+            <span class="gm-link-label">Monthly</span>
+            <select class="gm-link-sel" id="gmLinkMonthly"><option value="">— none —</option></select>
+          </div>
+          <div class="gm-link-col">
+            <span class="gm-link-label">Yearly</span>
+            <select class="gm-link-sel" id="gmLinkYearly"><option value="">— none —</option></select>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- PLAN TOMORROW -->
-    <div class="gm-card gm-card-tomorrow" id="gmCardTomorrow">
-      <div class="gm-header">
-        <div class="gm-header-left">
-          <div class="gm-eyebrow" id="tomorrowLabel">Plan tomorrow —</div>
-          <div class="gm-tomorrow-sub">Write tonight, locked until 6 AM.</div>
-        </div>
-        <div class="gm-tomorrow-count" id="gmTomorrowCount">0 planned</div>
+  <!-- OBJECTIVES -->
+  <div class="section">
+    <div class="section-title">Objectives</div>
+    <div class="gm-card">
+      <div class="obj-tabs">
+        <button type="button" class="obj-tab active" id="objTabMonth">This Month</button>
+        <button type="button" class="obj-tab"        id="objTabYear">This Year</button>
       </div>
-      <ul id="tomorrowList" class="goal-list gm-list"></ul>
-      <div id="tomorrowEmpty" class="empty-state">Nothing planned for tomorrow yet</div>
-      <div class="goal-input-wrap gm-input-wrap">
-        <input id="tomorrowInput" class="gm-input" type="text" placeholder="Add a goal for tomorrow…" autocomplete="off">
-        <button type="button" id="tomorrowAddBtn"    class="gm-add">+ Add</button>
-        <button type="button" id="tomorrowPolishBtn" class="gm-polish">✨ Polish</button>
-        <div class="gm-status" id="tomorrowStatus"></div>
+      <div class="obj-tab-panel active" id="objPanelMonth">
+        <button type="button" class="obj-new-btn" id="objNewMonthBtn">+ New Monthly Objective</button>
+        <div id="objMonthList"></div>
       </div>
+      <div class="obj-tab-panel" id="objPanelYear">
+        <button type="button" class="obj-new-btn" id="objNewYearBtn">+ New Yearly Objective</button>
+        <div id="objYearList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUTINE TRACKER -->
+  <div class="section">
+    <div class="section-title">Routine Tracker</div>
+    <div class="gm-card">
+      <div id="rtChallengeWrap"></div>
+      <div class="rt-toolbar">
+        <button type="button" class="rt-add-habit-btn" id="rtAddHabitBtn">+ Add Habit</button>
+        <button type="button" class="rt-start-btn"     id="rtStartChallengeBtn">🏆 Start Challenge</button>
+      </div>
+      <div class="rt-grid-wrap">
+        <div class="rt-grid" id="rtGrid"></div>
+      </div>
+      <button type="button" class="rt-load-more" id="rtLoadMore">Load more ▾</button>
     </div>
   </div>
 
@@ -987,6 +1269,8 @@ body.tb-no-scroll { overflow: hidden; }
 import { requireAuth } from './js/auth.js';
 import { initUserMenu } from './js/user-menu.js';
 import * as GoalsData from './js/goals-data.js';
+import * as ObjData from './js/objectives-data.js';
+import * as HabitsData from './js/habits-data.js';
 import { supabase } from './js/supabase.js';
 
 // ── Boot ──────────────────────────────────────────────────────
@@ -998,6 +1282,9 @@ const ANTHROPIC_API_KEY = '';
 
   const WAKE_HOUR  = 8;
   const SLEEP_HOUR = 24;
+  const _now = new Date();
+  const currentYear  = _now.getFullYear();
+  const currentMonth = _now.getMonth() + 1;
 
   // ── Date helpers ─────────────────────────────────────────────
   function pad2(n) { return String(n).padStart(2, '0'); }
@@ -1008,9 +1295,8 @@ const ANTHROPIC_API_KEY = '';
     return dateToKey(now);
   }
   function getTomorrowDateString() {
-    const now = new Date();
-    const d = new Date(now);
-    if (now.getHours() >= 6) d.setDate(d.getDate() + 1);
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
     return dateToKey(d);
   }
   function formatDate(yyyy_mm_dd) {
@@ -1020,9 +1306,16 @@ const ANTHROPIC_API_KEY = '';
     const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
     return wk + ', ' + mo + ' ' + d.getDate();
   }
+  function formatDateShort(yyyy_mm_dd) {
+    const parts = yyyy_mm_dd.split('-').map(Number);
+    const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parts[1] - 1];
+    return mo + ' ' + parts[2];
+  }
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
-  const todayDateStr    = getActiveDateString();
-  const tomorrowDateStr = getTomorrowDateString();
+  const todayDateStr = getActiveDateString();
 
   // ── Rollover ──────────────────────────────────────────────────
   async function rollover() {
@@ -1377,11 +1670,6 @@ const ANTHROPIC_API_KEY = '';
     document.getElementById('gmStreak').classList.toggle('gm-streak-active', s.count > 0);
   }
 
-  function renderTomorrowHeader(goals) {
-    document.getElementById('gmTomorrowCount').textContent = goals.length + ' planned';
-    document.getElementById('tomorrowLabel').textContent = 'Plan tomorrow — ' + formatDate(tomorrowDateStr);
-  }
-
   function renderListInto(goals, listEl, emptyEl, dateStr, readOnly, onReload) {
     listEl.innerHTML = '';
     emptyEl.style.display = goals.length === 0 ? 'block' : 'none';
@@ -1419,11 +1707,8 @@ const ANTHROPIC_API_KEY = '';
     renderTodayHeader(goals);
     updateTopbarGoals(goals);
     cycleIdx = 0; tick();
-  }
-  async function loadTomorrow() {
-    const goals = await GoalsData.loadGoals(tomorrowDateStr);
-    renderListInto(goals, document.getElementById('tomorrowList'), document.getElementById('tomorrowEmpty'), tomorrowDateStr, true, loadTomorrow);
-    renderTomorrowHeader(goals);
+    // refresh objective progress when todos change
+    loadObjectives();
   }
 
   // ── Push remaining ────────────────────────────────────────────
@@ -1432,14 +1717,15 @@ const ANTHROPIC_API_KEY = '';
     const remaining = today.filter(g => !g.done);
     if (!remaining.length) return;
     if (!confirm('Move ' + remaining.length + ' unchecked goal' + (remaining.length === 1 ? '' : 's') + ' to tomorrow?')) return;
-    const tomorrow = await GoalsData.loadGoals(tomorrowDateStr);
+    const tomorrowStr = getTomorrowDateString();
+    const tomorrow = await GoalsData.loadGoals(tomorrowStr);
     const seen = new Set(tomorrow.map(g => g.text));
     let pos = tomorrow.length;
     for (const g of remaining) {
-      if (!seen.has(g.text)) { await GoalsData.addGoal(tomorrowDateStr, g.text, pos++); seen.add(g.text); }
+      if (!seen.has(g.text)) { await GoalsData.addGoal(tomorrowStr, g.text, pos++); seen.add(g.text); }
       await GoalsData.deleteGoal(g.id);
     }
-    loadToday(); loadTomorrow();
+    loadToday();
   });
 
   // ── Add + Polish ──────────────────────────────────────────────
@@ -1480,7 +1766,15 @@ const ANTHROPIC_API_KEY = '';
   function makeAddHandlers(inputEl, addBtn, polishBtn, dateStr, statusEl, reload) {
     async function plainAdd(text) {
       const goals = await GoalsData.loadGoals(dateStr);
-      await GoalsData.addGoal(dateStr, text, goals.length);
+      const monthlyEl = document.getElementById('gmLinkMonthly');
+      const yearlyEl  = document.getElementById('gmLinkYearly');
+      const extras = {
+        linked_monthly_id: (monthlyEl && monthlyEl.value) || null,
+        linked_yearly_id:  (yearlyEl  && yearlyEl.value)  || null,
+      };
+      await GoalsData.addGoal(dateStr, text, goals.length, extras);
+      if (monthlyEl) monthlyEl.value = '';
+      if (yearlyEl)  yearlyEl.value  = '';
       inputEl.value = '';
       reload();
     }
@@ -1498,20 +1792,655 @@ const ANTHROPIC_API_KEY = '';
   }
 
   makeAddHandlers(document.getElementById('goalInput'), document.getElementById('goalAddBtn'), document.getElementById('goalPolishBtn'), todayDateStr, document.getElementById('polishStatus'), loadToday);
-  makeAddHandlers(document.getElementById('tomorrowInput'), document.getElementById('tomorrowAddBtn'), document.getElementById('tomorrowPolishBtn'), tomorrowDateStr, document.getElementById('tomorrowStatus'), loadTomorrow);
+
+  // ── Link toggle ───────────────────────────────────────────────
+  document.getElementById('gmLinkToggle').addEventListener('click', () => {
+    const panel = document.getElementById('gmLinkPanel');
+    const btn   = document.getElementById('gmLinkToggle');
+    const open  = panel.classList.toggle('open');
+    btn.textContent = (open ? '▾' : '▸') + ' Link to objective';
+  });
 
   // ── Realtime ──────────────────────────────────────────────────
-  GoalsData.subscribeGoals(() => { loadToday(); loadTomorrow(); });
+  GoalsData.subscribeGoals(() => { loadToday(); });
+  ObjData.subscribeMonthlyObjectives(() => { loadObjectives(); });
+  ObjData.subscribeYearlyObjectives(() => { loadObjectives(); });
+  HabitsData.subscribeHabits(() => { loadRoutineTracker(); });
+  HabitsData.subscribeChallenges(() => { loadRoutineTracker(); });
 
   // ── Boot ──────────────────────────────────────────────────────
   await rollover();
   await processStreak();
   await loadToday();
-  await loadTomorrow();
   await renderStreak();
   updateDayRing();
   setInterval(updateDayRing, 60 * 1000);
   startTicker();
+  loadObjectives();
+  loadRoutineTracker();
+
+  // ── Objectives ────────────────────────────────────────────────
+
+  let _monthlyObjs = [];
+  let _yearlyObjs  = [];
+  let _monthlyLinked = {}; // { id: [goal,...] }
+  let _yearlyLinked  = {}; // { id: [goal,...] }
+
+  async function loadObjectives() {
+    [_monthlyObjs, _yearlyObjs] = await Promise.all([
+      ObjData.loadMonthlyObjectives(currentYear, currentMonth),
+      ObjData.loadYearlyObjectives(currentYear),
+    ]);
+    const autoMonthly = _monthlyObjs.filter(o => o.progress_mode === 'auto');
+    const autoYearly  = _yearlyObjs.filter(o => o.progress_mode === 'auto');
+    _monthlyLinked = {};
+    _yearlyLinked  = {};
+    await Promise.all([
+      ...autoMonthly.map(async o => { _monthlyLinked[o.id] = await ObjData.loadGoalsForMonthlyObjective(o.id); }),
+      ...autoYearly.map( async o => { _yearlyLinked[o.id]  = await ObjData.loadGoalsForYearlyObjective(o.id);  }),
+    ]);
+    populateObjectiveSelects();
+    renderObjectives();
+  }
+
+  function populateObjectiveSelects() {
+    const mSel = document.getElementById('gmLinkMonthly');
+    const ySel = document.getElementById('gmLinkYearly');
+    const mVal = mSel.value, yVal = ySel.value;
+    mSel.innerHTML = '<option value="">— none —</option>' +
+      _monthlyObjs.filter(o => o.status === 'Active').map(o => `<option value="${o.id}">${esc(o.title)}</option>`).join('');
+    ySel.innerHTML = '<option value="">— none —</option>' +
+      _yearlyObjs.filter(o => o.status === 'Active').map(o => `<option value="${o.id}">${esc(o.title)}</option>`).join('');
+    mSel.value = mVal; ySel.value = yVal;
+  }
+
+  function computeObjProgress(obj, linked) {
+    if (obj.progress_mode === 'manual') return obj.manual_progress || 0;
+    const goals = linked || [];
+    if (!goals.length) return 0;
+    return Math.round(goals.filter(g => g.done).length / goals.length * 100);
+  }
+
+  function renderObjectives() {
+    renderObjList('month');
+    renderObjList('year');
+  }
+
+  function renderObjList(which) {
+    const listEl = document.getElementById(which === 'month' ? 'objMonthList' : 'objYearList');
+    const objs   = which === 'month' ? _monthlyObjs : _yearlyObjs;
+    listEl.innerHTML = '';
+    if (!objs.length) {
+      listEl.innerHTML = '<div class="empty-state">No objectives yet — add one above.</div>';
+      return;
+    }
+    objs.forEach(obj => listEl.appendChild(buildObjCard(obj, which)));
+  }
+
+  function buildObjCard(obj, which) {
+    const linked = which === 'month' ? (_monthlyLinked[obj.id] || []) : (_yearlyLinked[obj.id] || []);
+    const pct    = computeObjProgress(obj, linked);
+    const isDone = obj.status === 'Completed';
+
+    const card = document.createElement('div');
+    card.className = 'obj-card' + (isDone ? ' obj-done' : '');
+
+    const hd = document.createElement('div');
+    hd.className = 'obj-card-hd';
+
+    const main = document.createElement('div');
+    main.className = 'obj-card-main';
+    main.innerHTML =
+      `<div class="obj-title">${esc(obj.title)}${isDone ? '<span class="obj-done-badge">✓</span>' : ''}</div>` +
+      `<div class="obj-meta">${obj.category ? `<span>${esc(obj.category)}</span>` : ''}<span>${obj.status}</span>${obj.target_date ? `<span>Due ${formatDateShort(obj.target_date)}</span>` : ''}</div>` +
+      `<div class="obj-prog-row"><div class="obj-prog-bar-wrap"><div class="obj-prog-bar-fill" style="width:${pct}%"></div></div><div class="obj-prog-pct">${pct}%</div></div>` +
+      (linked.length ? `<div class="obj-todo-count">${linked.filter(g=>g.done).length} / ${linked.length} todos completed</div>` : '');
+
+    const expandBtn = document.createElement('button');
+    expandBtn.type = 'button';
+    expandBtn.className = 'obj-expand-btn';
+    expandBtn.textContent = '▾';
+
+    hd.appendChild(main);
+    hd.appendChild(expandBtn);
+    card.appendChild(hd);
+
+    const children = document.createElement('div');
+    children.className = 'obj-children';
+    card.appendChild(children);
+
+    const actions = document.createElement('div');
+    actions.className = 'obj-card-actions';
+    actions.style.display = 'none';
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button'; editBtn.className = 'obj-action-btn'; editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', e => { e.stopPropagation(); openObjModal(obj, which); });
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button'; delBtn.className = 'obj-action-btn danger'; delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!confirm('Delete this objective?')) return;
+      if (which === 'month') await ObjData.deleteMonthlyObjective(obj.id);
+      else await ObjData.deleteYearlyObjective(obj.id);
+      loadObjectives();
+    });
+    actions.appendChild(editBtn); actions.appendChild(delBtn);
+    card.appendChild(actions);
+
+    let expanded = false;
+    function toggle() {
+      expanded = !expanded;
+      expandBtn.classList.toggle('open', expanded);
+      actions.style.display = expanded ? 'flex' : 'none';
+      if (expanded && !children.childNodes.length) renderObjChildren(children, obj, which, linked);
+      children.classList.toggle('open', expanded);
+    }
+    hd.addEventListener('click', toggle);
+    expandBtn.addEventListener('click', e => { e.stopPropagation(); toggle(); });
+    return card;
+  }
+
+  function renderObjChildren(container, obj, which, linkedGoals) {
+    if (which === 'year') {
+      const monthly = _monthlyObjs;
+      if (!monthly.length) { container.innerHTML = '<div class="empty-state" style="font-size:11px">No monthly objectives for this year.</div>'; return; }
+      monthly.forEach(mo => {
+        const moLinked = _monthlyLinked[mo.id] || [];
+        const p = computeObjProgress(mo, moLinked);
+        const row = document.createElement('div');
+        row.className = 'obj-child-row';
+        row.innerHTML = `<div style="flex:1"><div style="font-size:13px;color:var(--text-primary)">${esc(mo.title)}</div>
+          <div class="obj-prog-row" style="margin-top:4px">
+            <div class="obj-prog-bar-wrap"><div class="obj-prog-bar-fill" style="width:${p}%"></div></div>
+            <div class="obj-prog-pct">${p}%</div>
+          </div></div>`;
+        container.appendChild(row);
+      });
+    } else {
+      if (!linkedGoals.length) { container.innerHTML = '<div class="empty-state" style="font-size:11px">No linked todos yet.</div>'; return; }
+      linkedGoals.forEach(g => {
+        const row = document.createElement('div');
+        row.className = 'obj-child-row' + (g.done ? ' done-todo' : '');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.className = 'obj-child-check'; cb.checked = !!g.done;
+        cb.addEventListener('change', async () => {
+          await GoalsData.updateGoal(g.id, { done: cb.checked, done_at: cb.checked ? new Date().toISOString() : null });
+          loadToday();
+        });
+        const txt = document.createElement('span');
+        txt.style.flex = '1'; txt.textContent = g.text;
+        const dt = document.createElement('span');
+        dt.className = 'obj-child-date'; dt.textContent = formatDate(g.date);
+        row.appendChild(cb); row.appendChild(txt); row.appendChild(dt);
+        container.appendChild(row);
+      });
+    }
+  }
+
+  function openObjModal(existingObj, which) {
+    const isNew = !existingObj;
+    const bg = document.createElement('div');
+    bg.className = 'obj-modal-bg';
+    const now = new Date();
+    const defaultTargetDate = which === 'month'
+      ? `${currentYear}-${pad2(currentMonth)}-${new Date(currentYear, currentMonth, 0).getDate()}`
+      : `${currentYear}-12-31`;
+
+    bg.innerHTML = `<div class="obj-modal" role="dialog" aria-modal="true">
+      <div class="obj-modal-hd">
+        <span class="obj-modal-ttl">${isNew ? 'New' : 'Edit'} ${which === 'month' ? 'Monthly' : 'Yearly'} Objective</span>
+        <button class="obj-modal-x" type="button">×</button>
+      </div>
+      <div class="obj-field"><label class="obj-label">Title</label>
+        <input class="obj-input" id="omTitle" type="text" placeholder="What do you want to achieve?" value="${esc(existingObj?.title||'')}"></div>
+      <div class="obj-field"><label class="obj-label">Description</label>
+        <textarea class="obj-input obj-textarea" id="omDesc" placeholder="Optional details…">${esc(existingObj?.description||'')}</textarea></div>
+      <div class="obj-field obj-row">
+        <div class="obj-half"><label class="obj-label">Category</label>
+          <input class="obj-input" id="omCat" type="text" placeholder="e.g. Health" value="${esc(existingObj?.category||'')}"></div>
+        <div class="obj-half"><label class="obj-label">Target date</label>
+          <input class="obj-input" id="omDate" type="date" value="${existingObj?.target_date || defaultTargetDate}"></div>
+      </div>
+      <div class="obj-field obj-row">
+        <div class="obj-half"><label class="obj-label">Status</label>
+          <select class="obj-input" id="omStatus">
+            <option value="Active"${(!existingObj||existingObj.status==='Active')?' selected':''}>Active</option>
+            <option value="Completed"${existingObj?.status==='Completed'?' selected':''}>Completed</option>
+            <option value="Abandoned"${existingObj?.status==='Abandoned'?' selected':''}>Abandoned</option>
+          </select></div>
+        <div class="obj-half"><label class="obj-label">Progress mode</label>
+          <select class="obj-input" id="omMode">
+            <option value="auto"${(!existingObj||existingObj.progress_mode==='auto')?' selected':''}>Auto (from todos)</option>
+            <option value="manual"${existingObj?.progress_mode==='manual'?' selected':''}>Manual</option>
+          </select></div>
+      </div>
+      <div class="obj-field" id="omManualWrap" style="${(existingObj?.progress_mode==='manual')?'':'display:none'}">
+        <label class="obj-label">Manual progress (%)</label>
+        <input class="obj-input" id="omManual" type="number" min="0" max="100" value="${existingObj?.manual_progress||0}">
+      </div>
+      <div class="obj-modal-actions">
+        ${!isNew ? '<button class="obj-mbtn obj-mbtn-danger" id="omDel" type="button">Delete</button>' : ''}
+        <button class="obj-mbtn obj-mbtn-sec" id="omCancel" type="button">Cancel</button>
+        <button class="obj-mbtn obj-mbtn-pri" id="omSave" type="button">Save</button>
+      </div>
+    </div>`;
+
+    document.body.appendChild(bg);
+    document.body.classList.add('tb-no-scroll');
+
+    bg.querySelector('#omMode').addEventListener('change', e => {
+      bg.querySelector('#omManualWrap').style.display = e.target.value === 'manual' ? '' : 'none';
+    });
+
+    const close = () => { bg.remove(); document.body.classList.remove('tb-no-scroll'); };
+    bg.querySelector('.obj-modal-x').addEventListener('click', close);
+    bg.querySelector('#omCancel').addEventListener('click', close);
+    bg.addEventListener('click', e => { if (e.target === bg) close(); });
+
+    if (!isNew) {
+      bg.querySelector('#omDel').addEventListener('click', async () => {
+        if (!confirm('Delete this objective?')) return;
+        if (which === 'month') await ObjData.deleteMonthlyObjective(existingObj.id);
+        else await ObjData.deleteYearlyObjective(existingObj.id);
+        close(); loadObjectives();
+      });
+    }
+
+    bg.querySelector('#omSave').addEventListener('click', async () => {
+      const title = bg.querySelector('#omTitle').value.trim();
+      if (!title) { bg.querySelector('#omTitle').focus(); return; }
+      const fields = {
+        title,
+        description:  bg.querySelector('#omDesc').value.trim() || null,
+        category:     bg.querySelector('#omCat').value.trim()  || null,
+        target_date:  bg.querySelector('#omDate').value        || null,
+        status:       bg.querySelector('#omStatus').value,
+        progress_mode: bg.querySelector('#omMode').value,
+        manual_progress: parseInt(bg.querySelector('#omManual').value, 10) || 0,
+      };
+      if (which === 'month') { fields.month = currentMonth; fields.year = currentYear; }
+      else                   { fields.year  = currentYear; }
+      const btn = bg.querySelector('#omSave');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      if (isNew) {
+        if (which === 'month') await ObjData.addMonthlyObjective(fields);
+        else await ObjData.addYearlyObjective(fields);
+      } else {
+        if (which === 'month') await ObjData.updateMonthlyObjective(existingObj.id, fields);
+        else await ObjData.updateYearlyObjective(existingObj.id, fields);
+      }
+      close(); loadObjectives();
+    });
+
+    bg.querySelector('#omTitle').focus();
+  }
+
+  // Objectives tab toggle
+  document.getElementById('objTabMonth').addEventListener('click', () => {
+    document.getElementById('objTabMonth').classList.add('active');
+    document.getElementById('objTabYear').classList.remove('active');
+    document.getElementById('objPanelMonth').classList.add('active');
+    document.getElementById('objPanelYear').classList.remove('active');
+  });
+  document.getElementById('objTabYear').addEventListener('click', () => {
+    document.getElementById('objTabYear').classList.add('active');
+    document.getElementById('objTabMonth').classList.remove('active');
+    document.getElementById('objPanelYear').classList.add('active');
+    document.getElementById('objPanelMonth').classList.remove('active');
+  });
+  document.getElementById('objNewMonthBtn').addEventListener('click', () => openObjModal(null, 'month'));
+  document.getElementById('objNewYearBtn').addEventListener('click',  () => openObjModal(null, 'year'));
+
+  // ── Routine Tracker ───────────────────────────────────────────
+
+  let _habits        = [];
+  let _habitLogs     = {}; // 'habitId:date' → log
+  let _dayNotes      = {}; // date → note
+  let _activeChallenges = [];
+  let _rtLoadedDays  = 30;
+  let _rtDays        = [];
+
+  function getRtDays(n) {
+    const days = [];
+    const d = new Date();
+    for (let i = 0; i < n; i++) { days.push(dateToKey(d)); d.setDate(d.getDate() - 1); }
+    return days;
+  }
+
+  async function loadRoutineTracker() {
+    _habits = await HabitsData.loadHabits();
+    _rtDays = getRtDays(_rtLoadedDays);
+    if (_rtDays.length) {
+      const start = _rtDays[_rtDays.length - 1];
+      const end   = _rtDays[0];
+      const [logs, notes, challenges] = await Promise.all([
+        HabitsData.loadHabitLogs(start, end),
+        HabitsData.loadDayNotes(start, end),
+        HabitsData.loadActiveChallenges(),
+      ]);
+      _habitLogs = {};
+      logs.forEach(l => { _habitLogs[l.habit_id + ':' + l.date] = l; });
+      _dayNotes = {};
+      notes.forEach(n => { _dayNotes[n.date] = n; });
+      _activeChallenges = challenges;
+    }
+    renderRoutineTracker();
+  }
+
+  function renderRoutineTracker() {
+    renderChallengeBanner();
+    renderHabitGrid();
+  }
+
+  function renderChallengeBanner() {
+    const wrap = document.getElementById('rtChallengeWrap');
+    wrap.innerHTML = '';
+    if (!_activeChallenges.length) return;
+    const ch = _activeChallenges[0];
+    const startD = new Date(ch.start_date + 'T00:00:00');
+    const today  = new Date();
+    today.setHours(0,0,0,0);
+    const elapsed  = Math.max(0, Math.floor((today - startD) / 86400000) + 1);
+    const remaining = Math.max(0, ch.duration_days - elapsed);
+    const chHabits  = _habits.filter(h => ch.habit_ids.includes(h.id));
+
+    let streak = 0, successDays = 0;
+    for (let i = elapsed - 1; i >= 0; i--) {
+      const d = new Date(startD); d.setDate(d.getDate() + i);
+      const ds = dateToKey(d);
+      const allDone = chHabits.every(h => (_habitLogs[h.id+':'+ds] || {}).completed);
+      if (i === elapsed - 1 || (ch.mode === 'lenient' && allDone) || (ch.mode === 'strict' && allDone)) {
+        if (allDone) { streak++; successDays++; }
+        else if (ch.mode === 'strict') break;
+      } else {
+        if (allDone) successDays++;
+      }
+    }
+    const successRate = elapsed > 0 ? Math.round(successDays / elapsed * 100) : 0;
+    const pct = Math.round(elapsed / ch.duration_days * 100);
+
+    wrap.innerHTML = `<div class="rt-challenge">
+      <div class="rt-challenge-hd">
+        <div class="rt-challenge-name"><span class="rt-challenge-badge">ACTIVE</span>${esc(ch.name)}</div>
+        <button class="rt-action-btn" id="rtAbandonBtn" type="button" style="border:1px solid rgba(255,107,107,0.22);border-radius:8px;background:transparent;color:var(--danger);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;font-family:inherit;">Abandon</button>
+      </div>
+      <div class="rt-challenge-stats">
+        <div class="rt-cstat"><div class="rt-cstat-num">${elapsed}</div><div class="rt-cstat-lbl">Days done</div></div>
+        <div class="rt-cstat"><div class="rt-cstat-num">${remaining}</div><div class="rt-cstat-lbl">Remaining</div></div>
+        <div class="rt-cstat"><div class="rt-cstat-num">${streak}</div><div class="rt-cstat-lbl">Streak</div></div>
+        <div class="rt-cstat"><div class="rt-cstat-num">${successRate}%</div><div class="rt-cstat-lbl">Success</div></div>
+      </div>
+      <div class="rt-challenge-prog"><div class="rt-challenge-prog-fill" style="width:${pct}%"></div></div>
+    </div>`;
+
+    wrap.querySelector('#rtAbandonBtn').addEventListener('click', async () => {
+      if (!confirm('Abandon this challenge?')) return;
+      await HabitsData.updateChallenge(ch.id, { status: 'abandoned' });
+      loadRoutineTracker();
+    });
+  }
+
+  function renderHabitGrid() {
+    const grid = document.getElementById('rtGrid');
+    grid.innerHTML = '';
+    const activeHabits = _habits.filter(h => h.active);
+    if (!activeHabits.length) {
+      grid.style.display = 'none';
+      document.getElementById('rtLoadMore').style.display = 'none';
+      return;
+    }
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = `72px repeat(${activeHabits.length}, 48px) 80px`;
+
+    // Header row
+    const hdDate = document.createElement('div');
+    hdDate.className = 'rt-hd-date'; hdDate.textContent = 'DATE';
+    grid.appendChild(hdDate);
+
+    activeHabits.forEach(h => {
+      const streak = HabitsData.computeStreak(h.id, Object.values(_habitLogs), false);
+      const hdH = document.createElement('div');
+      hdH.className = 'rt-hd-habit';
+      hdH.innerHTML = `<div class="rt-hd-habit-inner">
+        <span class="rt-hd-habit-icon">${esc(h.icon||'●')}</span>
+        <span class="rt-hd-habit-name">${esc(h.name)}</span>
+        <span class="rt-hd-habit-streak">${streak > 0 ? '🔥 '+streak : ''}</span>
+      </div>`;
+      hdH.addEventListener('click', () => openHabitModal(h));
+      grid.appendChild(hdH);
+    });
+
+    const hdPct = document.createElement('div');
+    hdPct.className = 'rt-hd-day-pct'; hdPct.textContent = 'DAY %';
+    grid.appendChild(hdPct);
+
+    // Data rows
+    _rtDays.forEach((ds, idx) => {
+      const isToday = ds === todayDateStr;
+      const isLast  = idx === _rtDays.length - 1;
+      const rowClass = (isToday ? ' rt-row-today' : '') + (isLast ? ' rt-row-last' : '');
+
+      const cellDate = document.createElement('div');
+      cellDate.className = 'rt-cell-date' + (isToday ? ' today-lbl' : '') + rowClass.split(' rt-').slice(1).map(c=>c?' rt-'+c:'').join('');
+      // just apply row class via data attribute for date cell
+      cellDate.className = 'rt-cell-date' + (isToday ? ' today-lbl' : '');
+      if (isToday) cellDate.classList.add('rt-row-today');
+      if (isLast)  cellDate.classList.add('rt-row-last');
+
+      const parts = ds.split('-').map(Number);
+      const d = new Date(parts[0], parts[1]-1, parts[2]);
+      const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      cellDate.textContent = dayNames[d.getDay()] + ' ' + pad2(parts[2]);
+      // Day note
+      const note = _dayNotes[ds];
+      const noteBtn = document.createElement('button');
+      noteBtn.className = 'rt-note-btn' + (note ? ' has-note' : '');
+      noteBtn.title = note ? note.note : 'Add note';
+      noteBtn.textContent = note ? '📝' : '·';
+      noteBtn.addEventListener('click', () => openDayNoteModal(ds));
+      cellDate.appendChild(noteBtn);
+      grid.appendChild(cellDate);
+
+      let doneCount = 0;
+      activeHabits.forEach(h => {
+        const log = _habitLogs[h.id + ':' + ds];
+        const completed = !!(log && log.completed);
+        if (completed) doneCount++;
+
+        const cell = document.createElement('div');
+        cell.className = 'rt-cell';
+        if (isToday) cell.classList.add('rt-row-today');
+        if (isLast)  cell.classList.add('rt-row-last');
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.className = 'rt-hb-check'; cb.checked = completed;
+        cb.addEventListener('change', async () => {
+          await HabitsData.toggleHabitLog(h.id, ds, cb.checked);
+          loadRoutineTracker();
+        });
+        cell.appendChild(cb);
+        grid.appendChild(cell);
+      });
+
+      const pct = activeHabits.length > 0 ? Math.round(doneCount / activeHabits.length * 100) : 0;
+      const pctCell = document.createElement('div');
+      pctCell.className = 'rt-cell-pct';
+      if (isToday) pctCell.classList.add('rt-row-today');
+      if (isLast)  pctCell.classList.add('rt-row-last');
+      pctCell.innerHTML = `<div class="rt-pct-bar"><div class="rt-pct-bar-fill" style="width:${pct}%"></div></div><div class="rt-pct-num">${pct}%</div>`;
+      grid.appendChild(pctCell);
+    });
+  }
+
+  function openHabitModal(existingHabit) {
+    const isNew = !existingHabit;
+    const bg = document.createElement('div');
+    bg.className = 'rt-modal-bg';
+    bg.innerHTML = `<div class="rt-modal" role="dialog" aria-modal="true">
+      <div class="rt-modal-hd">
+        <span class="rt-modal-ttl">${isNew ? 'New' : 'Edit'} Habit</span>
+        <button class="rt-modal-x" type="button">×</button>
+      </div>
+      <div class="rt-field"><label class="rt-label">Icon (emoji)</label>
+        <input class="rt-input" id="rhIcon" type="text" maxlength="4" placeholder="🏃" value="${esc(existingHabit?.icon||'')}"></div>
+      <div class="rt-field"><label class="rt-label">Name</label>
+        <input class="rt-input" id="rhName" type="text" placeholder="e.g. Exercise" value="${esc(existingHabit?.name||'')}"></div>
+      <div class="rt-field" style="flex-direction:row;gap:10px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><label class="rt-label">Target value</label>
+          <input class="rt-input" id="rhTarget" type="number" min="0" placeholder="e.g. 8" value="${existingHabit?.target_value||''}"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><label class="rt-label">Unit</label>
+          <input class="rt-input" id="rhUnit" type="text" placeholder="glasses" value="${esc(existingHabit?.unit||'')}"></div>
+      </div>
+      ${!isNew ? `<div class="rt-field"><label class="rt-label">Status</label>
+        <select class="rt-input" id="rhActive">
+          <option value="1"${existingHabit?.active?' selected':''}>Active</option>
+          <option value="0"${!existingHabit?.active?' selected':''}>Archived</option>
+        </select></div>` : ''}
+      <div class="rt-modal-actions">
+        <button class="rt-mbtn rt-mbtn-sec" id="rhCancel" type="button">Cancel</button>
+        <button class="rt-mbtn rt-mbtn-pri" id="rhSave" type="button">Save</button>
+      </div>
+    </div>`;
+    document.body.appendChild(bg);
+    document.body.classList.add('tb-no-scroll');
+    const close = () => { bg.remove(); document.body.classList.remove('tb-no-scroll'); };
+    bg.querySelector('.rt-modal-x').addEventListener('click', close);
+    bg.querySelector('#rhCancel').addEventListener('click', close);
+    bg.addEventListener('click', e => { if (e.target === bg) close(); });
+    bg.querySelector('#rhSave').addEventListener('click', async () => {
+      const name = bg.querySelector('#rhName').value.trim();
+      if (!name) { bg.querySelector('#rhName').focus(); return; }
+      const fields = {
+        name,
+        icon:         bg.querySelector('#rhIcon').value.trim()   || null,
+        target_value: parseFloat(bg.querySelector('#rhTarget').value) || null,
+        unit:         bg.querySelector('#rhUnit').value.trim()   || null,
+        active:       true,
+      };
+      if (!isNew) fields.active = bg.querySelector('#rhActive').value === '1';
+      const btn = bg.querySelector('#rhSave');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      if (isNew) {
+        const all = await HabitsData.loadHabits();
+        fields.order_index = all.length;
+        await HabitsData.addHabit(fields);
+      } else {
+        await HabitsData.updateHabit(existingHabit.id, fields);
+      }
+      close(); loadRoutineTracker();
+    });
+    bg.querySelector('#rhIcon').focus();
+  }
+
+  function openDayNoteModal(dateStr) {
+    const existing = _dayNotes[dateStr];
+    const bg = document.createElement('div');
+    bg.className = 'rt-modal-bg';
+    bg.innerHTML = `<div class="rt-modal" role="dialog" aria-modal="true">
+      <div class="rt-modal-hd">
+        <span class="rt-modal-ttl">Note — ${formatDate(dateStr)}</span>
+        <button class="rt-modal-x" type="button">×</button>
+      </div>
+      <div class="rt-field">
+        <textarea class="rt-input" id="rtNoteText" maxlength="280" style="resize:vertical;min-height:80px" placeholder="How did the day go? (max 280 chars)">${esc(existing?.note||'')}</textarea>
+        <span style="font-size:10px;color:var(--text-tertiary);text-align:right" id="rtNoteCount">${(existing?.note||'').length}/280</span>
+      </div>
+      <div class="rt-modal-actions">
+        ${existing ? '<button class="rt-mbtn rt-mbtn-danger" id="rtNoteDel" type="button">Delete</button>' : ''}
+        <button class="rt-mbtn rt-mbtn-sec" id="rtNoteCancel" type="button">Cancel</button>
+        <button class="rt-mbtn rt-mbtn-pri" id="rtNoteSave" type="button">Save</button>
+      </div>
+    </div>`;
+    document.body.appendChild(bg);
+    document.body.classList.add('tb-no-scroll');
+    const close = () => { bg.remove(); document.body.classList.remove('tb-no-scroll'); };
+    bg.querySelector('.rt-modal-x').addEventListener('click', close);
+    bg.querySelector('#rtNoteCancel').addEventListener('click', close);
+    bg.addEventListener('click', e => { if (e.target === bg) close(); });
+    bg.querySelector('#rtNoteText').addEventListener('input', e => {
+      bg.querySelector('#rtNoteCount').textContent = e.target.value.length + '/280';
+    });
+    if (existing) {
+      bg.querySelector('#rtNoteDel').addEventListener('click', async () => {
+        await HabitsData.deleteDayNote(dateStr);
+        close(); loadRoutineTracker();
+      });
+    }
+    bg.querySelector('#rtNoteSave').addEventListener('click', async () => {
+      const note = bg.querySelector('#rtNoteText').value.trim();
+      if (!note) { close(); return; }
+      await HabitsData.saveDayNote(dateStr, note);
+      close(); loadRoutineTracker();
+    });
+    bg.querySelector('#rtNoteText').focus();
+  }
+
+  function openChallengeModal() {
+    const bg = document.createElement('div');
+    bg.className = 'rt-modal-bg';
+    const activeHabits = _habits.filter(h => h.active);
+    bg.innerHTML = `<div class="rt-modal" role="dialog" aria-modal="true">
+      <div class="rt-modal-hd">
+        <span class="rt-modal-ttl">Start a Challenge</span>
+        <button class="rt-modal-x" type="button">×</button>
+      </div>
+      <div class="rt-field"><label class="rt-label">Challenge name</label>
+        <input class="rt-input" id="rcName" type="text" placeholder="e.g. 75 Hard" autocomplete="off"></div>
+      <div class="rt-field"><label class="rt-label">Duration (days)</label>
+        <input class="rt-input" id="rcDays" type="number" min="1" value="75"></div>
+      <div class="rt-field"><label class="rt-label">Mode</label>
+        <select class="rt-input" id="rcMode">
+          <option value="strict">Strict — missing a day resets streak</option>
+          <option value="lenient">Lenient — just marks the day missed</option>
+        </select></div>
+      <div class="rt-field"><label class="rt-label">Include habits</label>
+        <div class="rt-chal-habits" id="rcHabits">
+          ${activeHabits.map(h => `<div class="rt-chal-habit-opt" data-id="${h.id}">${esc(h.icon||'●')} ${esc(h.name)}</div>`).join('')}
+        </div></div>
+      <div class="rt-modal-actions">
+        <button class="rt-mbtn rt-mbtn-sec" id="rcCancel" type="button">Cancel</button>
+        <button class="rt-mbtn rt-mbtn-pri" id="rcSave" type="button">Start</button>
+      </div>
+    </div>`;
+    document.body.appendChild(bg);
+    document.body.classList.add('tb-no-scroll');
+    const close = () => { bg.remove(); document.body.classList.remove('tb-no-scroll'); };
+    bg.querySelector('.rt-modal-x').addEventListener('click', close);
+    bg.querySelector('#rcCancel').addEventListener('click', close);
+    bg.addEventListener('click', e => { if (e.target === bg) close(); });
+    bg.querySelectorAll('.rt-chal-habit-opt').forEach(opt => {
+      opt.addEventListener('click', () => opt.classList.toggle('selected'));
+    });
+    bg.querySelector('#rcSave').addEventListener('click', async () => {
+      const name = bg.querySelector('#rcName').value.trim();
+      const days = parseInt(bg.querySelector('#rcDays').value, 10);
+      if (!name || !days || days < 1) return;
+      const habitIds = [...bg.querySelectorAll('.rt-chal-habit-opt.selected')].map(o => o.dataset.id);
+      if (!habitIds.length) { alert('Select at least one habit.'); return; }
+      const btn = bg.querySelector('#rcSave');
+      btn.disabled = true; btn.textContent = 'Starting…';
+      await HabitsData.addChallenge({
+        name,
+        duration_days: days,
+        start_date: todayDateStr,
+        habit_ids: habitIds,
+        mode: bg.querySelector('#rcMode').value,
+        status: 'active',
+      });
+      close(); loadRoutineTracker();
+    });
+    bg.querySelector('#rcName').focus();
+  }
+
+  document.getElementById('rtAddHabitBtn').addEventListener('click', () => openHabitModal(null));
+  document.getElementById('rtStartChallengeBtn').addEventListener('click', () => {
+    if (_activeChallenges.length) { alert('Complete or abandon the current challenge first.'); return; }
+    openChallengeModal();
+  });
+  document.getElementById('rtLoadMore').addEventListener('click', async () => {
+    _rtLoadedDays += 30;
+    await loadRoutineTracker();
+  });
 </script>
 </body>
 </html>

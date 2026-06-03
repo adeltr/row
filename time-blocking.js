@@ -99,7 +99,8 @@
   var Store = {
     supa:      null,
     userId:    null,
-    blocks:    [],
+    blocks:    [],          // day-view blocks (for current dateStr)
+    weekBlocks: [],         // week-view blocks (for current week)
     dateStr:   '',
     _cbs:      [],
 
@@ -117,7 +118,6 @@
             self._subscribe();
           }).catch(function() { self.fetch(); });
         } else {
-          // Module script hasn't set __supabase yet — wait
           setTimeout(tryConnect, 300);
         }
       }
@@ -130,6 +130,12 @@
       var blocks = this.blocks;
       this._cbs.forEach(function(fn) { try { fn(blocks); } catch(e) {} });
     },
+    _emitWeek: function () {
+      var blocks = this.weekBlocks;
+      this._weekCbs.forEach(function(fn) { try { fn(blocks); } catch(e) {} });
+    },
+    _weekCbs: [],
+    onWeek: function(fn) { this._weekCbs.push(fn); },
 
     _saveLocal: function () {
       try { localStorage.setItem('tb:' + this.dateStr, JSON.stringify(this.blocks)); } catch(e) {}
@@ -157,20 +163,44 @@
       this._emit();
     },
 
+    fetchWeek: async function (mondayStr) {
+      if (!this.supa) { this._emitWeek(); return; }
+      var parts = mondayStr.split('-').map(Number);
+      var monday = new Date(parts[0], parts[1]-1, parts[2], 0, 0, 0);
+      var sunday = new Date(monday); sunday.setDate(monday.getDate() + 6); sunday.setHours(23, 59, 59);
+      var res = await this.supa
+        .from('time_blocks').select('*')
+        .gte('start_time', monday.toISOString())
+        .lte('start_time', sunday.toISOString())
+        .order('start_time');
+      if (!res.error && res.data) {
+        this.weekBlocks = res.data;
+      }
+      this._emitWeek();
+    },
+
     _subscribe: function () {
       if (!this.supa) return;
       var self = this;
-      this.supa.channel('tb_' + this.dateStr)
+      this.supa.channel('tb_global')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'time_blocks' },
-          function () { self.fetch(); })
+          function () {
+            if (_currentView === 'week') self.fetchWeek(_currentWeekMonday);
+            else self.fetch();
+          })
         .subscribe();
     },
 
     createBlock: async function (fields) {
       if (this.supa) {
-        if (!this.userId) { console.warn("[time-blocking] Cannot insert: user not authenticated yet"); return Promise.reject(new Error("User not authenticated")); } var insert = Object.assign({ user_id: this.userId }, fields);
+        if (!this.userId) { console.warn('[time-blocking] Cannot insert: user not authenticated yet'); return Promise.reject(new Error('User not authenticated')); }
+        var insert = Object.assign({ user_id: this.userId }, fields);
         var res = await this.supa.from('time_blocks').insert(insert).select().single();
-        if (!res.error) { await this.fetch(); return res.data; }
+        if (!res.error) {
+          if (_currentView === 'week') await this.fetchWeek(_currentWeekMonday);
+          else await this.fetch();
+          return res.data;
+        }
       }
       var block = Object.assign({ id: (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)), completed: false, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }, fields);
       this.blocks.push(block);
@@ -183,7 +213,9 @@
       var patch = Object.assign({}, fields, { updated_at: new Date().toISOString() });
       if (this.supa) {
         await this.supa.from('time_blocks').update(patch).eq('id', id);
-        await this.fetch(); return;
+        if (_currentView === 'week') await this.fetchWeek(_currentWeekMonday);
+        else await this.fetch();
+        return;
       }
       var idx = this.blocks.findIndex(function(b){ return b.id === id; });
       if (idx !== -1) {
@@ -196,7 +228,9 @@
     deleteBlock: async function (id) {
       if (this.supa) {
         await this.supa.from('time_blocks').delete().eq('id', id);
-        await this.fetch(); return;
+        if (_currentView === 'week') await this.fetchWeek(_currentWeekMonday);
+        else await this.fetch();
+        return;
       }
       this.blocks = this.blocks.filter(function(b){ return b.id !== id; });
       this._saveLocal(); this._emit();
@@ -212,10 +246,10 @@
     document.body.classList.remove('tb-no-scroll');
   }
 
-  function openModal(block, defaultStartMins) {
+  function openModal(block, defaultStartMins, targetDateStr) {
     closeModal();
     var isNew = !block;
-    var dateStr = Store.dateStr;
+    var dateStr = targetDateStr || Store.dateStr;
 
     var startMins = defaultStartMins != null
       ? snapTo(defaultStartMins, CREATE_SNAP)
@@ -516,6 +550,146 @@
     updateNowLine();
   }
 
+  // ── Week view state ───────────────────────────────────────────────────────────
+
+  var _currentView       = 'day';
+  var _currentWeekMonday = '';
+
+  function getViewPref() { try { return localStorage.getItem('tb_view_pref') || 'day'; } catch(e) { return 'day'; } }
+  function setViewPref(v) { try { localStorage.setItem('tb_view_pref', v); } catch(e) {} }
+
+  function getMondayOf(dateStr) {
+    var p = dateStr.split('-').map(Number);
+    var d = new Date(p[0], p[1]-1, p[2]);
+    var day = d.getDay();
+    var diff = (day === 0) ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+  }
+
+  function addDays(dateStr, n) {
+    var p = dateStr.split('-').map(Number);
+    var d = new Date(p[0], p[1]-1, p[2]);
+    d.setDate(d.getDate() + n);
+    return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+  }
+
+  function weekDays(mondayStr) {
+    var days = [];
+    for (var i = 0; i < 7; i++) days.push(addDays(mondayStr, i));
+    return days;
+  }
+
+  function formatWeekRange(mondayStr) {
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var p = mondayStr.split('-').map(Number);
+    var mo = new Date(p[0], p[1]-1, p[2]);
+    var su = new Date(mo); su.setDate(mo.getDate() + 6);
+    return months[mo.getMonth()] + ' ' + mo.getDate() + ' – ' +
+      (su.getMonth() !== mo.getMonth() ? months[su.getMonth()] + ' ' : '') + su.getDate();
+  }
+
+  // ── Week-view render ──────────────────────────────────────────────────────────
+
+  var _weekColNowEls = [];
+
+  function renderWeek(blocks) {
+    var wkEl = document.getElementById('tbWeekView');
+    if (!wkEl) return;
+    var today = getTodayStr();
+    var days  = weekDays(_currentWeekMonday);
+
+    // update range label
+    var rangeEl = document.getElementById('tbWeekRange');
+    if (rangeEl) rangeEl.textContent = formatWeekRange(_currentWeekMonday);
+
+    // group blocks by date string
+    var byDay = {};
+    days.forEach(function(d) { byDay[d] = []; });
+    blocks.forEach(function(b) {
+      var ds = b.start_time.slice(0, 10);
+      if (byDay[ds]) byDay[ds].push(b);
+    });
+
+    _weekColNowEls = [];
+    wkEl.innerHTML = '';
+    wkEl.style.display = 'flex';
+
+    // Hour gutter
+    var gutter = document.createElement('div');
+    gutter.style.cssText = 'width:' + GUTTER_W + 'px;flex-shrink:0;position:relative;height:' + minToY(TOTAL_MINS) + 'px';
+    for (var h = START_HOUR; h <= END_HOUR; h++) {
+      var y = minToY((h - START_HOUR) * 60);
+      var lbl = document.createElement('div');
+      lbl.className = 'tb-hlbl';
+      lbl.style.top = y + 'px';
+      lbl.textContent = formatHourLabel(h === 24 ? 0 : h);
+      gutter.appendChild(lbl);
+    }
+    wkEl.appendChild(gutter);
+
+    // Day columns
+    days.forEach(function(ds) {
+      var isToday = (ds === today);
+      var col = document.createElement('div');
+      col.style.cssText = 'flex:1;min-width:0;position:relative;height:' + minToY(TOTAL_MINS) + 'px;border-left:1px solid rgba(255,255,255,0.05);';
+      if (isToday) col.style.background = 'rgba(107,227,164,0.03)';
+
+      // Grid lines
+      for (var h2 = START_HOUR; h2 < END_HOUR; h2++) {
+        var y2 = minToY((h2 - START_HOUR) * 60);
+        var line = document.createElement('div');
+        line.style.cssText = 'position:absolute;left:0;right:0;top:' + y2 + 'px;height:1px;background:rgba(255,255,255,0.05);pointer-events:none;';
+        col.appendChild(line);
+        var half = document.createElement('div');
+        half.style.cssText = 'position:absolute;left:0;right:0;top:' + (y2 + minToY(30)) + 'px;height:1px;background:rgba(255,255,255,0.025);pointer-events:none;';
+        col.appendChild(half);
+      }
+
+      // Now line (today only)
+      if (isToday) {
+        var nowEl = document.createElement('div');
+        nowEl.className = 'tb-now';
+        nowEl.style.left = '0';
+        nowEl.innerHTML = '';
+        col.appendChild(nowEl);
+        _weekColNowEls.push(nowEl);
+        updateWeekNowLine();
+      }
+
+      // Blocks
+      byDay[ds].forEach(function(b) {
+        var bEl = makeBlockEl(b, col);
+        bEl.style.left  = '3px';
+        bEl.style.right = '3px';
+        col.appendChild(bEl);
+      });
+
+      // Click to create
+      col.addEventListener('click', function(e) {
+        if (e.target.closest('.tb-block')) return;
+        var rect = col.getBoundingClientRect();
+        var y3   = e.clientY - rect.top;
+        var mins = Math.max(0, Math.min(snapTo(yToMin(y3), CREATE_SNAP), TOTAL_MINS - 60));
+        openModal(null, mins, ds);
+      });
+
+      wkEl.appendChild(col);
+    });
+
+    updateStats(blocks);
+  }
+
+  function updateWeekNowLine() {
+    var now  = new Date();
+    var mins = minsFromTimeline(now);
+    _weekColNowEls.forEach(function(el) {
+      if (mins < 0 || mins > TOTAL_MINS) { el.style.display = 'none'; return; }
+      el.style.display = '';
+      el.style.top = minToY(mins) + 'px';
+    });
+  }
+
   // ── Build DOM ─────────────────────────────────────────────────────────────
 
   function buildTimeline(container) {
@@ -572,14 +746,64 @@
     section.className = 'section';
     section.id = 'tbSection';
 
+    // Section title
     var hdr = document.createElement('div');
     hdr.className = 'section-title';
-    hdr.textContent = 'Time Blocking — ' + formatDateLabel(dateStr);
+    hdr.textContent = 'Time Blocking';
     section.appendChild(hdr);
 
     var card = document.createElement('div');
     card.className = 'gm-card tb-card';
     section.appendChild(card);
+
+    // DAY | WEEK toggle
+    var toggleBar = document.createElement('div');
+    toggleBar.style.cssText = 'display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:0 20px 14px;';
+
+    var viewToggle = document.createElement('div');
+    viewToggle.style.cssText = 'display:flex;gap:4px;';
+
+    function makeViewBtn(label, value) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = label;
+      btn.dataset.view = value;
+      btn.style.cssText = 'padding:5px 14px;border-radius:8px;font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;cursor:pointer;transition:background 0.15s,color 0.15s;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);';
+      btn.addEventListener('click', function() { switchView(btn.dataset.view); });
+      return btn;
+    }
+    var dayBtn  = makeViewBtn('DAY',  'day');
+    var weekBtn = makeViewBtn('WEEK', 'week');
+    viewToggle.appendChild(dayBtn);
+    viewToggle.appendChild(weekBtn);
+
+    // Week navigation (hidden in day view)
+    var weekNav = document.createElement('div');
+    weekNav.id = 'tbWeekNav';
+    weekNav.style.cssText = 'display:none;align-items:center;gap:8px;';
+    var prevBtn = document.createElement('button');
+    prevBtn.type = 'button'; prevBtn.textContent = '‹';
+    prevBtn.style.cssText = 'border:1px solid rgba(255,255,255,0.10);border-radius:7px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);font-size:15px;cursor:pointer;padding:3px 10px;';
+    var rangeEl = document.createElement('span');
+    rangeEl.id = 'tbWeekRange';
+    rangeEl.style.cssText = 'font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);min-width:120px;text-align:center;';
+    var nextBtn = document.createElement('button');
+    nextBtn.type = 'button'; nextBtn.textContent = '›';
+    nextBtn.style.cssText = prevBtn.style.cssText;
+    var todayBtn = document.createElement('button');
+    todayBtn.type = 'button'; todayBtn.textContent = 'Today';
+    todayBtn.style.cssText = 'border:1px solid rgba(255,255,255,0.10);border-radius:7px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-family:inherit;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;padding:4px 10px;';
+
+    prevBtn.addEventListener('click',  function() { navWeek(-7); });
+    nextBtn.addEventListener('click',  function() { navWeek(+7); });
+    todayBtn.addEventListener('click', function() { goToThisWeek(); });
+
+    weekNav.appendChild(prevBtn); weekNav.appendChild(rangeEl);
+    weekNav.appendChild(nextBtn); weekNav.appendChild(todayBtn);
+
+    toggleBar.appendChild(viewToggle);
+    toggleBar.appendChild(weekNav);
+    card.appendChild(toggleBar);
 
     var stats = document.createElement('div');
     stats.id = 'tbStats';
@@ -587,13 +811,59 @@
     stats.textContent = 'Loading…';
     card.appendChild(stats);
 
+    // Day view scroll + timeline
     var scroll = document.createElement('div');
+    scroll.id = 'tbDayView';
     scroll.className = 'tb-scroll';
     card.appendChild(scroll);
-
     buildTimeline(scroll);
 
+    // Week view container
+    var weekWrap = document.createElement('div');
+    weekWrap.id = 'tbWeekView';
+    weekWrap.className = 'tb-scroll';
+    weekWrap.style.overflowX = 'auto';
+    card.appendChild(weekWrap);
+
     return section;
+  }
+
+  function switchView(view) {
+    _currentView = view;
+    setViewPref(view);
+    var dayView  = document.getElementById('tbDayView');
+    var weekView = document.getElementById('tbWeekView');
+    var weekNav  = document.getElementById('tbWeekNav');
+
+    // update button styles
+    document.querySelectorAll('[data-view]').forEach(function(b) {
+      var active = b.dataset.view === view;
+      b.style.background = active ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)';
+      b.style.color      = active ? '#FAFAFA' : 'rgba(255,255,255,0.5)';
+      b.style.borderColor = active ? 'rgba(255,255,255,0.20)' : 'rgba(255,255,255,0.08)';
+    });
+
+    if (view === 'day') {
+      dayView.style.display  = '';
+      weekView.style.display = 'none';
+      weekNav.style.display  = 'none';
+      Store.fetch();
+    } else {
+      dayView.style.display  = 'none';
+      weekView.style.display = '';
+      weekNav.style.display  = 'flex';
+      Store.fetchWeek(_currentWeekMonday);
+    }
+  }
+
+  function navWeek(days) {
+    _currentWeekMonday = addDays(_currentWeekMonday, days);
+    Store.fetchWeek(_currentWeekMonday);
+  }
+
+  function goToThisWeek() {
+    _currentWeekMonday = getMondayOf(getTodayStr());
+    Store.fetchWeek(_currentWeekMonday);
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
@@ -605,12 +875,19 @@
     var section = buildSection();
     page.appendChild(section);
 
+    _currentWeekMonday = getMondayOf(getTodayStr());
+    _currentView = getViewPref();
+
     Store.init(getTodayStr());
     Store.on(renderBlocks);
+    Store.onWeek(renderWeek);
+
+    // Apply initial view
+    switchView(_currentView);
 
     updateNowLine();
     if (_nowTimer) clearInterval(_nowTimer);
-    _nowTimer = setInterval(updateNowLine, 60 * 1000);
+    _nowTimer = setInterval(function() { updateNowLine(); updateWeekNowLine(); }, 60 * 1000);
   }
 
   if (document.readyState === 'loading') {

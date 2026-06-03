@@ -1,3 +1,38 @@
+# Phase 1 Setup Guide
+
+## What Phase 1 adds
+
+- Top nav: WATER removed, STACK renamed to INTAKE. Final order: GOALS · INTAKE · GYM · FINANCE.
+- Goals page: "Plan Tomorrow" section removed. Only the TODAY list remains.
+- Time Blocking: DAY / WEEK toggle. Week view shows 7 columns with per-day block placement and weekly navigation.
+- Monthly & Yearly Objectives: new section between the TODO list and time blocking. Tabs for This Month / This Year, cascading expand (yearly → monthly → todos), auto-progress from linked todos.
+- Routine Tracker: habit grid (last 30 days by default), streak indicators, challenge mode.
+
+## Phase 1 one-time setup
+
+### 1. Run the migration SQL
+
+In Supabase Dashboard → SQL Editor → New query, paste the entire contents of:
+
+```
+supabase/migrations/20260602_phase1_objectives_habits.sql
+```
+
+Click **Run**. This creates:
+- `monthly_objectives` table + RLS
+- `yearly_objectives` table + RLS
+- `habits` table + RLS
+- `habit_logs` table + RLS (unique per habit+date)
+- `day_notes` table + RLS
+- `challenges` table + RLS
+- Adds `linked_monthly_id` and `linked_yearly_id` columns to the existing `goals` table
+
+### 2. No other dashboard changes needed
+
+No new Storage buckets, no new Auth settings. Just run the migration and deploy.
+
+---
+
 # Phase 0 Setup Guide
 
 ## What Phase 0 does

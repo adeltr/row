@@ -63,51 +63,11 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.topbar-water-wrap {
-  flex: 1 1 0; min-width: 0;
-  display: flex;
-}
-.topbar-water-pill {
-  flex: 1; min-width: 0;
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 12px;
-  background: rgba(125, 211, 252, 0.07);
-  border: 1px solid rgba(125, 211, 252, 0.14);
-  border-right: none;
-  border-radius: 11px 0 0 11px;
-  text-decoration: none;
-  color: #FAFAFA;
-  -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s;
-}
-.topbar-water-pill:hover { background: rgba(125, 211, 252, 0.12); }
-.topbar-water-pill .topbar-pill-dot { background: #7DD3FC; }
-.topbar-water-add {
-  flex: 0 0 auto;
-  width: 38px;
-  border: 1px solid rgba(125, 211, 252, 0.14);
-  background: linear-gradient(180deg, rgba(125, 211, 252, 0.22), rgba(110, 231, 183, 0.22));
-  color: #FFFFFF;
-  font-family: inherit; font-size: 17px; font-weight: 700;
-  cursor: pointer;
-  border-radius: 0 11px 11px 0;
-  -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s, transform 0.10s;
-}
-.topbar-water-add:hover {
-  background: linear-gradient(180deg, rgba(125, 211, 252, 0.34), rgba(110, 231, 183, 0.34));
-}
-.topbar-water-add:active { transform: scale(0.94); }
-.topbar-water-add.flash {
-  background: linear-gradient(180deg, rgba(125, 211, 252, 0.65), rgba(110, 231, 183, 0.65));
-}
-
 @media (max-width: 480px) {
   .topbar { padding-left: 10px; padding-right: 10px; gap: 4px; }
-  .topbar-pill, .topbar-water-pill { padding: 7px 9px; gap: 5px; }
+  .topbar-pill { padding: 7px 9px; gap: 5px; }
   .topbar-pill-label { font-size: 9px; letter-spacing: 0.10em; }
   .topbar-pill-count { font-size: 11px; }
-  .topbar-water-add { width: 32px; font-size: 16px; }
 }
 @media (max-width: 380px) {
   .topbar-pill-label { display: none; }
@@ -169,17 +129,9 @@ body.topbar-modal-open {
   </a>
   <a href="health.html" class="topbar-pill" id="topbarStack">
     <span class="topbar-pill-dot"></span>
-    <span class="topbar-pill-label">STACK</span>
+    <span class="topbar-pill-label">INTAKE</span>
     <span class="topbar-pill-count" id="topbarStackCount">—/—</span>
   </a>
-  <div class="topbar-water-wrap">
-    <a href="health.html#water" class="topbar-water-pill" id="topbarWater">
-      <span class="topbar-pill-dot"></span>
-      <span class="topbar-pill-label">WATER</span>
-      <span class="topbar-pill-count" id="topbarWaterCount">—/—</span>
-    </a>
-    <button class="topbar-water-add" id="topbarWaterAdd" aria-label="Log one drink" type="button">+</button>
-  </div>
   <a href="gym.html" class="topbar-pill" id="topbarGym">
     <span class="topbar-pill-dot"></span>
     <span class="topbar-pill-label">GYM</span>
@@ -212,22 +164,12 @@ body.topbar-modal-open {
       String(d.getMonth() + 1).padStart(2, '0') + '-' +
       String(d.getDate()).padStart(2, '0');
   }
-  function calendarDateKey() {
-    const d = new Date();
-    return d.getFullYear() + '-' +
-      String(d.getMonth() + 1).padStart(2, '0') + '-' +
-      String(d.getDate()).padStart(2, '0');
-  }
-
   // -------- Read progress from window.__rowProgress (set by each page's module) --------
   function getGoalsProgress() {
     return (window.__rowProgress && window.__rowProgress.goals) || { done: 0, total: 0 };
   }
   function getStackProgress() {
     return (window.__rowProgress && window.__rowProgress.stack) || { done: 0, total: 0 };
-  }
-  function getWaterProgress() {
-    return (window.__rowProgress && window.__rowProgress.water) || { done: 0, total: 0 };
   }
 
   function classifyStatus(done, total) {
@@ -248,52 +190,18 @@ body.topbar-modal-open {
   function render() {
     const goalsEl = document.getElementById('topbarGoals');
     const stackEl = document.getElementById('topbarStack');
-    const waterEl = document.getElementById('topbarWater');
     if (!goalsEl) return; // not injected yet
 
     const g = getGoalsProgress();
     const s = getStackProgress();
-    const w = getWaterProgress();
 
     document.getElementById('topbarGoalsCount').textContent =
       (window.__rowProgress && window.__rowProgress.goals) ? (g.done + '/' + g.total) : '—/—';
     document.getElementById('topbarStackCount').textContent =
       (window.__rowProgress && window.__rowProgress.stack) ? (s.done + '/' + s.total) : '—/—';
-    document.getElementById('topbarWaterCount').textContent =
-      (window.__rowProgress && window.__rowProgress.water) ? (w.done + '/' + w.total) : '—/—';
 
     setPillStatus(goalsEl, classifyStatus(g.done, g.total));
     setPillStatus(stackEl, classifyStatus(s.done, s.total));
-    setPillStatus(waterEl, classifyStatus(w.done, w.total));
-  }
-
-  // -------- Water +1 (works from any page via window.__supabase) --------
-  async function addWater() {
-    const k = calendarDateKey();
-    const rp = window.__rowProgress;
-
-    // Optimistically increment the display
-    if (!window.__rowProgress) window.__rowProgress = {};
-    if (!window.__rowProgress.water) window.__rowProgress.water = { done: 0, total: 1 };
-    window.__rowProgress.water.done += 1;
-    render();
-
-    const btn = document.getElementById('topbarWaterAdd');
-    if (btn) {
-      btn.classList.add('flash');
-      setTimeout(() => btn.classList.remove('flash'), 220);
-    }
-
-    // Persist to Supabase if available (set by the page's module import of supabase.js)
-    if (window.__supabase) {
-      try {
-        const { data: { user } } = await window.__supabase.auth.getUser();
-        const newCount = window.__rowProgress.water.done;
-        await window.__supabase
-          .from('water_logs')
-          .upsert({ user_id: user.id, log_key: k, count: newCount }, { onConflict: 'user_id,log_key' });
-      } catch (e) { /* offline — next page visit will re-load from Supabase */ }
-    }
   }
 
   // -------- Mobile lockdown helpers --------
@@ -346,8 +254,6 @@ body.topbar-modal-open {
   // -------- Boot --------
   function boot() {
     injectStyleAndHTML();
-    const btn = document.getElementById('topbarWaterAdd');
-    if (btn) btn.addEventListener('click', (e) => { e.preventDefault(); addWater(); });
     render();
     lockGestures();
     startModalLock();

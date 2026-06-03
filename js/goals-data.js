@@ -29,11 +29,14 @@ export async function loadGoalsBefore(dateStr) {
   return data;
 }
 
-export async function addGoal(dateStr, text, position) {
+export async function addGoal(dateStr, text, position, extras) {
   const user_id = await getUserId();
+  const row = { user_id, date: dateStr, text, position: position ?? 0 };
+  if (extras && extras.linked_monthly_id) row.linked_monthly_id = extras.linked_monthly_id;
+  if (extras && extras.linked_yearly_id)  row.linked_yearly_id  = extras.linked_yearly_id;
   const { data, error } = await supabase
     .from('goals')
-    .insert({ user_id, date: dateStr, text, position: position ?? 0 })
+    .insert(row)
     .select()
     .single();
   if (error) throw error;
@@ -79,7 +82,9 @@ export async function upsertGoals(dateStr, goalsArr) {
     done: g.done ?? false,
     done_at: g.done_at ?? null,
     queued: g.queued ?? false,
-    position: i
+    position: i,
+    linked_monthly_id: g.linked_monthly_id ?? null,
+    linked_yearly_id:  g.linked_yearly_id  ?? null,
   }));
   const { data, error } = await supabase
     .from('goals')

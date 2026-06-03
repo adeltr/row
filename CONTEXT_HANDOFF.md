@@ -1,5 +1,32 @@
 # CONTEXT_HANDOFF.md — Row Dashboard
 
+## Phase 1 — COMPLETE ✓
+
+### Phase 1 deliverables
+
+| # | Deliverable | Status |
+|---|---|---|
+| 1 | SQL migration (objectives, habits, challenges, day_notes, goals ALTER) | ✓ Done |
+| 2 | topbar.js: WATER removed, STACK→INTAKE | ✓ Done |
+| 3 | js/goals-data.js: linked_monthly_id / linked_yearly_id support | ✓ Done |
+| 4 | js/objectives-data.js: monthly/yearly objective CRUD + realtime | ✓ Done |
+| 5 | js/habits-data.js: habits, habit_logs, day_notes, challenges CRUD + realtime | ✓ Done |
+| 6 | index.html: Plan Tomorrow removed, Objectives section, Routine Tracker | ✓ Done |
+| 7 | time-blocking.js: DAY/WEEK toggle, week view, week navigation | ✓ Done |
+| 8 | CHANGES.md + CONTEXT_HANDOFF.md updated | ✓ Done |
+
+### Architecture decisions made in Phase 1
+
+- Objectives auto-progress is computed client-side (N parallel queries for linked goals — personal scale)
+- Yearly cascade shows all monthly objectives for the year (no explicit yearly→monthly FK needed)
+- Week view uses a single Supabase query for the full Mon–Sun range; Store.weekBlocks is separate from Store.blocks
+- `openModal(block, defaultStartMins, targetDateStr)` — 3rd param lets week view pass the column's date
+- Challenge streak is computed client-side from habit_logs at render time
+- Routine tracker grid columns set via `grid-template-columns` in JS (variable number of habits)
+- `_currentView` and `_currentWeekMonday` are module-level vars in time-blocking.js (IIFE scope)
+
+---
+
 ## Phase 0 — COMPLETE ✓
 
 All 13 deliverables finished. See CHANGES.md for full setup instructions.
