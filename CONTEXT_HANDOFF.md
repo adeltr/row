@@ -1,5 +1,28 @@
 # CONTEXT_HANDOFF.md — Row Dashboard
 
+## Phase 2 — IN PROGRESS
+
+### Phase 2 status
+
+| Step | Deliverable | Status |
+|------|---|---|
+| 1 | SQL migration: `foods`, `meal_logs`, `nutrition_profile` tables + RLS + ~140 seed foods | ✓ Done |
+| 2 | `js/nutrition-data.js`: full CRUD + `computeDailyTargets` + realtime | ✓ Done |
+| 3 | `health.html`: 3-tab system (STACK \| WATER \| NUTRITION), water tracker embedded, NUTRITION placeholder | ✓ Done |
+| 4 | NUTRITION tab full UI: calorie ring, meal slots, food search, profile modal, weekly summary | ⬜ Not started — next session |
+
+### Phase 2 architecture decisions so far
+
+- Tab bar in `health.html` — active tab persists in `localStorage('intake:active_tab')`
+- Water tab lazy-inits on first visit (loads Supabase data only when tab opened)
+- All water element IDs prefixed with `w` to avoid conflicts (`wWaterNum`, `wSettingsBtn`, etc.)
+- `--good`, `--warn`, `--bad`, `--info` added to `:root` CSS vars (shared by water + upcoming nutrition ring)
+- `po-water.html` kept as fallback (not deleted)
+- `nutrition-data.js` uses `getUserId()` pattern matching all other data modules
+- `computeDailyTargets()` is a pure function (no Supabase) — Mifflin-St Jeor BMR + activity multiplier + goal adjustment
+
+---
+
 ## Phase 1 — COMPLETE ✓
 
 ### Phase 1 deliverables

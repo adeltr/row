@@ -5,435 +5,238 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#050506">
 <meta name="color-scheme" content="dark">
-<title>Daily Stack — Customizable Template</title>
+<title>Intake — Daily Stack</title>
 <script src="topbar.js" defer></script>
 <style>
 :root {
   --bg: #050506;
-  --bg-card: rgba(255, 255, 255, 0.04);
-  --bg-secondary: rgba(255, 255, 255, 0.035);
-  --bg-input: rgba(0, 0, 0, 0.28);
-  --bg-input-focus: rgba(0, 0, 0, 0.36);
-  --bg-dropdown: rgba(15, 15, 18, 0.96);
-
-  --border: rgba(255, 255, 255, 0.06);
-  --border-soft: rgba(255, 255, 255, 0.04);
-  --border-strong: rgba(255, 255, 255, 0.12);
-
+  --bg-card: rgba(255,255,255,0.04);
+  --bg-secondary: rgba(255,255,255,0.035);
+  --bg-input: rgba(0,0,0,0.28);
+  --bg-input-focus: rgba(0,0,0,0.36);
+  --bg-dropdown: rgba(15,15,18,0.96);
+  --border: rgba(255,255,255,0.06);
+  --border-soft: rgba(255,255,255,0.04);
+  --border-strong: rgba(255,255,255,0.12);
   --text-primary: #FAFAFA;
   --text-secondary: #B8B6B0;
   --text-tertiary: #76746E;
   --text-quaternary: #4D4B47;
-
   --accent: #1D9E75;
-  --accent-glow: rgba(29, 158, 117, 0.35);
+  --accent-glow: rgba(29,158,117,0.35);
   --warning: #FF8A4D;
-  --warning-bg: rgba(163, 45, 45, 0.10);
+  --warning-bg: rgba(163,45,45,0.10);
   --tag-stack: #D8AB30;
-  --tag-stack-bg: rgba(216, 171, 48, 0.15);
-
+  --tag-stack-bg: rgba(216,171,48,0.15);
+  --good: #6ee7b7;
+  --warn: #fbbf24;
+  --bad: #ff8a8a;
+  --info: #7DD3FC;
+  --w-bg-card: #111113;
   --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
 * { box-sizing: border-box; }
-html, body {
-  margin: 0; padding: 0;
-  background: var(--bg);
-  color: var(--text-secondary);
-  font-family: var(--font);
-  font-size: 15px; line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text-secondary); font-family: var(--font); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 body { min-height: 100vh; position: relative; overflow-x: hidden; }
-
 body::before {
   content: ''; position: fixed; inset: 0;
-  background:
-    radial-gradient(60% 50% at 82% 14%, rgba(224, 118, 88, 0.16) 0%, transparent 60%),
-    radial-gradient(50% 40% at 18% 90%, rgba(180, 180, 200, 0.06) 0%, transparent 60%);
-  filter: blur(40px);
-  pointer-events: none; z-index: 0;
+  background: radial-gradient(60% 50% at 82% 14%, rgba(224,118,88,0.16) 0%, transparent 60%), radial-gradient(50% 40% at 18% 90%, rgba(180,180,200,0.06) 0%, transparent 60%);
+  filter: blur(40px); pointer-events: none; z-index: 0;
   animation: drift 36s ease-in-out infinite alternate;
 }
-body::after {
-  content: ''; position: fixed; inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.014) 1px, transparent 1px);
-  background-size: 3px 3px;
-  pointer-events: none; z-index: 1;
-}
-@keyframes drift { 0% { transform: translate(0, 0); } 100% { transform: translate(-2%, 2%); } }
+body::after { content: ''; position: fixed; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.014) 1px, transparent 1px); background-size: 3px 3px; pointer-events: none; z-index: 1; }
+@keyframes drift { 0% { transform: translate(0,0); } 100% { transform: translate(-2%,2%); } }
 
-main {
-  position: relative; z-index: 2;
-  max-width: 720px; margin: 0 auto;
-  padding: 56px 20px 80px;
-  padding-top: max(56px, env(safe-area-inset-top, 56px));
-}
+main { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; padding: 56px 20px 80px; padding-top: max(56px, env(safe-area-inset-top, 56px)); }
 
-.section-title {
-  font-family: var(--font-mono);
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--text-tertiary);
-  margin: 0 4px 14px;
-  display: flex; align-items: center; gap: 12px;
-}
+/* ── TAB BAR ── */
+.intake-tabs { display: flex; gap: 4px; background: rgba(0,0,0,0.30); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 22px; }
+.intake-tab { flex: 1; background: transparent; border: none; border-radius: 9px; color: var(--text-tertiary); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 10px; cursor: pointer; transition: background 0.15s, color 0.15s; -webkit-tap-highlight-color: transparent; }
+.intake-tab:hover { color: var(--text-secondary); }
+.intake-tab.active { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+
+/* ── SECTION TITLE ── */
+.section-title { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 4px 14px; display: flex; align-items: center; gap: 12px; }
 .section-title::before { content: '≡'; font-size: 14px; opacity: 0.5; }
+.sf-eyebrow { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+.sf-title { font-size: 24px; font-weight: 700; letter-spacing: -0.022em; color: var(--text-primary); line-height: 1.15; margin-bottom: 2px; }
 
-.stack-card {
-  background: var(--bg-card);
-  border-radius: 16px;
-  padding: 22px 22px 18px;
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
-}
-
+/* ── STACK TAB ── */
+.stack-card { background: var(--bg-card); border-radius: 16px; padding: 22px 22px 18px; backdrop-filter: blur(24px) saturate(1.2); -webkit-backdrop-filter: blur(24px) saturate(1.2); box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
 .stack-head { margin-bottom: 12px; }
-.sf-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--text-tertiary);
-  margin-bottom: 6px;
-}
-.sf-title {
-  font-size: 24px; font-weight: 700;
-  letter-spacing: -0.022em;
-  color: var(--text-primary);
-  line-height: 1.15; margin-bottom: 2px;
-}
-.stack-progress-text {
-  font-family: var(--font-mono);
-  font-size: 12px; color: var(--text-tertiary);
-  font-variant-numeric: tabular-nums;
-  margin-top: 6px;
-}
-.stack-progress-track {
-  height: 5px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 999px; overflow: hidden;
-  margin: 14px 0 18px;
-}
-.stack-progress-fill {
-  height: 100%; width: 0%;
-  background: #FFFFFF; border-radius: 999px;
-  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
+.stack-progress-text { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; margin-top: 6px; }
+.stack-progress-track { height: 5px; background: rgba(255,255,255,0.05); border-radius: 999px; overflow: hidden; margin: 14px 0 18px; }
+.stack-progress-fill { height: 100%; width: 0%; background: #FFFFFF; border-radius: 999px; transition: width 0.5s cubic-bezier(0.22,1,0.36,1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); }
 .stack-window { margin-bottom: 14px; }
-.stack-window-header {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 8px; padding-bottom: 6px;
-  border-bottom: 1px solid var(--border-soft);
-}
+.stack-window-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border-soft); }
 .stack-window-icon { font-size: 16px; }
 .stack-window-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
 .stack-window-time { font-size: 11px; color: var(--text-tertiary); font-weight: 500; }
-
-.stack-item {
-  display: grid;
-  grid-template-columns: 32px 1fr auto auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: var(--bg-secondary);
-  margin-bottom: 6px;
-  border: 1px solid transparent;
-  transition: background 0.2s, border-color 0.2s;
-}
+.stack-item { display: grid; grid-template-columns: 32px 1fr auto auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; background: var(--bg-secondary); margin-bottom: 6px; border: 1px solid transparent; transition: background 0.2s, border-color 0.2s; }
 .stack-item:hover { background: rgba(255,255,255,0.05); }
 .stack-item.taken { background: rgba(29,158,117,0.08); }
 .stack-item.taken .stack-item-name { text-decoration: line-through; color: var(--text-tertiary); }
-
-@keyframes pulse-red {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-  50%      { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-}
-.stack-item.missed {
-  border: 1px solid rgba(239, 68, 68, 0.45);
-  animation: pulse-red 1.5s ease-in-out infinite;
-}
-.stack-item.missed .stack-check { border-color: rgba(239, 68, 68, 0.55); }
+@keyframes pulse-red { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); } }
+.stack-item.missed { border: 1px solid rgba(239,68,68,0.45); animation: pulse-red 1.5s ease-in-out infinite; }
+.stack-item.missed .stack-check { border-color: rgba(239,68,68,0.55); }
 .stack-item.taken.missed { animation: none; border-color: transparent; }
 .stack-item.taken.missed .stack-check { border-color: var(--accent); }
-
-.stack-check {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--border-strong);
-  background: var(--bg-card);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; color: transparent;
-  transition: all 0.2s;
-  flex-shrink: 0; font-family: inherit; padding: 0;
-}
+.stack-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border-strong); background: var(--bg-card); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: transparent; transition: all 0.2s; flex-shrink: 0; font-family: inherit; padding: 0; }
 .stack-check:hover { border-color: var(--accent); }
-.stack-check.checked {
-  background: var(--accent); border-color: var(--accent);
-  color: white;
-  box-shadow: 0 0 12px var(--accent-glow);
-}
-
+.stack-check.checked { background: var(--accent); border-color: var(--accent); color: white; box-shadow: 0 0 12px var(--accent-glow); }
 .stack-item-body { min-width: 0; }
-.stack-item-name {
-  font-size: 14px; font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.2;
-  display: inline-flex; align-items: center;
-  gap: 8px; flex-wrap: wrap;
-  outline: none;
-}
-.stack-item-name[contenteditable="true"] {
-  outline: 1px solid rgba(255,255,255,0.25);
-  outline-offset: 4px; border-radius: 4px;
-}
-.stack-item-meta {
-  font-size: 11px; color: var(--text-tertiary);
-  margin-top: 2px; outline: none; cursor: text;
-}
-.stack-item-meta[contenteditable="true"] {
-  outline: 1px solid rgba(255,255,255,0.2);
-  outline-offset: 4px; border-radius: 4px;
-  color: var(--text-secondary);
-}
-.stack-item-meta:empty::before {
-  content: 'add notes…';
-  color: var(--text-quaternary);
-  font-style: italic;
-}
-
-.stack-item-tag {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  padding: 2px 7px; border-radius: 99px;
-  font-weight: 600; letter-spacing: 0.04em;
-  text-transform: lowercase;
-}
+.stack-item-name { font-size: 14px; font-weight: 600; color: var(--text-primary); line-height: 1.2; display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; outline: none; }
+.stack-item-name[contenteditable="true"] { outline: 1px solid rgba(255,255,255,0.25); outline-offset: 4px; border-radius: 4px; }
+.stack-item-meta { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; outline: none; cursor: text; }
+.stack-item-meta[contenteditable="true"] { outline: 1px solid rgba(255,255,255,0.2); outline-offset: 4px; border-radius: 4px; color: var(--text-secondary); }
+.stack-item-meta:empty::before { content: 'add notes…'; color: var(--text-quaternary); font-style: italic; }
+.stack-item-tag { font-family: var(--font-mono); font-size: 10px; padding: 2px 7px; border-radius: 99px; font-weight: 600; letter-spacing: 0.04em; text-transform: lowercase; }
 .stack-item-tag.tag-stack { background: var(--tag-stack-bg); color: var(--tag-stack); }
 .stack-item-tag.tag-not-ordered { background: var(--warning-bg); color: var(--text-tertiary); }
-
-.stack-low-btn {
-  background: transparent;
-  border: 1px solid var(--border-strong);
-  color: var(--text-tertiary);
-  font-size: 10px;
-  padding: 5px 9px; border-radius: 6px;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-weight: 600; letter-spacing: 0.04em;
-  white-space: nowrap;
-  display: inline-flex; align-items: center; gap: 4px;
-  transition: all 0.15s;
-}
+.stack-low-btn { background: transparent; border: 1px solid var(--border-strong); color: var(--text-tertiary); font-size: 10px; padding: 5px 9px; border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-weight: 600; letter-spacing: 0.04em; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s; }
 .stack-low-btn:hover { border-color: rgba(163,45,45,0.4); color: var(--warning); }
-.stack-low-btn.is-low {
-  background: var(--warning-bg);
-  border-color: rgba(163,45,45,0.4);
-  color: var(--warning);
-}
-
-.stack-item-del {
-  background: transparent;
-  border: 1px solid var(--border-strong);
-  color: var(--text-tertiary);
-  cursor: pointer;
-  font-size: 16px;
-  padding: 4px 10px; border-radius: 6px;
-  opacity: 0.7;
-  transition: opacity 0.15s, color 0.15s, border-color 0.15s, background 0.15s;
-  font-family: inherit;
-  line-height: 1;
-  min-width: 28px; min-height: 28px;
-  display: inline-flex; align-items: center; justify-content: center;
-}
+.stack-low-btn.is-low { background: var(--warning-bg); border-color: rgba(163,45,45,0.4); color: var(--warning); }
+.stack-item-del { background: transparent; border: 1px solid var(--border-strong); color: var(--text-tertiary); cursor: pointer; font-size: 16px; padding: 4px 10px; border-radius: 6px; opacity: 0.7; transition: opacity 0.15s, color 0.15s, border-color 0.15s, background 0.15s; font-family: inherit; line-height: 1; min-width: 28px; min-height: 28px; display: inline-flex; align-items: center; justify-content: center; }
 .stack-item:hover .stack-item-del { opacity: 1; }
-.stack-item-del:hover, .stack-item-del:active {
-  color: #FF6B6B;
-  border-color: rgba(239, 68, 68, 0.45);
-  background: rgba(239, 68, 68, 0.08);
-  opacity: 1;
-}
-
-.stack-window-empty {
-  font-size: 12px;
-  color: var(--text-quaternary);
-  font-style: italic;
-  padding: 8px 12px;
-}
-
-/* ====== TICKER — cycles missed + running low every 5s ====== */
-.stack-ticker {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  margin-bottom: 14px;
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 10px;
-  font-size: 12px;
-  min-height: 36px;
-}
-.stack-ticker-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: #6BE3A4;
-  flex-shrink: 0;
-  transition: background 0.3s;
-}
+.stack-item-del:hover, .stack-item-del:active { color: #FF6B6B; border-color: rgba(239,68,68,0.45); background: rgba(239,68,68,0.08); opacity: 1; }
+.stack-window-empty { font-size: 12px; color: var(--text-quaternary); font-style: italic; padding: 8px 12px; }
+.stack-ticker { display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin-bottom: 14px; background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; font-size: 12px; min-height: 36px; }
+.stack-ticker-dot { width: 8px; height: 8px; border-radius: 50%; background: #6BE3A4; flex-shrink: 0; transition: background 0.3s; }
 .stack-ticker.status-low .stack-ticker-dot { background: #FF8A4D; }
-.stack-ticker.status-missed .stack-ticker-dot {
-  background: #FF6B6B;
-  animation: ticker-pulse 1.5s ease-in-out infinite;
-}
-@keyframes ticker-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
-  50%      { box-shadow: 0 0 0 5px rgba(239, 68, 68, 0); }
-}
-.stack-ticker-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-  flex-shrink: 0;
-}
+.stack-ticker.status-missed .stack-ticker-dot { background: #FF6B6B; animation: ticker-pulse 1.5s ease-in-out infinite; }
+@keyframes ticker-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); } 50% { box-shadow: 0 0 0 5px rgba(239,68,68,0); } }
+.stack-ticker-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-tertiary); flex-shrink: 0; }
 .stack-ticker-sep { color: var(--text-quaternary); flex-shrink: 0; }
-.stack-ticker-msg {
-  flex: 1;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: opacity 0.28s;
-}
+.stack-ticker-msg { flex: 1; font-size: 12px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity 0.28s; }
 .stack-ticker-msg.is-fading { opacity: 0; }
-.stack-ticker-count {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-tertiary);
-  font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
-}
-
-.stack-add-wrap {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border-soft);
-}
+.stack-ticker-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.stack-add-wrap { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-soft); }
 .stack-add-label { margin-bottom: 10px; }
-.stack-add-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 110px 90px;
-  gap: 6px;
-  align-items: center;
-}
-.stack-input {
-  font-size: 13px;
-  padding: 9px 11px;
-  border-radius: 10px;
-  border: 1px solid var(--border-strong);
-  background: var(--bg-input);
-  color: var(--text-primary);
-  font-family: inherit;
-  transition: border-color 0.18s, background 0.18s;
-}
+.stack-add-row { display: grid; grid-template-columns: 1fr 1fr 110px 90px; gap: 6px; align-items: center; }
+.stack-input { font-size: 13px; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--border-strong); background: var(--bg-input); color: var(--text-primary); font-family: inherit; transition: border-color 0.18s, background 0.18s; }
 .stack-input::placeholder { color: var(--text-tertiary); }
-.stack-input:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.40);
-  background: var(--bg-input-focus);
-}
+.stack-input:focus { outline: none; border-color: rgba(255,255,255,0.40); background: var(--bg-input-focus); }
 .stack-select { cursor: pointer; }
-.stack-add-btn {
-  font-size: 13px;
-  padding: 9px 11px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  background: linear-gradient(180deg, #FFFFFF 0%, #E8E5DD 100%);
-  color: #0A0A0B;
-  font-weight: 700;
-  letter-spacing: 0.005em;
-  cursor: pointer;
-  font-family: inherit;
-  transition: transform 0.12s, box-shadow 0.18s, background 0.18s;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    0 4px 14px rgba(0, 0, 0, 0.30);
-}
-.stack-add-btn:hover {
-  background: linear-gradient(180deg, #FFFFFF 0%, #F2F0EA 100%);
-  transform: translateY(-1px);
-}
+.stack-add-btn { font-size: 13px; padding: 9px 11px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.85); background: linear-gradient(180deg,#FFFFFF 0%,#E8E5DD 100%); color: #0A0A0B; font-weight: 700; letter-spacing: 0.005em; cursor: pointer; font-family: inherit; transition: transform 0.12s, background 0.18s; box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 4px 14px rgba(0,0,0,0.30); }
+.stack-add-btn:hover { background: linear-gradient(180deg,#FFFFFF 0%,#F2F0EA 100%); transform: translateY(-1px); }
 .stack-add-btn:active { transform: translateY(0) scale(0.97); }
-
-/* ====== SEARCH AUTOCOMPLETE — appears below the form when typing in Name ====== */
 .stack-name-wrap { position: relative; }
-
-.stack-search-results {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  width: max(100%, 320px);
-  background: var(--bg-dropdown);
-  border: 1px solid var(--border-strong);
-  border-radius: 12px;
-  max-height: 280px;
-  overflow-y: auto;
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
-  z-index: 50;
-  padding: 6px;
-}
+.stack-search-results { position: absolute; top: calc(100% + 6px); left: 0; width: max(100%,320px); background: var(--bg-dropdown); border: 1px solid var(--border-strong); border-radius: 12px; max-height: 280px; overflow-y: auto; backdrop-filter: blur(20px) saturate(1.2); -webkit-backdrop-filter: blur(20px) saturate(1.2); box-shadow: 0 16px 40px rgba(0,0,0,0.65); z-index: 50; padding: 6px; }
 .stack-search-results[hidden] { display: none; }
-
-.stack-result {
-  display: flex;
-  gap: 12px; align-items: center;
-  width: 100%;
-  padding: 9px 11px;
-  background: transparent; border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: left;
-  font-family: inherit;
-  color: var(--text-secondary);
-  transition: background 0.12s;
-}
-.stack-result:hover, .stack-result.is-focused { background: rgba(255, 255, 255, 0.06); }
-
+.stack-result { display: flex; gap: 12px; align-items: center; width: 100%; padding: 9px 11px; background: transparent; border: none; border-radius: 8px; cursor: pointer; text-align: left; font-family: inherit; color: var(--text-secondary); transition: background 0.12s; }
+.stack-result:hover { background: rgba(255,255,255,0.06); }
 .stack-result-icon { font-size: 17px; flex-shrink: 0; width: 24px; text-align: center; }
 .stack-result-body { min-width: 0; flex: 1; }
-.stack-result-name {
-  font-size: 13px; font-weight: 600;
-  color: var(--text-primary); line-height: 1.2;
-}
-.stack-result-meta {
-  font-size: 11px; color: var(--text-tertiary);
-  margin-top: 2px;
-}
+.stack-result-name { font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.2; }
+.stack-result-meta { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
 
-.attribution {
-  text-align: center; margin-top: 28px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-quaternary);
-}
+/* ── WATER TAB ── */
+.w-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.w-title { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; margin: 0; color: var(--text-primary); }
+.w-icon-btn { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; color: var(--text-secondary); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background 0.18s, color 0.18s; }
+.w-icon-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+.w-divider { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.w-divider::before, .w-divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.10); }
+.w-divider span { font-size: 11px; letter-spacing: 0.22em; font-weight: 600; color: rgba(255,255,255,0.85); }
+.w-card { background: var(--w-bg-card); border: 1px solid var(--border); border-radius: 18px; padding: 22px 20px 18px; margin-bottom: 14px; }
+.water-label { font-size: 10px; letter-spacing: 0.20em; font-weight: 700; color: var(--text-tertiary); margin-bottom: 8px; text-transform: uppercase; }
+.water-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.water-num { font-size: 56px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.water-target { font-size: 18px; color: var(--text-tertiary); font-weight: 500; }
+.water-bar-wrap { position: relative; margin: 14px 0 22px; }
+.water-bar-track { position: relative; height: 28px; border-radius: 14px; background: rgba(255,255,255,0.04); overflow: hidden; }
+.water-bar-fill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 14px; background: linear-gradient(90deg, var(--info), var(--good)); transition: width 0.4s ease; box-shadow: 0 0 18px rgba(110,231,183,0.18); }
+.water-bar-fill.over { background: linear-gradient(90deg, var(--good), var(--warn)); }
+.water-bar-zone { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.18); }
+.water-bar-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10px; color: var(--text-tertiary); font-family: var(--font-mono); }
+.water-bar-labels .water-zone-name { color: var(--good); font-weight: 700; letter-spacing: 0.10em; text-transform: lowercase; }
+.water-actions { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: stretch; }
+.water-minus-btn { background: rgba(255,255,255,0.06); border: none; border-radius: 16px; color: var(--text-primary); font-size: 22px; font-weight: 700; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.water-minus-btn:hover { background: rgba(255,255,255,0.10); }
+.water-minus-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.water-plus-btn { background: linear-gradient(180deg,#ffffff 0%,#e8e5dd 100%); color: #0a0a0b; border: none; border-radius: 16px; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer; padding: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; -webkit-tap-highlight-color: transparent; box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 4px 14px rgba(0,0,0,0.40); }
+.water-plus-btn:hover { transform: translateY(-1px); }
+.water-plus-btn:active { transform: scale(0.98); }
+.water-helper { text-align: center; font-size: 12px; color: var(--text-tertiary); margin-top: 12px; font-style: italic; }
+.water-helper.good { color: var(--good); font-style: normal; }
+.why-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: 1px solid var(--border); color: var(--text-secondary); border-radius: 10px; padding: 11px 14px; cursor: pointer; margin-top: 14px; font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; -webkit-tap-highlight-color: transparent; }
+.why-toggle:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+.why-arrow { transition: transform 0.2s; font-size: 14px; }
+.why-toggle[aria-expanded="true"] .why-arrow { transform: rotate(180deg); }
+.why-body { margin-top: 8px; padding: 14px 16px; background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 10px; display: none; }
+.why-body.show { display: block; }
+.why-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; padding: 4px 0; font-variant-numeric: tabular-nums; }
+.why-row .why-label { color: var(--text-secondary); }
+.why-row .why-val { color: var(--text-primary); font-weight: 600; font-family: var(--font-mono); }
+.why-row.total { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 10px; }
+.why-row.total .why-label { color: var(--good); font-weight: 700; }
+.why-row.total .why-val { color: var(--good); }
+.hist-row { display: grid; grid-template-columns: 70px 1fr auto; gap: 10px; padding: 10px 0; align-items: center; border-bottom: 1px solid var(--border); font-size: 13px; }
+.hist-row:last-child { border-bottom: none; }
+.hist-date { font-size: 11px; color: var(--text-tertiary); font-family: var(--font-mono); }
+.hist-bar-wrap { height: 8px; background: rgba(255,255,255,0.04); border-radius: 4px; overflow: hidden; }
+.hist-bar-fill { height: 100%; background: linear-gradient(90deg, var(--info), var(--good)); border-radius: 4px; }
+.hist-bar-fill.miss { background: rgba(255,138,138,0.4); }
+.hist-count { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.spark-wrap { padding: 6px 0; }
+.spark-svg { width: 100%; height: 70px; display: block; }
+.spark-bar { fill: var(--good); }
+.spark-bar.miss { fill: rgba(255,138,138,0.5); }
+.spark-target { stroke: rgba(255,255,255,0.20); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.w-search-wrap { position: relative; }
+.w-search-input { width: 100%; background: rgba(0,0,0,0.28); border: 1px solid var(--border); color: var(--text-primary); font-family: inherit; font-size: 14px; padding: 11px 14px; border-radius: 10px; outline: none; }
+.w-search-input:focus { border-color: rgba(110,231,183,0.40); }
+.w-search-results { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--w-bg-card); border: 1px solid var(--border-strong); border-radius: 10px; padding: 4px; max-height: 240px; overflow-y: auto; z-index: 5; display: none; }
+.w-search-results.show { display: block; }
+.w-search-result { display: flex; flex-direction: column; gap: 2px; padding: 9px 12px; border-radius: 7px; cursor: pointer; font-size: 13px; }
+.w-search-result:hover { background: rgba(255,255,255,0.05); }
+.w-search-result-name { color: var(--text-primary); font-weight: 600; }
+.w-search-result-meta { font-size: 10.5px; color: var(--text-tertiary); font-family: var(--font-mono); }
+.w-search-result-add { color: var(--good); }
+.w-subs-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.w-sub-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 10px; flex-wrap: wrap; }
+.w-sub-row-info { flex: 1; min-width: 140px; }
+.w-sub-row-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.w-sub-row-meta { font-size: 11px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; font-family: var(--font-mono); margin-top: 2px; }
+.w-sub-row-dose { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.30); border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; }
+.w-sub-dose-input { width: 56px; background: transparent; border: none; outline: none; color: var(--text-primary); font-family: inherit; font-size: 13px; font-weight: 600; text-align: center; -moz-appearance: textfield; }
+.w-sub-dose-input::-webkit-outer-spin-button, .w-sub-dose-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.w-sub-dose-unit { font-size: 11px; color: var(--text-tertiary); font-family: var(--font-mono); white-space: nowrap; }
+.w-sub-row-del { background: transparent; border: none; color: var(--text-quaternary); font-size: 16px; cursor: pointer; padding: 4px 8px; }
+.w-sub-row-del:hover { color: var(--bad); }
+
+/* ── NUTRITION PLACEHOLDER ── */
+.nut-placeholder { padding: 48px 20px; text-align: center; background: var(--bg-card); border-radius: 16px; border: 1px dashed var(--border-strong); }
+.nut-placeholder p { color: var(--text-tertiary); font-size: 13px; margin: 8px 0 0; }
+
+/* ── SHARED MODAL ── */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); z-index: 100; align-items: center; justify-content: center; padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom)); }
+.modal-bg.show { display: flex; }
+.modal { width: 100%; max-width: 480px; background: var(--w-bg-card); border: 1px solid var(--border-strong); border-radius: 16px; padding: 22px; max-height: calc(88vh - env(safe-area-inset-bottom)); overflow-y: auto; }
+.modal h3 { margin: 0 0 14px; font-size: 17px; font-weight: 700; color: var(--text-primary); }
+.modal-section { margin-bottom: 22px; }
+.modal-section h4 { margin: 0 0 8px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.field label { font-size: 11px; color: var(--text-tertiary); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.field input[type="number"], .field input[type="text"], .field select { background: rgba(0,0,0,0.28); border: 1px solid var(--border); color: var(--text-primary); font-family: inherit; font-size: 14px; padding: 10px 12px; border-radius: 10px; outline: none; -moz-appearance: textfield; }
+.field input[type="number"]::-webkit-outer-spin-button, .field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.field input:focus, .field select:focus { border-color: rgba(110,231,183,0.40); box-shadow: 0 0 0 2px rgba(110,231,183,0.10); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.seg { display: flex; gap: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
+.seg button { flex: 1; padding: 9px; border: none; background: transparent; color: var(--text-tertiary); border-radius: 7px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.seg button.active { background: linear-gradient(180deg,#ffffff 0%,#e8e5dd 100%); color: #0a0a0b; }
+.btn-primary { width: 100%; padding: 13px; border: none; background: linear-gradient(180deg,#ffffff 0%,#e8e5dd 100%); color: #0a0a0b; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 4px 14px rgba(0,0,0,0.40); -webkit-tap-highlight-color: transparent; }
+.btn-secondary { padding: 11px 16px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text-primary); border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.btn-secondary:hover { background: rgba(255,255,255,0.10); }
+.modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+.modal-actions .btn-primary { flex: 1; }
+
+.attribution { text-align: center; margin-top: 28px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-quaternary); }
 
 @media (max-width: 600px) {
-  main { padding: 40px 16px 60px; }
+  main { padding: 40px 16px calc(60px + env(safe-area-inset-bottom)); }
   .stack-card { padding: 18px 16px 14px; }
   .stack-item { grid-template-columns: 28px 1fr auto; gap: 8px; }
   .stack-item .stack-low-btn { grid-column: 2 / 4; margin-top: 4px; justify-self: start; }
@@ -441,566 +244,628 @@ main {
   .stack-add-row .stack-add-btn { grid-column: 1 / -1; }
   .stack-add-row .stack-select { grid-column: 1 / -1; }
   .stack-search-results { width: 100%; }
+  .water-num { font-size: 48px; }
 }
 
-::selection { background: rgba(224, 118, 88, 0.3); color: var(--text-primary); }
+::selection { background: rgba(224,118,88,0.3); color: var(--text-primary); }
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.15); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 </style>
 </head>
 <body>
 
 <main>
   <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px">
-    <div class="section-title">Daily Stack</div>
+    <div class="section-title">Intake</div>
     <div id="user-menu" style="padding-top:4px"></div>
   </div>
 
-  <div class="stack-card">
-    <div class="stack-ticker" id="stackTicker">
-      <span class="stack-ticker-dot"></span>
-      <span class="stack-ticker-label">STACK</span>
-      <span class="stack-ticker-sep">·</span>
-      <span class="stack-ticker-msg" id="stackTickerMsg">All caught up — keep it rolling</span>
-      <span class="stack-ticker-count" id="stackTickerCount">0/0</span>
-    </div>
+  <div class="intake-tabs" role="tablist">
+    <button class="intake-tab" data-tab="stack" role="tab">STACK</button>
+    <button class="intake-tab" data-tab="water" role="tab">WATER</button>
+    <button class="intake-tab" data-tab="nutrition" role="tab">NUTRITION</button>
+  </div>
 
-    <div class="stack-head">
-      <div class="sf-eyebrow">Daily stack</div>
-      <div class="sf-title">Tap each as you take it</div>
-      <div class="stack-progress-text" id="stackProgressText">— / — taken today · resets at 6 AM</div>
-    </div>
-
-    <div class="stack-progress-track">
-      <div id="stackProgressBar" class="stack-progress-fill"></div>
-    </div>
-
-    <div id="stackGroups"></div>
-
-    <div class="stack-add-wrap">
-      <div class="sf-eyebrow stack-add-label">Add to stack</div>
-      <div class="stack-add-row">
-        <div class="stack-name-wrap">
-          <input id="stackAddName" type="text" placeholder="Name (e.g. B-complex)" class="stack-input" autocomplete="off" spellcheck="false" />
-          <div id="stackSearchResults" class="stack-search-results" hidden></div>
-        </div>
-        <input id="stackAddDose" type="text" placeholder="Dose (e.g. 1 cap)" class="stack-input" />
-        <select id="stackAddWindow" class="stack-input stack-select">
-          <option value="morning">Morning</option>
-          <option value="lunch">Lunch</option>
-          <option value="evening">Evening</option>
-          <option value="anytime">Anytime</option>
-        </select>
-        <button id="stackAddBtn" class="stack-add-btn">+ Add</button>
+  <!-- ══ STACK TAB ══ -->
+  <div data-tab-panel="stack">
+    <div class="stack-card">
+      <div class="stack-ticker" id="stackTicker">
+        <span class="stack-ticker-dot"></span>
+        <span class="stack-ticker-label">STACK</span>
+        <span class="stack-ticker-sep">·</span>
+        <span class="stack-ticker-msg" id="stackTickerMsg">All caught up — keep it rolling</span>
+        <span class="stack-ticker-count" id="stackTickerCount">0/0</span>
       </div>
+      <div class="stack-head">
+        <div class="sf-eyebrow">Daily stack</div>
+        <div class="sf-title">Tap each as you take it</div>
+        <div class="stack-progress-text" id="stackProgressText">— / — taken today · resets at 6 AM</div>
+      </div>
+      <div class="stack-progress-track"><div id="stackProgressBar" class="stack-progress-fill"></div></div>
+      <div id="stackGroups"></div>
+      <div class="stack-add-wrap">
+        <div class="sf-eyebrow stack-add-label">Add to stack</div>
+        <div class="stack-add-row">
+          <div class="stack-name-wrap">
+            <input id="stackAddName" type="text" placeholder="Name (e.g. B-complex)" class="stack-input" autocomplete="off" spellcheck="false">
+            <div id="stackSearchResults" class="stack-search-results" hidden></div>
+          </div>
+          <input id="stackAddDose" type="text" placeholder="Dose (e.g. 1 cap)" class="stack-input">
+          <select id="stackAddWindow" class="stack-input stack-select">
+            <option value="morning">Morning</option>
+            <option value="lunch">Lunch</option>
+            <option value="evening">Evening</option>
+            <option value="anytime">Anytime</option>
+          </select>
+          <button id="stackAddBtn" class="stack-add-btn">+ Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="attribution">// editable template · data stored in Supabase</div>
+  </div>
+
+  <!-- ══ WATER TAB ══ -->
+  <div data-tab-panel="water" hidden>
+    <div class="w-header">
+      <h2 class="w-title">Water Coach</h2>
+      <button class="w-icon-btn" id="wSettingsBtn" title="Settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+    <div class="w-divider"><span>WATER</span></div>
+    <div class="w-card">
+      <div class="water-label" id="wWaterUnitLabel">BOTTLES DRANK TODAY</div>
+      <div class="water-row">
+        <span class="water-num" id="wWaterNum">0</span>
+        <span class="water-target" id="wWaterTarget">/ 9</span>
+      </div>
+      <div class="water-bar-wrap">
+        <div class="water-bar-track">
+          <div class="water-bar-fill" id="wWaterBarFill" style="width:0%"></div>
+          <div class="water-bar-zone" id="wWaterBarZoneStart" style="left:55%"></div>
+          <div class="water-bar-zone" id="wWaterBarZoneEnd" style="left:80%"></div>
+        </div>
+        <div class="water-bar-labels">
+          <span id="wWaterBarMin">0</span>
+          <span class="water-zone-name">healthy zone</span>
+          <span id="wWaterBarMax">12+</span>
+        </div>
+      </div>
+      <div class="water-actions">
+        <button class="water-minus-btn" id="wWaterMinusBtn" type="button" aria-label="Undo last">−</button>
+        <button class="water-plus-btn" id="wWaterPlusBtn" type="button">
+          <span id="wWaterPlusLabel">Drank a bottle</span><span>↑</span>
+        </button>
+      </div>
+      <div class="water-helper" id="wWaterHelper">Start the day — first one in.</div>
+      <button class="why-toggle" id="wWhyToggle" type="button" aria-expanded="false">
+        <span>Why this target?</span><span class="why-arrow">▾</span>
+      </button>
+      <div class="why-body" id="wWhyBody"></div>
+    </div>
+    <div class="w-card">
+      <div class="water-label">LAST 14 DAYS</div>
+      <div class="spark-wrap">
+        <svg class="spark-svg" id="wSparkSvg" viewBox="0 0 280 70" preserveAspectRatio="none"></svg>
+      </div>
+      <div id="wHistList" style="margin-top:14px"></div>
     </div>
   </div>
 
-  <div class="attribution">// editable template · all data stays in your browser</div>
+  <!-- ══ NUTRITION TAB (placeholder — Step 4) ══ -->
+  <div data-tab-panel="nutrition" hidden>
+    <div class="nut-placeholder">
+      <div class="sf-eyebrow">Nutrition</div>
+      <p>Full nutrition tracker coming in Step 4.</p>
+    </div>
+  </div>
 </main>
+
+<!-- Water settings modal -->
+<div class="modal-bg" id="wSetModalBg">
+  <div class="modal">
+    <h3>Water settings</h3>
+    <div class="modal-section">
+      <h4>Profile</h4>
+      <div class="field-row">
+        <div class="field"><label>Weight</label><input type="number" id="wSetWeight" step="0.5" min="20" max="300"></div>
+        <div class="field"><label>Weight unit</label>
+          <div class="seg" id="wSetWeightUnit"><button data-u="kg">kg</button><button data-u="lb">lb</button></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Age</label><input type="number" id="wSetAge" min="13" max="100"></div>
+        <div class="field"><label>Sex</label>
+          <div class="seg" id="wSetSex"><button data-s="m">Male</button><button data-s="f">Female</button><button data-s="o">Other</button></div>
+        </div>
+      </div>
+      <div class="field"><label>Activity (training hours/week)</label><input type="number" id="wSetActivity" min="0" max="40" step="0.5"></div>
+    </div>
+    <div class="modal-section">
+      <h4>Display</h4>
+      <div class="field"><label>Show water as</label>
+        <div class="seg" id="wSetUnit"><button data-u="bottle">Bottles</button><button data-u="glass">Glasses</button><button data-u="oz">oz</button><button data-u="ml">ml</button></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Bottle size (ml)</label><input type="number" id="wSetBottleMl" min="100" max="2000" step="50"></div>
+        <div class="field"><label>Glass size (ml)</label><input type="number" id="wSetGlassMl" min="100" max="500" step="10"></div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>Caffeine</h4>
+      <div class="field">
+        <label>Average caffeine per day (mg)</label>
+        <input type="number" id="wSetCaffeine" min="0" max="1000" step="10">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;line-height:1.4">~1 cup coffee = 95 mg · espresso = 75 mg · energy drink = 160 mg.</div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>Stimulants &amp; meds</h4>
+      <div class="field">
+        <label>Search to add</label>
+        <div class="w-search-wrap">
+          <input type="text" class="w-search-input" id="wSubSearch" placeholder="Type a name (Adderall, Concerta…)" autocomplete="off">
+          <div class="w-search-results" id="wSubResults"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;line-height:1.4">Each substance bumps your daily water target.</div>
+      </div>
+      <div class="w-subs-list" id="wSubsList"></div>
+    </div>
+    <div class="modal-section">
+      <h4>Data</h4>
+      <button class="btn-secondary" id="wSetReset" style="color:var(--bad);border-color:rgba(255,138,138,0.3)">Reset all water data</button>
+    </div>
+    <div class="modal-actions"><button class="btn-primary" id="wSetClose">Done</button></div>
+  </div>
+</div>
 
 <script type="module">
 import { requireAuth } from './js/auth.js';
 import { initUserMenu } from './js/user-menu.js';
 import * as StackData from './js/stack-data.js';
+import * as WaterData from './js/water-data.js';
 
 await requireAuth();
 await initUserMenu();
 
-  function getActiveDate() {
-    const now = new Date();
-    if (now.getHours() < 6) now.setDate(now.getDate() - 1);
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const d = String(now.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
-  }
+// ── TAB SYSTEM ────────────────────────────────────────────────
+let _waterInited = false;
 
-  const TEMPLATE_VERSION = 5;
+function switchTab(name) {
+  localStorage.setItem('intake:active_tab', name);
+  document.querySelectorAll('.intake-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('[data-tab-panel]').forEach(p => { p.hidden = p.dataset.tabPanel !== name; });
+  if (name === 'water' && !_waterInited) { _waterInited = true; initWaterTab().catch(console.error); }
+}
+document.querySelectorAll('.intake-tab').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+const _savedTab = localStorage.getItem('intake:active_tab') || 'stack';
+switchTab(_savedTab);
 
-  const STACK_DEFAULTS = [
-    { id: 'm1', name: 'XXXXX - Supplement of choice', dose: '', intake_window: 'morning', note: 'how much MG, meal times, any data below', tag: null,    ordered: true  },
-    { id: 'm2', name: 'XXXXX - Supplement of choice', dose: '', intake_window: 'morning', note: 'how much MG, meal times, any data below', tag: 'stack', ordered: true  },
-    { id: 'm3', name: 'XXXXX - Supplement of choice', dose: '', intake_window: 'morning', note: 'how much MG, meal times, any data below', tag: null,    ordered: true  },
-    { id: 'l1', name: 'XXXXX - Supplement of choice', dose: '', intake_window: 'lunch',   note: 'how much MG, meal times, any data below', tag: null,    ordered: true  },
-    { id: 'l2', name: 'XXXXX - Supplement of choice', dose: '', intake_window: 'lunch',   note: 'how much MG, meal times, any data below', tag: null,    ordered: true  },
-    { id: 'e1', name: 'XXXXX - Supplement of choice', dose: '', intake_window: 'evening', note: 'how much MG, meal times, any data below', tag: null,    ordered: true  },
-    { id: 'e2', name: 'XXXXX - Supplement of choice', dose: '', intake_window: 'evening', note: 'how much MG, meal times, any data below', tag: 'not-ordered', ordered: false },
-    { id: 'e3', name: 'XXXXX - Supplement of choice', dose: '', intake_window: 'evening', note: 'how much MG, meal times, any data below', tag: null,    ordered: true  },
-  ];
+// ════════════════════════════════════════════════════════════
+// STACK TAB
+// ════════════════════════════════════════════════════════════
 
-  const STACK_WINDOWS = [
-    { key: 'morning', icon: '🌅', title: 'Morning', time: '7–10 AM', cutoffHour: 10 },
-    { key: 'lunch',   icon: '🍽️', title: 'Lunch',   time: '12–2 PM', cutoffHour: 14 },
-    { key: 'evening', icon: '🌙', title: 'Evening', time: '9–11 PM', cutoffHour: 23 },
-    { key: 'anytime', icon: '⏱️', title: 'Anytime', time: 'No fixed window', cutoffHour: null },
-  ];
+function getActiveDate() {
+  const now = new Date();
+  if (now.getHours() < 6) now.setDate(now.getDate() - 1);
+  return now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+}
 
-  // ====== SUPPLEMENT DATABASE — researched defaults ======
-  const SUPPLEMENT_DB = [
-    { name: 'Creatine monohydrate', dose: '5g', intake_window: 'anytime', note: 'Daily — consistency matters more than timing', icon: '🏋️', aliases: ['creatine'] },
-    { name: 'Beta-alanine', dose: '2–5g', intake_window: 'morning', note: 'Pre-workout — split doses to avoid tingles', icon: '🏋️', aliases: ['beta alanine'] },
-    { name: 'L-citrulline', dose: '6–8g', intake_window: 'morning', note: '~30 min pre-workout for pump', icon: '🏋️', aliases: ['citrulline'] },
-    { name: 'BCAAs', dose: '5–10g', intake_window: 'anytime', note: 'Around workout window', icon: '🏋️', aliases: ['bcaa'] },
-    { name: 'Whey protein', dose: '25–40g', intake_window: 'anytime', note: 'Post-workout or to hit daily target', icon: '🥤', aliases: ['whey'] },
-    { name: 'Casein protein', dose: '25–40g', intake_window: 'evening', note: 'Before bed for slow overnight aminos', icon: '🥤', aliases: ['casein'] },
-    { name: 'L-carnitine', dose: '1–2g', intake_window: 'morning', note: 'With carbs for best uptake', icon: '🏋️', aliases: ['carnitine'] },
-    { name: 'Acetyl-L-carnitine', dose: '500mg–2g', intake_window: 'morning', note: 'Cognitive variant — crosses BBB', icon: '🧠', aliases: ['alcar'] },
-    { name: 'HMB', dose: '3g', intake_window: 'anytime', note: 'Split 3x daily — muscle preservation', icon: '🏋️', aliases: ['hmb'] },
-    { name: 'Glutamine', dose: '5g', intake_window: 'anytime', note: 'Recovery — post-workout or before bed', icon: '🏋️', aliases: ['l-glutamine'] },
-    { name: 'Vitamin D3', dose: '2000–5000 IU', intake_window: 'lunch', note: 'Fat-soluble — take with biggest meal', icon: '☀️', aliases: ['vit d', 'vitamin d', 'd3', 'cholecalciferol'] },
-    { name: 'Vitamin K2 (MK-7)', dose: '100–200 mcg', intake_window: 'lunch', note: 'Pairs with D3 — same meal', icon: '💊', aliases: ['vit k', 'vitamin k', 'k2', 'mk7'] },
-    { name: 'Vitamin C', dose: '500–1000mg', intake_window: 'morning', note: 'Water-soluble — split if over 500mg', icon: '🍊', aliases: ['vit c', 'ascorbic acid'] },
-    { name: 'Vitamin B12', dose: '500–1000mcg', intake_window: 'morning', note: 'Methylcobalamin form preferred', icon: '⚡', aliases: ['b12', 'methylcobalamin'] },
-    { name: 'B-complex', dose: '1 cap', intake_window: 'morning', note: 'All B vitamins — energy', icon: '⚡', aliases: ['b complex', 'b vitamins'] },
-    { name: 'Vitamin A', dose: '5000 IU', intake_window: 'lunch', note: 'Fat-soluble — with fat', icon: '💊', aliases: ['vit a', 'retinol'] },
-    { name: 'Vitamin E', dose: '400 IU', intake_window: 'lunch', note: 'Fat-soluble — with fat', icon: '💊', aliases: ['vit e', 'tocopherol'] },
-    { name: 'Folate', dose: '400–800mcg', intake_window: 'morning', note: 'Methylfolate preferred', icon: '💊', aliases: ['folic acid', 'b9', 'methylfolate'] },
-    { name: 'Biotin', dose: '30mcg–5mg', intake_window: 'anytime', note: 'Hair, skin, nails', icon: '💅', aliases: ['biotin', 'b7'] },
-    { name: 'Multivitamin', dose: '1 serving', intake_window: 'lunch', note: 'Take with food', icon: '💊', aliases: ['multi', 'multivitamin'] },
-    { name: 'Magnesium glycinate', dose: '200–400mg', intake_window: 'evening', note: '30–60 min before bed — sleep helper', icon: '🌙', aliases: ['magnesium', 'mag glycinate', 'bisglycinate'] },
-    { name: 'Magnesium L-threonate', dose: '144mg elemental', intake_window: 'evening', note: 'Cognitive variant — crosses BBB', icon: '🧠', aliases: ['magtein', 'threonate'] },
-    { name: 'Magnesium citrate', dose: '200–400mg', intake_window: 'evening', note: 'Also supports digestion', icon: '🌙', aliases: ['mag citrate'] },
-    { name: 'Zinc', dose: '15–30mg', intake_window: 'evening', note: 'With food — not with calcium or iron', icon: '💊', aliases: ['zinc'] },
-    { name: 'Iron', dose: '18–65mg', intake_window: 'morning', note: 'Empty stomach with vit C', icon: '💊', aliases: ['iron'] },
-    { name: 'Calcium', dose: '500mg', intake_window: 'evening', note: 'With food — not with iron', icon: '🦴', aliases: ['calcium'] },
-    { name: 'Selenium', dose: '100–200mcg', intake_window: 'anytime', note: 'Thyroid + antioxidant', icon: '💊', aliases: ['selenium'] },
-    { name: 'Iodine', dose: '150mcg', intake_window: 'morning', note: 'Thyroid support', icon: '💊', aliases: ['iodine'] },
-    { name: 'Omega-3 (Fish oil)', dose: '2–3g EPA+DHA', intake_window: 'lunch', note: 'With biggest fatty meal', icon: '🐟', aliases: ['omega 3', 'omega3', 'fish oil', 'epa', 'dha'] },
-    { name: 'Krill oil', dose: '500–1000mg', intake_window: 'lunch', note: 'More absorbable than fish oil', icon: '🐟', aliases: ['krill'] },
-    { name: 'MCT oil', dose: '1–2 tbsp', intake_window: 'morning', note: 'Fast energy — start low', icon: '🥥', aliases: ['mct'] },
-    { name: 'Flaxseed oil', dose: '1–2g', intake_window: 'lunch', note: 'Plant omega-3 — with food', icon: '🌱', aliases: ['flax', 'flaxseed'] },
-    { name: 'L-theanine', dose: '100–200mg', intake_window: 'morning', note: 'Stacks with caffeine 2:1', icon: '🧠', aliases: ['theanine'] },
-    { name: 'Caffeine', dose: '100–200mg', intake_window: 'morning', note: 'Stack with L-theanine for cleaner focus', icon: '☕', aliases: ['caffeine'] },
-    { name: 'Rhodiola rosea', dose: '200–400mg', intake_window: 'morning', note: 'Adaptogen — energy and stress', icon: '🌿', aliases: ['rhodiola'] },
-    { name: 'Lion\'s mane', dose: '500–1000mg', intake_window: 'morning', note: 'Cognitive support — daily', icon: '🍄', aliases: ['lions mane', 'hericium'] },
-    { name: 'Bacopa monnieri', dose: '300–600mg', intake_window: 'morning', note: 'With fat — long-term memory', icon: '🌿', aliases: ['bacopa'] },
-    { name: 'Ginkgo biloba', dose: '120–240mg', intake_window: 'morning', note: 'Circulation and cognition', icon: '🌿', aliases: ['ginkgo'] },
-    { name: 'Alpha-GPC', dose: '300–600mg', intake_window: 'morning', note: 'Choline — focus and learning', icon: '🧠', aliases: ['alpha gpc'] },
-    { name: 'Phosphatidylserine', dose: '100–300mg', intake_window: 'evening', note: 'Cortisol regulation', icon: '🧠', aliases: ['ps'] },
-    { name: 'NAC', dose: '600–1800mg', intake_window: 'morning', note: 'Glutathione precursor — split doses', icon: '💊', aliases: ['nac', 'n-acetyl cysteine'] },
-    { name: 'Melatonin', dose: '0.3–3mg', intake_window: 'evening', note: '30–60 min before bed — start low', icon: '🌙', aliases: ['melatonin'] },
-    { name: 'Glycine', dose: '3g', intake_window: 'evening', note: 'Body temp drop = better sleep onset', icon: '🌙', aliases: ['glycine'] },
-    { name: 'Apigenin', dose: '50mg', intake_window: 'evening', note: 'From chamomile — before bed', icon: '🌙', aliases: ['apigenin'] },
-    { name: 'Ashwagandha', dose: '300–600mg', intake_window: 'evening', note: 'KSM-66 form — stress and cortisol', icon: '🌿', aliases: ['ashwagandha', 'ksm-66'] },
-    { name: 'L-tryptophan', dose: '500mg–1g', intake_window: 'evening', note: 'Serotonin precursor — sleep onset', icon: '🌙', aliases: ['tryptophan'] },
-    { name: 'GABA', dose: '500–750mg', intake_window: 'evening', note: 'Calming — before bed', icon: '🌙', aliases: ['gaba'] },
-    { name: 'Valerian root', dose: '300–600mg', intake_window: 'evening', note: 'Sleep onset support', icon: '🌙', aliases: ['valerian'] },
-    { name: 'Probiotics', dose: '10–50 billion CFU', intake_window: 'morning', note: 'Empty stomach or with food', icon: '🦠', aliases: ['probiotic'] },
-    { name: 'Quercetin', dose: '500–1000mg', intake_window: 'anytime', note: 'Pairs well with vitamin C', icon: '🌿', aliases: ['quercetin'] },
-    { name: 'Curcumin', dose: '500–1000mg', intake_window: 'lunch', note: 'With black pepper + fat', icon: '🌿', aliases: ['curcumin', 'turmeric'] },
-    { name: 'Resveratrol', dose: '250–500mg', intake_window: 'morning', note: 'With fat for absorption', icon: '🍇', aliases: ['resveratrol'] },
-    { name: 'CoQ10 / Ubiquinol', dose: '100–200mg', intake_window: 'lunch', note: 'Fat-soluble — with biggest meal', icon: '💊', aliases: ['coq10', 'ubiquinol'] },
-    { name: 'Alpha lipoic acid', dose: '300–600mg', intake_window: 'morning', note: 'Empty stomach for absorption', icon: '💊', aliases: ['ala', 'alpha lipoic'] },
-    { name: 'Glutathione', dose: '250–1000mg', intake_window: 'morning', note: 'Liposomal form for absorption', icon: '💊', aliases: ['glutathione'] },
-    { name: 'Astaxanthin', dose: '4–12mg', intake_window: 'lunch', note: 'Fat-soluble — with fatty meal', icon: '💊', aliases: ['astaxanthin'] },
-    { name: 'Berberine', dose: '500mg', intake_window: 'lunch', note: 'Before meals — glucose support', icon: '💊', aliases: ['berberine'] },
-    { name: 'Milk thistle', dose: '200–400mg', intake_window: 'anytime', note: 'Silymarin — liver support', icon: '🌿', aliases: ['milk thistle', 'silymarin'] },
-    { name: 'Spirulina', dose: '3–5g', intake_window: 'morning', note: 'Algae — protein and antioxidants', icon: '🌱', aliases: ['spirulina'] },
-    { name: 'Chlorella', dose: '2–4g', intake_window: 'morning', note: 'Algae — detox support', icon: '🌱', aliases: ['chlorella'] },
-    { name: 'Tongkat ali', dose: '200–400mg', intake_window: 'morning', note: 'Cycle 8 weeks on/off', icon: '🌿', aliases: ['tongkat', 'longjack'] },
-    { name: 'Fadogia agrestis', dose: '600mg', intake_window: 'morning', note: 'Cycle 8 weeks on/off', icon: '🌿', aliases: ['fadogia'] },
-    { name: 'DHEA', dose: '25–50mg', intake_window: 'morning', note: 'Hormonal — consult doctor', icon: '💊', aliases: ['dhea'] },
-    { name: 'Pregnenolone', dose: '10–50mg', intake_window: 'morning', note: 'Hormonal — consult doctor', icon: '💊', aliases: ['pregnenolone'] },
-    { name: 'Tribulus terrestris', dose: '250–750mg', intake_window: 'morning', note: 'Libido and energy', icon: '🌿', aliases: ['tribulus'] },
-    { name: 'Maca root', dose: '1.5–3g', intake_window: 'morning', note: 'Adaptogen — energy and libido', icon: '🌿', aliases: ['maca'] },
-    { name: 'Collagen peptides', dose: '10–20g', intake_window: 'anytime', note: 'With vitamin C for synthesis', icon: '💅', aliases: ['collagen'] },
-    { name: 'Glucosamine', dose: '1500mg', intake_window: 'lunch', note: 'With food', icon: '🦴', aliases: ['glucosamine'] },
-    { name: 'Chondroitin', dose: '1200mg', intake_window: 'lunch', note: 'Often paired with glucosamine', icon: '🦴', aliases: ['chondroitin'] },
-    { name: 'MSM', dose: '1–3g', intake_window: 'anytime', note: 'Joint support', icon: '🦴', aliases: ['msm'] },
-    { name: 'Hyaluronic acid', dose: '120–200mg', intake_window: 'anytime', note: 'Skin and joint hydration', icon: '💅', aliases: ['hyaluronic', 'ha'] },
-    { name: 'Cordyceps', dose: '1–3g', intake_window: 'morning', note: 'Energy and endurance', icon: '🍄', aliases: ['cordyceps'] },
-    { name: 'Reishi', dose: '1–2g', intake_window: 'evening', note: 'Calming adaptogen', icon: '🍄', aliases: ['reishi', 'ganoderma'] },
-    { name: 'Chaga', dose: '1–2g', intake_window: 'morning', note: 'Antioxidant and immune', icon: '🍄', aliases: ['chaga'] },
-  ];
+const STACK_DEFAULTS = [
+  { id:'m1', name:'XXXXX - Supplement of choice', dose:'', intake_window:'morning', note:'how much MG, meal times, any data below', tag:null,          ordered:true  },
+  { id:'m2', name:'XXXXX - Supplement of choice', dose:'', intake_window:'morning', note:'how much MG, meal times, any data below', tag:'stack',        ordered:true  },
+  { id:'m3', name:'XXXXX - Supplement of choice', dose:'', intake_window:'morning', note:'how much MG, meal times, any data below', tag:null,          ordered:true  },
+  { id:'l1', name:'XXXXX - Supplement of choice', dose:'', intake_window:'lunch',   note:'how much MG, meal times, any data below', tag:null,          ordered:true  },
+  { id:'l2', name:'XXXXX - Supplement of choice', dose:'', intake_window:'lunch',   note:'how much MG, meal times, any data below', tag:null,          ordered:true  },
+  { id:'e1', name:'XXXXX - Supplement of choice', dose:'', intake_window:'evening', note:'how much MG, meal times, any data below', tag:null,          ordered:true  },
+  { id:'e2', name:'XXXXX - Supplement of choice', dose:'', intake_window:'evening', note:'how much MG, meal times, any data below', tag:'not-ordered', ordered:false },
+  { id:'e3', name:'XXXXX - Supplement of choice', dose:'', intake_window:'evening', note:'how much MG, meal times, any data below', tag:null,          ordered:true  },
+];
 
-  let currentItems = [];
-  let currentTaken = {};
-  let currentDate = getActiveDate();
+const STACK_WINDOWS = [
+  { key:'morning', icon:'🌅', title:'Morning', time:'7–10 AM',         cutoffHour:10   },
+  { key:'lunch',   icon:'🍽️', title:'Lunch',   time:'12–2 PM',         cutoffHour:14   },
+  { key:'evening', icon:'🌙', title:'Evening', time:'9–11 PM',         cutoffHour:23   },
+  { key:'anytime', icon:'⏱️', title:'Anytime', time:'No fixed window', cutoffHour:null },
+];
 
-  async function loadData() {
-    currentDate = getActiveDate();
-    [currentItems, currentTaken] = await Promise.all([
-      StackData.loadItems(),
-      StackData.loadTaken(currentDate)
-    ]);
-    if (!currentItems.length) {
-      currentItems = await StackData.replaceAllItems(STACK_DEFAULTS);
-    }
-  }
+const SUPPLEMENT_DB = [
+  { name:'Creatine monohydrate',   dose:'5g',           intake_window:'anytime',  note:'Daily — consistency matters more than timing',      icon:'🏋️', aliases:['creatine']                    },
+  { name:'Beta-alanine',           dose:'2–5g',         intake_window:'morning',  note:'Pre-workout — split doses to avoid tingles',        icon:'🏋️', aliases:['beta alanine']               },
+  { name:'L-citrulline',           dose:'6–8g',         intake_window:'morning',  note:'~30 min pre-workout for pump',                      icon:'🏋️', aliases:['citrulline']                  },
+  { name:'BCAAs',                  dose:'5–10g',        intake_window:'anytime',  note:'Around workout window',                             icon:'🏋️', aliases:['bcaa']                        },
+  { name:'Whey protein',           dose:'25–40g',       intake_window:'anytime',  note:'Post-workout or to hit daily target',               icon:'🥤', aliases:['whey']                        },
+  { name:'Casein protein',         dose:'25–40g',       intake_window:'evening',  note:'Before bed for slow overnight aminos',              icon:'🥤', aliases:['casein']                      },
+  { name:'L-carnitine',            dose:'1–2g',         intake_window:'morning',  note:'With carbs for best uptake',                        icon:'🏋️', aliases:['carnitine']                   },
+  { name:'Acetyl-L-carnitine',     dose:'500mg–2g',     intake_window:'morning',  note:'Cognitive variant — crosses BBB',                   icon:'🧠', aliases:['alcar']                       },
+  { name:'Vitamin D3',             dose:'2000–5000 IU', intake_window:'lunch',    note:'Fat-soluble — take with biggest meal',              icon:'☀️', aliases:['vit d','vitamin d','d3']      },
+  { name:'Vitamin K2 (MK-7)',      dose:'100–200 mcg',  intake_window:'lunch',    note:'Pairs with D3 — same meal',                         icon:'💊', aliases:['vit k','vitamin k','k2']      },
+  { name:'Vitamin C',              dose:'500–1000mg',   intake_window:'morning',  note:'Water-soluble — split if over 500mg',               icon:'🍊', aliases:['vit c','ascorbic acid']       },
+  { name:'Vitamin B12',            dose:'500–1000mcg',  intake_window:'morning',  note:'Methylcobalamin form preferred',                    icon:'⚡', aliases:['b12','methylcobalamin']       },
+  { name:'B-complex',              dose:'1 cap',        intake_window:'morning',  note:'All B vitamins — energy',                           icon:'⚡', aliases:['b complex','b vitamins']      },
+  { name:'Omega-3 (Fish oil)',     dose:'2–3g EPA+DHA', intake_window:'lunch',    note:'With biggest fatty meal',                           icon:'🐟', aliases:['omega 3','fish oil','epa','dha']},
+  { name:'Magnesium glycinate',    dose:'200–400mg',    intake_window:'evening',  note:'30–60 min before bed — sleep helper',               icon:'🌙', aliases:['magnesium','mag glycinate']   },
+  { name:'Magnesium L-threonate',  dose:'144mg elemental',intake_window:'evening',note:'Cognitive variant — crosses BBB',                  icon:'🧠', aliases:['magtein','threonate']         },
+  { name:'Zinc',                   dose:'15–30mg',      intake_window:'evening',  note:'With food — not with calcium or iron',              icon:'💊', aliases:['zinc']                        },
+  { name:'L-theanine',             dose:'100–200mg',    intake_window:'morning',  note:'Stacks with caffeine 2:1',                          icon:'🧠', aliases:['theanine']                    },
+  { name:'Rhodiola rosea',         dose:'200–400mg',    intake_window:'morning',  note:'Adaptogen — energy and stress',                     icon:'🌿', aliases:['rhodiola']                    },
+  { name:"Lion's mane",            dose:'500–1000mg',   intake_window:'morning',  note:'Cognitive support — daily',                         icon:'🍄', aliases:['lions mane']                  },
+  { name:'Ashwagandha',            dose:'300–600mg',    intake_window:'evening',  note:'KSM-66 form — stress and cortisol',                 icon:'🌿', aliases:['ashwagandha','ksm-66']        },
+  { name:'Melatonin',              dose:'0.3–3mg',      intake_window:'evening',  note:'30–60 min before bed — start low',                  icon:'🌙', aliases:['melatonin']                   },
+  { name:'Probiotics',             dose:'10–50B CFU',   intake_window:'morning',  note:'Empty stomach or with food',                        icon:'🦠', aliases:['probiotic']                   },
+  { name:'Curcumin',               dose:'500–1000mg',   intake_window:'lunch',    note:'With black pepper + fat',                           icon:'🌿', aliases:['curcumin','turmeric']         },
+  { name:'CoQ10 / Ubiquinol',      dose:'100–200mg',    intake_window:'lunch',    note:'Fat-soluble — with biggest meal',                   icon:'💊', aliases:['coq10','ubiquinol']           },
+  { name:'Collagen peptides',      dose:'10–20g',       intake_window:'anytime',  note:'With vitamin C for synthesis',                      icon:'💅', aliases:['collagen']                    },
+  { name:'NAC',                    dose:'600–1800mg',   intake_window:'morning',  note:'Glutathione precursor — split doses',               icon:'💊', aliases:['nac','n-acetyl cysteine']     },
+];
 
-  async function toggleTaken(id) {
-    await StackData.setTaken(id, currentDate, !currentTaken[id]);
-    await render();
-  }
-  async function toggleLow(id) {
-    const item = currentItems.find(i => i.id === id);
-    if (!item) return;
-    await StackData.updateItem(id, { low_stock: !item.low_stock });
-    await render();
-  }
-  async function deleteItem(id) {
-    await StackData.deleteItem(id);
-    await render();
-  }
-  async function addItem(name, dose, windowKey, note = '') {
-    const v = String(name || '').trim();
-    if (!v) return;
-    await StackData.addItem({
-      name: v,
-      dose: String(dose || '').trim(),
-      intake_window: ['morning','lunch','evening','anytime'].includes(windowKey) ? windowKey : 'anytime',
-      note: String(note || '').trim(),
-      tag: null, ordered: true
+let _sItems = [], _sTaken = {}, _sDate = getActiveDate();
+
+async function loadStackData() {
+  _sDate = getActiveDate();
+  [_sItems, _sTaken] = await Promise.all([StackData.loadItems(), StackData.loadTaken(_sDate)]);
+  if (!_sItems.length) _sItems = await StackData.replaceAllItems(STACK_DEFAULTS);
+}
+
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function metaText(item) { const p=[]; if(item.dose) p.push(item.dose); if(item.note) p.push(item.note); return p.join(' · '); }
+
+async function renderStack() {
+  await loadStackData();
+  const total = _sItems.length;
+  const taken = _sItems.filter(i => _sTaken[i.id]).length;
+  document.getElementById('stackProgressText').textContent = `${taken} / ${total} taken today · resets at 6 AM`;
+  document.getElementById('stackProgressBar').style.width = (total ? (taken/total)*100 : 0) + '%';
+  if (!window.__rowProgress) window.__rowProgress = {};
+  window.__rowProgress.stack = { done: taken, total };
+  window.dispatchEvent(new CustomEvent('rowprogress'));
+
+  const groupsEl = document.getElementById('stackGroups');
+  groupsEl.innerHTML = '';
+  const nowHour = new Date().getHours() + new Date().getMinutes()/60;
+
+  STACK_WINDOWS.forEach(win => {
+    const winItems = _sItems.filter(i => (i.intake_window||'anytime') === win.key);
+    if (!winItems.length) return;
+    const group = document.createElement('div');
+    group.className = 'stack-window';
+    group.innerHTML = `<div class="stack-window-header"><span class="stack-window-icon">${win.icon}</span><span class="stack-window-title">${win.title}</span><span class="stack-window-time">${win.time}</span></div>`;
+    const past = win.cutoffHour !== null && nowHour > win.cutoffHour;
+    winItems.forEach(item => {
+      const isTaken = !!_sTaken[item.id];
+      const isMissed = !isTaken && past;
+      const isLow = !!item.low_stock;
+      const row = document.createElement('div');
+      row.className = 'stack-item' + (isTaken?' taken':'') + (isMissed?' missed':'');
+      let tagHtml = '';
+      if (item.tag === 'stack') tagHtml = '<span class="stack-item-tag tag-stack">stack</span>';
+      else if (item.tag === 'not-ordered') tagHtml = '<span class="stack-item-tag tag-not-ordered">not ordered</span>';
+      row.innerHTML = `
+        <button class="stack-check ${isTaken?'checked':''}" data-action="toggle" data-id="${item.id}">${isTaken?'✓':''}</button>
+        <div class="stack-item-body">
+          <div class="stack-item-name" data-edit="name" data-id="${item.id}"><span class="stack-item-name-text">${escapeHtml(item.name)}</span>${tagHtml}</div>
+          <div class="stack-item-meta" data-edit="meta" data-id="${item.id}">${escapeHtml(metaText(item))}</div>
+        </div>
+        <button class="stack-low-btn ${isLow?'is-low':''}" data-action="low" data-id="${item.id}">↓ Running low</button>
+        <button class="stack-item-del" data-action="del" data-id="${item.id}">×</button>`;
+      group.appendChild(row);
     });
-    await render();
-  }
-  async function updateItemField(id, field, value) {
-    await StackData.updateItem(id, { [field]: value });
-  }
-
-  async function render() {
-    await loadData();
-    const items = currentItems;
-    const taken = currentTaken;
-    const totalCount = items.length;
-    const takenCount = items.filter(i => taken[i.id]).length;
-    document.getElementById('stackProgressText').textContent =
-      `${takenCount} / ${totalCount} taken today · resets at 6 AM`;
-    const pct = totalCount === 0 ? 0 : (takenCount / totalCount) * 100;
-    document.getElementById('stackProgressBar').style.width = pct + '%';
-
-    if (!window.__rowProgress) window.__rowProgress = {};
-    window.__rowProgress.stack = { done: takenCount, total: totalCount };
-    window.dispatchEvent(new CustomEvent('rowprogress'));
-
-    const groupsEl = document.getElementById('stackGroups');
-    groupsEl.innerHTML = '';
-
-    const now = new Date();
-    const nowHour = now.getHours() + (now.getMinutes() / 60);
-
-    STACK_WINDOWS.forEach(win => {
-      const winItems = items.filter(i => (i.intake_window || 'anytime') === win.key);
-      if (winItems.length === 0) return;
-
-      const group = document.createElement('div');
-      group.className = 'stack-window';
-      group.innerHTML = `
-        <div class="stack-window-header">
-          <span class="stack-window-icon">${win.icon}</span>
-          <span class="stack-window-title">${win.title}</span>
-          <span class="stack-window-time">${win.time}</span>
-        </div>`;
-
-      const isPastCutoff = win.cutoffHour !== null && nowHour > win.cutoffHour;
-
-      winItems.forEach(item => {
-        const isTaken = !!taken[item.id];
-        const isLow = !!item.low_stock;
-        const isMissed = !isTaken && isPastCutoff;
-
-        const row = document.createElement('div');
-        row.className = 'stack-item' + (isTaken ? ' taken' : '') + (isMissed ? ' missed' : '');
-
-        let tagHtml = '';
-        if (item.tag === 'stack') tagHtml = '<span class="stack-item-tag tag-stack">stack</span>';
-        else if (item.tag === 'not-ordered') tagHtml = '<span class="stack-item-tag tag-not-ordered">not ordered</span>';
-
-        row.innerHTML = `
-          <button class="stack-check ${isTaken ? 'checked' : ''}" data-action="toggle" data-id="${item.id}" aria-label="Mark taken">${isTaken ? '✓' : ''}</button>
-          <div class="stack-item-body">
-            <div class="stack-item-name" data-edit="name" data-id="${item.id}">
-              <span class="stack-item-name-text">${escapeHtml(item.name)}</span>${tagHtml}
-            </div>
-            <div class="stack-item-meta" data-edit="meta" data-id="${item.id}">${escapeHtml(metaText(item))}</div>
-          </div>
-          <button class="stack-low-btn ${isLow ? 'is-low' : ''}" data-action="low" data-id="${item.id}">↓ Running low</button>
-          <button class="stack-item-del" data-action="del" data-id="${item.id}" aria-label="Delete">×</button>`;
-
-        group.appendChild(row);
-      });
-
-      groupsEl.appendChild(group);
-    });
-
-    if (groupsEl.children.length === 0) {
-      groupsEl.innerHTML = `<div class="stack-window-empty">No items yet — add one below to start your stack.</div>`;
-    }
-
-    renderTicker();
-  }
-
-  // ====== TICKER ======
-  let tickerIndex = 0;
-  let tickerInterval = null;
-  let cachedIssues = [];
-
-  function getStackIssues() {
-    const items = currentItems;
-    const taken = currentTaken;
-    const now = new Date();
-    const nowHour = now.getHours() + (now.getMinutes() / 60);
-
-    const missed = [];
-    const lowList = [];
-
-    items.forEach(item => {
-      const win = STACK_WINDOWS.find(w => w.key === (item.intake_window || 'anytime'));
-      const isPastCutoff = win && win.cutoffHour !== null && nowHour > win.cutoffHour;
-      const isTaken = !!taken[item.id];
-      if (isPastCutoff && !isTaken) {
-        missed.push({
-          type: 'missed',
-          text: `${item.name} — missed ${win.title.toLowerCase()} dose`
-        });
-      }
-      if (item.low_stock) {
-        lowList.push({
-          type: 'low',
-          text: `${item.name} — running low, reorder soon`
-        });
-      }
-    });
-
-    return [...missed, ...lowList];
-  }
-
-  function renderTicker() {
-    const issues = getStackIssues();
-    const tickerEl = document.getElementById('stackTicker');
-    const msgEl = document.getElementById('stackTickerMsg');
-    const countEl = document.getElementById('stackTickerCount');
-    const totalItems = currentItems.length;
-
-    cachedIssues = issues;
-
-    if (issues.length === 0) {
-      msgEl.textContent = 'All caught up — keep it rolling';
-      tickerEl.classList.remove('status-low', 'status-missed');
-      countEl.textContent = `0/${totalItems}`;
-      tickerIndex = 0;
-      return;
-    }
-
-    const hasMissed = issues.some(i => i.type === 'missed');
-    tickerEl.classList.remove('status-low', 'status-missed');
-    tickerEl.classList.add(hasMissed ? 'status-missed' : 'status-low');
-
-    if (tickerIndex >= issues.length) tickerIndex = 0;
-    msgEl.textContent = issues[tickerIndex].text;
-    countEl.textContent = `${issues.length}/${totalItems}`;
-  }
-
-  function cycleTicker() {
-    if (cachedIssues.length <= 1) {
-      renderTicker();
-      return;
-    }
-    const msgEl = document.getElementById('stackTickerMsg');
-    msgEl.classList.add('is-fading');
-    setTimeout(() => {
-      tickerIndex++;
-      renderTicker();
-      msgEl.classList.remove('is-fading');
-    }, 280);
-  }
-
-  function startTicker() {
-    if (tickerInterval) clearInterval(tickerInterval);
-    tickerInterval = setInterval(cycleTicker, 5000);
-  }
-
-  function metaText(item) {
-    const parts = [];
-    if (item.dose) parts.push(item.dose);
-    if (item.note) parts.push(item.note);
-    return parts.join(' · ');
-  }
-  function escapeHtml(str) {
-    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-
-  document.getElementById('stackGroups').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    e.stopPropagation();
-    const id = btn.dataset.id;
-    if (btn.dataset.action === 'toggle') toggleTaken(id);
-    else if (btn.dataset.action === 'low') toggleLow(id);
-    else if (btn.dataset.action === 'del') deleteItem(id);
+    groupsEl.appendChild(group);
   });
-  document.getElementById('stackGroups').addEventListener('pointerdown', (e) => {
-    const btn = e.target.closest('[data-action="del"]');
-    if (!btn) return;
-    e.preventDefault(); e.stopPropagation();
-    deleteItem(btn.dataset.id);
-  });
-  // async actions — event handlers fire and forget; render() re-fetches state
-  document.getElementById('stackGroups').addEventListener('click', (e) => {
-    const editEl = e.target.closest('[data-edit]');
-    if (!editEl) return;
-    if (e.target.closest('[data-action]')) return;
-    if (editEl.getAttribute('contenteditable') === 'true') return;
-    startEdit(editEl);
-  });
+  if (!groupsEl.children.length) groupsEl.innerHTML = `<div class="stack-window-empty">No items yet — add one below.</div>`;
+  renderTicker();
+}
 
-  function startEdit(el) {
-    const id = el.dataset.id;
-    const field = el.dataset.edit;
-    if (field === 'name') {
-      const textSpan = el.querySelector('.stack-item-name-text');
-      if (!textSpan) return;
-      textSpan.setAttribute('contenteditable', 'true');
-      textSpan.style.outline = '1px solid rgba(255,255,255,0.25)';
-      textSpan.style.outlineOffset = '4px';
-      textSpan.style.borderRadius = '4px';
-      textSpan.focus();
-      placeCaretAtEnd(textSpan);
-      const finish = (commit) => {
-        textSpan.removeAttribute('contenteditable');
-        textSpan.style.outline = ''; textSpan.style.outlineOffset = '';
-        if (commit) {
-          const newVal = textSpan.textContent.trim();
-          if (newVal) updateItemField(id, 'name', newVal).then(render); else render();
-        } else render();
-      };
-      textSpan.addEventListener('blur', () => finish(true), { once: true });
-      textSpan.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); textSpan.blur(); }
-        if (e.key === 'Escape') { textSpan.blur(); render(); }
-      });
-    }
-    if (field === 'meta') {
-      el.setAttribute('contenteditable', 'true');
-      el.focus(); placeCaretAtEnd(el);
-      const finishMeta = (commit) => {
-        el.removeAttribute('contenteditable');
-        if (commit) {
-          const text = el.textContent.trim();
-          const parts = text.split(/\s*·\s*/);
-          Promise.all([
-            updateItemField(id, 'dose', parts[0] || ''),
-            updateItemField(id, 'note', parts.slice(1).join(' · '))
-          ]).then(render);
-        } else render();
-      };
-      el.addEventListener('blur', () => finishMeta(true), { once: true });
-      el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
-        if (e.key === 'Escape') { el.blur(); render(); }
-      });
-    }
+let _tickIdx=0, _tickInterval=null, _tickIssues=[];
+function getStackIssues() {
+  const nowHour = new Date().getHours() + new Date().getMinutes()/60;
+  const missed=[], low=[];
+  _sItems.forEach(item => {
+    const win = STACK_WINDOWS.find(w => w.key===(item.intake_window||'anytime'));
+    if (win && win.cutoffHour!==null && nowHour>win.cutoffHour && !_sTaken[item.id])
+      missed.push({ type:'missed', text:`${item.name} — missed ${win.title.toLowerCase()} dose` });
+    if (item.low_stock) low.push({ type:'low', text:`${item.name} — running low, reorder soon` });
+  });
+  return [...missed, ...low];
+}
+function renderTicker() {
+  const issues = getStackIssues();
+  const ticker = document.getElementById('stackTicker');
+  const msg = document.getElementById('stackTickerMsg');
+  const cnt = document.getElementById('stackTickerCount');
+  _tickIssues = issues;
+  if (!issues.length) { msg.textContent='All caught up — keep it rolling'; ticker.classList.remove('status-low','status-missed'); cnt.textContent=`0/${_sItems.length}`; _tickIdx=0; return; }
+  ticker.classList.remove('status-low','status-missed');
+  ticker.classList.add(issues.some(i=>i.type==='missed') ? 'status-missed' : 'status-low');
+  if (_tickIdx >= issues.length) _tickIdx = 0;
+  msg.textContent = issues[_tickIdx].text;
+  cnt.textContent = `${issues.length}/${_sItems.length}`;
+}
+function cycleTicker() {
+  if (_tickIssues.length<=1) { renderTicker(); return; }
+  const msg = document.getElementById('stackTickerMsg');
+  msg.classList.add('is-fading');
+  setTimeout(() => { _tickIdx++; renderTicker(); msg.classList.remove('is-fading'); }, 280);
+}
+function startTicker() { if(_tickInterval) clearInterval(_tickInterval); _tickInterval=setInterval(cycleTicker,5000); }
+
+document.getElementById('stackGroups').addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]'); if (!btn) return;
+  e.stopPropagation();
+  const id = btn.dataset.id;
+  if (btn.dataset.action==='toggle') StackData.setTaken(id,_sDate,!_sTaken[id]).then(renderStack);
+  else if (btn.dataset.action==='low') { const it=_sItems.find(i=>i.id===id); if(it) StackData.updateItem(id,{low_stock:!it.low_stock}).then(renderStack); }
+  else if (btn.dataset.action==='del') StackData.deleteItem(id).then(renderStack);
+});
+document.getElementById('stackGroups').addEventListener('pointerdown', e => {
+  const btn = e.target.closest('[data-action="del"]'); if (!btn) return;
+  e.preventDefault(); e.stopPropagation();
+  StackData.deleteItem(btn.dataset.id).then(renderStack);
+});
+document.getElementById('stackGroups').addEventListener('click', e => {
+  const el = e.target.closest('[data-edit]');
+  if (!el || e.target.closest('[data-action]') || el.getAttribute('contenteditable')==='true') return;
+  startEdit(el);
+});
+
+function placeCaretAtEnd(el) { const r=document.createRange(); r.selectNodeContents(el); r.collapse(false); const s=window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+function startEdit(el) {
+  const id=el.dataset.id, field=el.dataset.edit;
+  if (field==='name') {
+    const span=el.querySelector('.stack-item-name-text'); if(!span) return;
+    span.setAttribute('contenteditable','true'); span.style.cssText='outline:1px solid rgba(255,255,255,0.25);outline-offset:4px;border-radius:4px';
+    span.focus(); placeCaretAtEnd(span);
+    const done=(commit)=>{ span.removeAttribute('contenteditable'); span.style.cssText=''; if(commit){const v=span.textContent.trim(); if(v) StackData.updateItem(id,{name:v}).then(renderStack); else renderStack();} else renderStack(); };
+    span.addEventListener('blur',()=>done(true),{once:true});
+    span.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();span.blur();} if(e.key==='Escape'){span.blur();renderStack();} });
   }
-
-  function placeCaretAtEnd(el) {
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    range.collapse(false);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
+  if (field==='meta') {
+    el.setAttribute('contenteditable','true'); el.focus(); placeCaretAtEnd(el);
+    const done=(commit)=>{ el.removeAttribute('contenteditable'); if(commit){const parts=el.textContent.trim().split(/\s*·\s*/); Promise.all([StackData.updateItem(id,{dose:parts[0]||''}),StackData.updateItem(id,{note:parts.slice(1).join(' · ')})]).then(renderStack);} else renderStack(); };
+    el.addEventListener('blur',()=>done(true),{once:true});
+    el.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();el.blur();} if(e.key==='Escape'){el.blur();renderStack();} });
   }
+}
 
-  // ====== ADD FORM + SEARCH AUTOCOMPLETE ======
-  const nameInput = document.getElementById('stackAddName');
-  const doseInput = document.getElementById('stackAddDose');
-  const winSelect = document.getElementById('stackAddWindow');
-  const addBtn = document.getElementById('stackAddBtn');
-  const resultsEl = document.getElementById('stackSearchResults');
+const _nameIn=document.getElementById('stackAddName');
+const _doseIn=document.getElementById('stackAddDose');
+const _winSel=document.getElementById('stackAddWindow');
+const _addBtn=document.getElementById('stackAddBtn');
+const _resEl =document.getElementById('stackSearchResults');
+let _pendNote='';
 
-  let pendingNote = ''; // hidden note auto-filled when a DB result is selected
+function searchSupplements(q) {
+  const ql=q.toLowerCase().trim(); if(!ql) return [];
+  const starts=[], contains=[];
+  SUPPLEMENT_DB.forEach(s => {
+    const all=[s.name.toLowerCase(),...(s.aliases||[]).map(a=>a.toLowerCase())];
+    if(all.some(n=>n.startsWith(ql))) starts.push(s);
+    else if(all.some(n=>n.includes(ql))) contains.push(s);
+  });
+  return [...starts,...contains].slice(0,6);
+}
+function renderSearchResults(q) {
+  const m=searchSupplements(q);
+  if(!q.trim()||!m.length){_resEl.hidden=true;_resEl.innerHTML='';return;}
+  _resEl.hidden=false;
+  _resEl.innerHTML=m.map(s=>{const wm=STACK_WINDOWS.find(w=>w.key===s.intake_window)||STACK_WINDOWS[3]; return `<button class="stack-result" data-name="${escapeHtml(s.name)}" data-dose="${escapeHtml(s.dose)}" data-intake-window="${s.intake_window}" data-note="${escapeHtml(s.note)}"><div class="stack-result-icon">${s.icon||'💊'}</div><div class="stack-result-body"><div class="stack-result-name">${escapeHtml(s.name)}</div><div class="stack-result-meta">${escapeHtml(s.dose)} · ${wm.icon} ${wm.title.toLowerCase()} · ${escapeHtml(s.note)}</div></div></button>`;}).join('');
+}
+_nameIn.addEventListener('input',()=>{ renderSearchResults(_nameIn.value); _pendNote=''; });
+_nameIn.addEventListener('focus',()=>{ if(_nameIn.value.trim()) renderSearchResults(_nameIn.value); });
+document.addEventListener('click',e=>{ if(!e.target.closest('.stack-name-wrap')) _resEl.hidden=true; });
+_resEl.addEventListener('click',e=>{ const btn=e.target.closest('.stack-result'); if(!btn) return; _nameIn.value=btn.dataset.name; _doseIn.value=btn.dataset.dose; _winSel.value=btn.dataset.intakeWindow; _pendNote=btn.dataset.note; _resEl.hidden=true; _addBtn.focus(); });
+_addBtn.addEventListener('click',()=>{
+  const name=_nameIn.value.trim(); if(!name) return;
+  StackData.addItem({name,dose:_doseIn.value.trim(),intake_window:['morning','lunch','evening','anytime'].includes(_winSel.value)?_winSel.value:'anytime',note:_pendNote,tag:null,ordered:true}).then(renderStack);
+  _nameIn.value=''; _doseIn.value=''; _pendNote=''; _resEl.hidden=true; _nameIn.focus();
+});
+[_nameIn,_doseIn].forEach(inp=>inp.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){if(!_resEl.hidden&&inp===_nameIn){const f=_resEl.querySelector('.stack-result');if(f){e.preventDefault();f.click();return;}} _addBtn.click();}
+  if(e.key==='Escape') _resEl.hidden=true;
+}));
 
-  function searchSupplements(q) {
-    const query = q.toLowerCase().trim();
-    if (!query) return [];
-    const starts = [];
-    const contains = [];
-    SUPPLEMENT_DB.forEach(s => {
-      const nameLC = s.name.toLowerCase();
-      const aliases = (s.aliases || []).map(a => a.toLowerCase());
-      const allNames = [nameLC, ...aliases];
-      if (allNames.some(n => n.startsWith(query))) starts.push(s);
-      else if (allNames.some(n => n.includes(query))) contains.push(s);
-    });
-    return [...starts, ...contains].slice(0, 6);
+setInterval(renderStack, 60000);
+StackData.subscribeItems(renderStack);
+StackData.subscribeLogs(renderStack);
+await renderStack();
+startTicker();
+
+// ════════════════════════════════════════════════════════════
+// WATER TAB
+// ════════════════════════════════════════════════════════════
+
+const SUBSTANCE_DB = [
+  { id:'adderall',   name:'Adderall (mixed amphetamine salts)', cat:'ADHD stim',    unit:'mg',           defaultDose:20,  mlPerUnit:25,   note:'Stim · reduces thirst signal' },
+  { id:'concerta',   name:'Concerta (methylphenidate ER)',      cat:'ADHD stim',    unit:'mg',           defaultDose:36,  mlPerUnit:13.9, note:'Stim · reduces thirst signal' },
+  { id:'vyvanse',    name:'Vyvanse (lisdexamfetamine)',         cat:'ADHD stim',    unit:'mg',           defaultDose:50,  mlPerUnit:10,   note:'Stim prodrug · long acting'   },
+  { id:'ritalin',    name:'Ritalin IR (methylphenidate)',       cat:'ADHD stim',    unit:'mg',           defaultDose:20,  mlPerUnit:20,   note:'Short-acting stim'            },
+  { id:'modafinil',  name:'Modafinil',                          cat:'Wakefulness',  unit:'mg',           defaultDose:200, mlPerUnit:1.75, note:'Mild dehydrating effect'      },
+  { id:'lithium',    name:'Lithium',                            cat:'Mood',         unit:'mg',           defaultDose:600, mlPerUnit:1.67, note:'Critical — narrow therapeutic window' },
+  { id:'hctz',       name:'Hydrochlorothiazide (HCTZ)',         cat:'Diuretic',     unit:'mg',           defaultDose:25,  mlPerUnit:40,   note:'Direct diuretic'              },
+  { id:'lasix',      name:'Furosemide (Lasix)',                 cat:'Diuretic',     unit:'mg',           defaultDose:40,  mlPerUnit:30,   note:'Loop diuretic'                },
+  { id:'nicotine',   name:'Nicotine pouch (Velo / Zyn)',        cat:'Stim',         unit:'pouches/day',  defaultDose:4,   mlPerUnit:62.5, note:'Dry mouth'                    },
+  { id:'alcohol',    name:'Alcohol',                            cat:'Depressant',   unit:'drinks/day',   defaultDose:1,   mlPerUnit:400,  note:'~10 ml urine per gram ethanol' },
+  { id:'cannabis',   name:'Cannabis / THC',                     cat:'Other',        unit:'sessions/day', defaultDose:1,   mlPerUnit:250,  note:'Cottonmouth'                  },
+  { id:'creatine',   name:'Creatine monohydrate',               cat:'Supplement',   unit:'g/day',        defaultDose:5,   mlPerUnit:80,   note:'Pulls water into muscle cells' },
+  { id:'preworkout', name:'Pre-workout (caffeine + others)',    cat:'Stim',         unit:'servings/day', defaultDose:1,   mlPerUnit:300,  note:'High-stim formula'            },
+  { id:'sertraline', name:'SSRI (sertraline / escitalopram)',   cat:'SSRI',         unit:'mg',           defaultDose:50,  mlPerUnit:4,    note:'Mild dry mouth'               },
+  { id:'wellbutrin', name:'Bupropion (Wellbutrin)',             cat:'NDRI',         unit:'mg',           defaultDose:300, mlPerUnit:1.17, note:'Stim-like profile'            },
+];
+
+function wSubExtraMl(s) { return Math.max(0, ((s.dose!=null?s.dose:s.defaultDose)||0)*(s.mlPerUnit||0)); }
+function wSubDoseLabel(s) { return (s.dose!=null?s.dose:s.defaultDose)+' '+(s.unit||''); }
+function wEsc(s) { return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const w$ = id => document.getElementById(id);
+
+function wNormalize(s) {
+  s=s||{}; s.unit=s.unit||'bottle'; s.bottleMl=s.bottleMl||500; s.glassMl=s.glassMl||250; s.weightUnit=s.weightUnit||'kg';
+  s.profile=Object.assign({weightKg:75,age:25,sex:'m',activityHrsPerWeek:5},s.profile||{});
+  s.caffeineMgPerDay=(s.caffeineMgPerDay!=null)?s.caffeineMgPerDay:200;
+  s.substances=Array.isArray(s.substances)?s.substances:[];
+  s.logs=(s.logs&&typeof s.logs==='object')?s.logs:{};
+  return s;
+}
+
+let wState = wNormalize({});
+
+function wSave() {
+  WaterData.saveProfile({
+    unit:wState.unit, bottle_ml:wState.bottleMl, glass_ml:wState.glassMl, weight_unit:wState.weightUnit,
+    weight_kg:wState.profile.weightKg, age:wState.profile.age, sex:wState.profile.sex,
+    activity_hrs_per_week:wState.profile.activityHrsPerWeek, caffeine_mg_per_day:wState.caffeineMgPerDay,
+    substances:wState.substances
+  }).catch(console.error);
+}
+
+function wDk(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function wToday() { return wDk(new Date()); }
+function wCount() { return wState.logs[wToday()]||0; }
+function wSetCount(n) { const k=wToday(); const c=Math.max(0,n); if(c===0) delete wState.logs[k]; else wState.logs[k]=c; WaterData.setLogCount(k,c).catch(console.error); }
+
+function wCalcTarget() {
+  const p=wState.profile; const wKg=wState.weightUnit==='lb'?p.weightKg/2.20462:p.weightKg;
+  const base=wKg*35; const exercise=(p.activityHrsPerWeek||0)/7*500;
+  const caffeine=Math.max(0,(wState.caffeineMgPerDay||0)-200)*1.5;
+  const subs=(wState.substances||[]).reduce((s,x)=>s+wSubExtraMl(x),0);
+  let adj=0; if(p.sex==='m') adj+=200; if((p.age||0)>=50) adj+=100;
+  return {base,exercise,caffeine,subs,adjust:adj,total:base+exercise+caffeine+subs+adj};
+}
+function wVolMl() { return {bottle:wState.bottleMl||500,glass:wState.glassMl||250,oz:30,ml:1}[wState.unit]||500; }
+function wPlural() { return {bottle:'bottles',glass:'glasses',oz:'oz',ml:'ml'}[wState.unit]||'bottles'; }
+function wSingular() { return {bottle:'bottle',glass:'glass',oz:'oz',ml:'ml'}[wState.unit]||'bottle'; }
+function wFmt(ml) { return ml>=1000?(ml/1000).toFixed(1)+' L':Math.round(ml)+' ml'; }
+
+function wRenderWater() {
+  const calc=wCalcTarget(); const tgt=Math.ceil(calc.total/wVolMl()); const cnt=wCount();
+  w$('wWaterUnitLabel').textContent=wPlural().toUpperCase()+' DRANK TODAY';
+  w$('wWaterNum').textContent=cnt; w$('wWaterTarget').textContent='/ '+tgt;
+  w$('wWaterPlusLabel').textContent='Drank a '+wSingular();
+  const pct=(cnt/tgt)*100; const fill=w$('wWaterBarFill');
+  fill.style.width=Math.min(150,pct)/1.5+'%'; fill.classList.toggle('over',pct>100);
+  w$('wWaterBarMin').textContent='0'; w$('wWaterBarMax').textContent=Math.ceil(tgt*1.5)+'+';
+  w$('wWaterBarZoneStart').style.left=(65/1.5)+'%'; w$('wWaterBarZoneEnd').style.left=(100/1.5)+'%';
+  const h=w$('wWaterHelper');
+  if(cnt===0){h.textContent='Start the day — first one in.';h.classList.remove('good');}
+  else if(pct<50){h.textContent='Behind pace — drink one in the next hour.';h.classList.remove('good');}
+  else if(pct<100){h.textContent=(tgt-cnt)+' to go. Pacing well.';h.classList.remove('good');}
+  else if(pct<130){h.textContent='✓ Target hit — top up if you train this evening.';h.classList.add('good');}
+  else{h.textContent='Strong — way past target.';h.classList.add('good');}
+  w$('wWaterMinusBtn').disabled=cnt<=0;
+  wRenderWhy(calc,tgt);
+  if(!window.__rowProgress) window.__rowProgress={};
+  window.__rowProgress.water={done:cnt,total:tgt};
+  window.dispatchEvent(new CustomEvent('rowprogress'));
+  wRenderHistory(); wRenderSpark(tgt);
+}
+
+function wRenderWhy(calc,tgt) {
+  const wd=wState.profile.weightKg.toFixed(0); const u=wState.weightUnit;
+  let h=`<div class="why-row"><span class="why-label">Base (${wd} ${u} × 35 ml)</span><span class="why-val">${wFmt(calc.base)}</span></div>`;
+  if(calc.exercise>0) h+=`<div class="why-row"><span class="why-label">+ Exercise (${wState.profile.activityHrsPerWeek} h/wk)</span><span class="why-val">+ ${wFmt(calc.exercise)}</span></div>`;
+  if(calc.caffeine>0) h+=`<div class="why-row"><span class="why-label">+ Caffeine (${wState.caffeineMgPerDay} mg/day)</span><span class="why-val">+ ${wFmt(calc.caffeine)}</span></div>`;
+  (wState.substances||[]).forEach(s=>{ h+=`<div class="why-row"><span class="why-label">+ ${wEsc(s.name)} (${wEsc(wSubDoseLabel(s))})</span><span class="why-val">+ ${wFmt(wSubExtraMl(s))}</span></div>`; });
+  if(calc.adjust>0) h+=`<div class="why-row"><span class="why-label">+ Sex / age adjustment</span><span class="why-val">+ ${wFmt(calc.adjust)}</span></div>`;
+  h+=`<div class="why-row total"><span class="why-label">Daily target</span><span class="why-val">${wFmt(calc.total)} ≈ ${tgt} ${wPlural()}</span></div>`;
+  w$('wWhyBody').innerHTML=h;
+}
+
+function wRenderHistory() {
+  const tgt=Math.ceil(wCalcTarget().total/wVolMl());
+  const dows=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const days=[];
+  for(let i=6;i>=1;i--){const d=new Date();d.setDate(d.getDate()-i);days.push({d,k:wDk(d)});}
+  w$('wHistList').innerHTML=days.map(({d,k})=>{
+    const cnt=wState.logs[k]||0; const pct=Math.min(100,(cnt/tgt)*100);
+    return `<div class="hist-row"><span class="hist-date">${dows[d.getDay()]} ${d.getMonth()+1}/${d.getDate()}</span><div class="hist-bar-wrap"><div class="hist-bar-fill ${cnt>=tgt?'':'miss'}" style="width:${pct}%"></div></div><span class="hist-count">${cnt}/${tgt}</span></div>`;
+  }).join('')||'<div style="text-align:center;font-size:12px;color:var(--text-tertiary);padding:12px 0">No logs yet.</div>';
+}
+
+function wRenderSpark(tgt) {
+  const svg=w$('wSparkSvg'); const W=280,H=70,pad=4,days=14; const data=[];
+  for(let i=days-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);data.push(wState.logs[wDk(d)]||0);}
+  const max=Math.max(tgt,...data)||1; const colW=(W-pad*2)/data.length; const bW=colW*0.7;
+  const ty=H-pad-(tgt/max)*(H-pad*2);
+  let html=`<line class="spark-target" x1="0" x2="${W}" y1="${ty.toFixed(1)}" y2="${ty.toFixed(1)}"/>`;
+  data.forEach((v,i)=>{const x=pad+i*colW+(colW-bW)/2;const h=(v/max)*(H-pad*2);html+=`<rect class="${v>=tgt?'spark-bar':'spark-bar miss'}" x="${x.toFixed(1)}" y="${(H-pad-h).toFixed(1)}" width="${bW.toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="2"/>`;});
+  svg.innerHTML=html;
+}
+
+w$('wWaterPlusBtn').addEventListener('click',()=>{ wSetCount(wCount()+1); wRenderWater(); const b=w$('wWaterPlusBtn'); b.style.transform='scale(0.97)'; setTimeout(()=>{b.style.transform='';},120); });
+w$('wWaterMinusBtn').addEventListener('click',()=>{ wSetCount(Math.max(0,wCount()-1)); wRenderWater(); });
+w$('wWhyToggle').addEventListener('click',()=>{ const b=w$('wWhyBody'); b.classList.toggle('show'); w$('wWhyToggle').setAttribute('aria-expanded',b.classList.contains('show')?'true':'false'); });
+
+function wRenderSettings() {
+  w$('wSetWeight').value=wState.profile.weightKg; w$('wSetAge').value=wState.profile.age;
+  w$('wSetActivity').value=wState.profile.activityHrsPerWeek; w$('wSetCaffeine').value=wState.caffeineMgPerDay;
+  w$('wSetBottleMl').value=wState.bottleMl; w$('wSetGlassMl').value=wState.glassMl;
+  wSegActive('wSetUnit',wState.unit,'u'); wSegActive('wSetWeightUnit',wState.weightUnit,'u'); wSegActive('wSetSex',wState.profile.sex,'s');
+  wRenderSubs();
+}
+function wSegActive(id,val,attr) { w$(id).querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset[attr]===val)); }
+function wBindSeg(id,attr,fn) { w$(id).querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ w$(id).querySelectorAll('button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); fn(b.dataset[attr]); })); }
+wBindSeg('wSetUnit','u',v=>{wState.unit=v;wSave();wRenderWater();});
+wBindSeg('wSetWeightUnit','u',v=>{wState.weightUnit=v;wSave();wRenderWater();});
+wBindSeg('wSetSex','s',v=>{wState.profile.sex=v;wSave();wRenderWater();});
+['wSetWeight','wSetAge','wSetActivity','wSetCaffeine','wSetBottleMl','wSetGlassMl'].forEach(id=>{
+  w$(id).addEventListener('input',()=>{
+    const v=parseFloat(w$(id).value);
+    if(id==='wSetWeight') wState.profile.weightKg=v||0;
+    else if(id==='wSetAge') wState.profile.age=v||0;
+    else if(id==='wSetActivity') wState.profile.activityHrsPerWeek=v||0;
+    else if(id==='wSetCaffeine') wState.caffeineMgPerDay=v||0;
+    else if(id==='wSetBottleMl') wState.bottleMl=v||500;
+    else if(id==='wSetGlassMl') wState.glassMl=v||250;
+    wSave(); wRenderWater();
+  });
+});
+
+function wRenderSubs() {
+  const list=w$('wSubsList');
+  if(!wState.substances||!wState.substances.length){list.innerHTML='<div style="font-size:12px;color:var(--text-tertiary);text-align:center;padding:14px 0;font-style:italic;">No substances added.</div>';return;}
+  list.innerHTML=wState.substances.map((s,i)=>`<div class="w-sub-row"><div class="w-sub-row-info"><div class="w-sub-row-name">${wEsc(s.name)}</div><div class="w-sub-row-meta">+ ${wFmt(wSubExtraMl(s))} / day · ${wEsc(s.cat||'')}</div></div><div class="w-sub-row-dose"><input type="number" class="w-sub-dose-input" data-i="${i}" min="0" step="0.5" value="${s.dose!=null?s.dose:s.defaultDose}"><span class="w-sub-dose-unit">${wEsc(s.unit||'')}</span></div><button class="w-sub-row-del" data-i="${i}">×</button></div>`).join('');
+  list.querySelectorAll('.w-sub-dose-input').forEach(inp=>{inp.addEventListener('input',()=>{const i=parseInt(inp.dataset.i,10);wState.substances[i].dose=parseFloat(inp.value)||0;wSave();inp.closest('.w-sub-row').querySelector('.w-sub-row-meta').textContent='+ '+wFmt(wSubExtraMl(wState.substances[i]))+' / day · '+(wState.substances[i].cat||'');wRenderWater();});});
+  list.querySelectorAll('.w-sub-row-del').forEach(b=>b.addEventListener('click',()=>{wState.substances.splice(parseInt(b.dataset.i,10),1);wSave();wRenderSubs();wRenderWater();}));
+}
+
+w$('wSubSearch').addEventListener('input',e=>{
+  const q=e.target.value.trim().toLowerCase(); const res=w$('wSubResults');
+  if(!q){res.classList.remove('show');res.innerHTML='';return;}
+  const m=SUBSTANCE_DB.filter(s=>s.name.toLowerCase().includes(q)||s.cat.toLowerCase().includes(q)).slice(0,8);
+  if(!m.length){res.innerHTML='<div class="w-search-result"><span class="w-search-result-name">No matches</span></div>';res.classList.add('show');return;}
+  res.innerHTML=m.map(s=>`<div class="w-search-result" data-id="${s.id}"><span class="w-search-result-name">${wEsc(s.name)} <span class="w-search-result-add">+</span></span><span class="w-search-result-meta">${wEsc(s.cat)} · ${s.defaultDose} ${wEsc(s.unit)} → ~${wFmt((s.defaultDose||0)*(s.mlPerUnit||0))}/day</span></div>`).join('');
+  res.classList.add('show');
+  res.querySelectorAll('.w-search-result').forEach(el=>el.addEventListener('click',()=>{
+    const sub=SUBSTANCE_DB.find(x=>x.id===el.dataset.id); if(!sub) return;
+    if((wState.substances||[]).find(x=>x.id===sub.id)){alert('Already added — edit the dose below.');return;}
+    wState.substances.push({id:sub.id,name:sub.name,cat:sub.cat,unit:sub.unit,mlPerUnit:sub.mlPerUnit,defaultDose:sub.defaultDose,dose:sub.defaultDose});
+    wSave(); w$('wSubSearch').value=''; res.classList.remove('show'); wRenderSubs(); wRenderWater();
+  }));
+});
+document.addEventListener('click',e=>{ if(!e.target.closest('.w-search-wrap')) w$('wSubResults').classList.remove('show'); });
+w$('wSettingsBtn').addEventListener('click',()=>{ wRenderSettings(); w$('wSetModalBg').classList.add('show'); });
+w$('wSetClose').addEventListener('click',()=>w$('wSetModalBg').classList.remove('show'));
+w$('wSetReset').addEventListener('click',async()=>{
+  if(!confirm('Wipe ALL water logs and settings?')) return;
+  wState=wNormalize({});
+  await WaterData.saveProfile({unit:wState.unit,bottle_ml:wState.bottleMl,glass_ml:wState.glassMl,weight_unit:wState.weightUnit,weight_kg:wState.profile.weightKg,age:wState.profile.age,sex:wState.profile.sex,activity_hrs_per_week:wState.profile.activityHrsPerWeek,caffeine_mg_per_day:wState.caffeineMgPerDay,substances:wState.substances});
+  await WaterData.setLogCount(wToday(),0);
+  w$('wSetModalBg').classList.remove('show'); wRenderWater();
+});
+
+async function initWaterTab() {
+  const prof=await WaterData.loadProfile();
+  if(prof){
+    wState=wNormalize({unit:prof.unit,bottleMl:prof.bottle_ml,glassMl:prof.glass_ml,weightUnit:prof.weight_unit,profile:{weightKg:prof.weight_kg,age:prof.age,sex:prof.sex,activityHrsPerWeek:prof.activity_hrs_per_week},caffeineMgPerDay:prof.caffeine_mg_per_day,substances:prof.substances||[]});
   }
-
-  function renderSearchResults(q) {
-    const matches = searchSupplements(q);
-    if (!q.trim() || matches.length === 0) {
-      resultsEl.hidden = true;
-      resultsEl.innerHTML = '';
-      return;
-    }
-    resultsEl.hidden = false;
-    resultsEl.innerHTML = matches.map(s => {
-      const winMeta = STACK_WINDOWS.find(w => w.key === s.intake_window) || STACK_WINDOWS[3];
-      return `
-        <button class="stack-result" data-name="${escapeHtml(s.name)}" data-dose="${escapeHtml(s.dose)}" data-intake-window="${s.intake_window}" data-note="${escapeHtml(s.note)}">
-          <div class="stack-result-icon">${s.icon || '💊'}</div>
-          <div class="stack-result-body">
-            <div class="stack-result-name">${escapeHtml(s.name)}</div>
-            <div class="stack-result-meta">${escapeHtml(s.dose)} · ${winMeta.icon} ${winMeta.title.toLowerCase()} · ${escapeHtml(s.note)}</div>
-          </div>
-        </button>`;
-    }).join('');
-  }
-
-  nameInput.addEventListener('input', () => {
-    renderSearchResults(nameInput.value);
-    pendingNote = ''; // reset note if user is typing manually
-  });
-  nameInput.addEventListener('focus', () => {
-    if (nameInput.value.trim()) renderSearchResults(nameInput.value);
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.stack-name-wrap')) resultsEl.hidden = true;
-  });
-
-  resultsEl.addEventListener('click', (e) => {
-    const btn = e.target.closest('.stack-result');
-    if (!btn) return;
-    nameInput.value = btn.dataset.name;
-    doseInput.value = btn.dataset.dose;
-    winSelect.value = btn.dataset.intakeWindow;
-    pendingNote = btn.dataset.note;
-    resultsEl.hidden = true;
-    addBtn.focus();
-  });
-
-  addBtn.addEventListener('click', () => {
-    addItem(nameInput.value, doseInput.value, winSelect.value, pendingNote);
-    nameInput.value = '';
-    doseInput.value = '';
-    pendingNote = '';
-    resultsEl.hidden = true;
-    nameInput.focus();
-  });
-
-  [nameInput, doseInput].forEach(i => {
-    i.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        if (!resultsEl.hidden && i === nameInput) {
-          const firstResult = resultsEl.querySelector('.stack-result');
-          if (firstResult) { e.preventDefault(); firstResult.click(); return; }
-        }
-        addBtn.click();
-      }
-      if (e.key === 'Escape') resultsEl.hidden = true;
-    });
-  });
-
-  setInterval(render, 60 * 1000);
-
-  StackData.subscribeItems(render);
-  StackData.subscribeLogs(render);
-
-  await render();
-  startTicker();
+  const today=new Date();
+  const keys=Array.from({length:14},(_,i)=>{const d=new Date(today);d.setDate(today.getDate()-i);return wDk(d);});
+  const counts=await Promise.all(keys.map(k=>WaterData.loadLog(k)));
+  keys.forEach((k,i)=>{ if(counts[i]>0) wState.logs[k]=counts[i]; });
+  WaterData.subscribeLog(()=>{ WaterData.loadLog(wToday()).then(n=>{wState.logs[wToday()]=n;wRenderWater();}).catch(console.error); });
+  wRenderWater();
+}
 </script>
 
 </body>
