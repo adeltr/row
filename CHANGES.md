@@ -1,3 +1,11 @@
+# Phase 2 Step 3 — INTAKE tab restructure (2026-06-03)
+
+Phase 2 Step 3 done — `health.html` now has STACK | WATER | NUTRITION tabs. NUTRITION tab is placeholder, Step 4 will build the full UI in next session.
+
+Steps 1–3 complete. Step 4 (nutrition tab UI) not started.
+
+---
+
 # Phase 1 Setup Guide
 
 ## What Phase 1 adds
