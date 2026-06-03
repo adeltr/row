@@ -1,3 +1,36 @@
+# Phase 3A-2 — Stretching tab (2026-06-03)
+
+## SQL migration
+File: `supabase/migrations/20260603_phase3a2_stretching.sql`  
+Run in Supabase SQL Editor — idempotent (`ON CONFLICT DO NOTHING` on bucket insert).  
+New tables: `stretch_routines`, `stretches`, `stretching_logs`.  
+New Storage bucket: `stretch-photos` (private, owner-scoped policies).
+
+## New JS module
+`js/stretching-data.js` — full CRUD for routines + stretches + logs:
+- `loadRoutines`, `loadRoutineWithStretches` (joined, ordered by `order_index`)
+- `addRoutine`, `updateRoutine`, `deleteRoutine`
+- `addStretch`, `updateStretch`, `deleteStretch`, `reorderStretches`
+- `uploadStretchPhoto` — Canvas-compresses to 1080px JPEG, uploads to private bucket, stores storage path
+- `getStretchPhotoUrl` — creates 1-hour signed URL on demand
+- `deleteStretchPhoto` — removes from storage + nulls `photo_url`
+- `loadStretchingLogs`, `addStretchingLog`, `deleteStretchingLog`
+- `computeCurrentStreak(logs)` — pure function, consecutive days from today/yesterday
+- `subscribeStretching(callback)` — realtime on all 3 tables
+
+## gym.html — STRETCHING tab
+- Replaces placeholder with full functional UI
+- **Check-in card**: routine picker, duration (min), notes, LOG SESSION button, 5s undo toast, streak badge
+- **Routines list**: cards with last-used date, ▶ view / ✎ edit / ✕ delete
+- **+ NEW button**: slide-up modal (name + description)
+- **Routine detail modal**: stretches list with photo thumbnails, ↑↓ reorder, edit, delete, + ADD STRETCH
+- **Add/Edit stretch modal**: name, description, hold duration, photo upload with inline preview + remove
+- **History section** (collapsible): 30-day calendar grid with green dots on logged days, click a day for detail, 4 stats (sessions/min this week + 30d)
+- All data loads lazily on first tab activation (`_stchInit` flag)
+- Photo URLs generated as signed URLs (private bucket) asynchronously after render
+
+---
+
 # Phase 3A-1 — Programs + Workout Player + History + Stats (2026-06-03)
 
 ## SQL migration

@@ -1,5 +1,34 @@
 # CONTEXT_HANDOFF.md — Row Dashboard
 
+## Phase 3A — COMPLETE ✓ (both 3A-1 and 3A-2)
+
+### Phase 3A-2 — Stretching tab
+
+| Step | Deliverable | Status |
+|------|---|---|
+| 9 | SQL migration: `stretch_routines`, `stretches`, `stretching_logs`, `stretch-photos` bucket | ✓ Done |
+| 10 | `js/stretching-data.js` — CRUD, photo upload/signed URLs, streak, realtime | ✓ Done |
+| 11 | STRETCHING tab UI: check-in, routines, detail modal, stretch modal, history calendar | ✓ Done |
+| 12 | CHANGES.md + CONTEXT_HANDOFF.md updated | ✓ Done |
+
+### Phase 3A-2 architecture decisions
+
+- `photo_url` stores the Supabase storage **path** (`{user_id}/{stretchId}.jpg`), not a public URL (bucket is private)
+- Signed URLs generated on-demand via `getStretchPhotoUrl(path)` → 1-hour expiry; called async after render
+- Photo upload flow: save stretch first → get ID → upload (so we always have a real ID for the path)
+- Canvas compression: 1080px max width, JPEG 85% quality, before upload
+- `computeCurrentStreak` is pure: takes log array, returns int; streak must include today or yesterday to be "active"
+- Stretching JS lazy-inits on first tab click (`_stchInit` flag); module imported once via `getStchMod()`
+- Three slide-up modals (`stch-modal-overlay`): routine editor, routine detail, stretch editor
+- `stchRenderCalendar` is not called on init — only when history panel is expanded (performance)
+
+### What comes next — Phase 3B (Running)
+
+- RUNNING tab currently shows placeholder "Coming in Phase 3B"
+- Scope: run tracking, pace analysis, training plans
+
+---
+
 ## Phase 3A-1 — COMPLETE ✓ (needs prod test before 3A-2)
 
 ### What Phase 3A-1 adds

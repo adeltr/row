@@ -1578,6 +1578,79 @@ img, video, canvas, svg { max-width: 100%; }
 .wp-finish-notes { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text-1); font-family:var(--font-mono); font-size:12px; padding:8px 10px; box-sizing:border-box; min-height:56px; resize:vertical; margin-bottom:12px; }
 .wp-save-btn { width:100%; background:var(--good); border:none; border-radius:10px; color:#0a0a0b; font-family:var(--font-mono); font-size:13px; font-weight:700; padding:12px; cursor:pointer; letter-spacing:0.1em; margin-bottom:8px; }
 .wp-discard-btn { width:100%; background:transparent; border:1px solid rgba(239,68,68,0.28); border-radius:10px; color:#f87171; font-family:var(--font-mono); font-size:11px; padding:9px; cursor:pointer; }
+
+/* ── STRETCHING TAB ─────────────────────────────────────────── */
+.stch-checkin-card { background:linear-gradient(135deg,rgba(110,231,183,0.05),rgba(255,255,255,0.02)); border:1px solid rgba(110,231,183,0.15); border-radius:16px; padding:16px; margin-bottom:20px; }
+.stch-checkin-header { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.stch-checkin-title { font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:0.14em; color:var(--text-3); text-transform:uppercase; }
+.stch-streak-badge { font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--text-3); }
+.stch-checkin-row { display:flex; gap:8px; margin-bottom:8px; }
+.stch-select { flex:1; min-width:0; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text-1); font-family:var(--font-mono); font-size:12px; padding:7px 10px; }
+.stch-dur-input { width:72px; flex-shrink:0; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text-1); font-family:var(--font-mono); font-size:12px; padding:7px 10px; text-align:center; }
+.stch-notes-input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text-1); font-family:var(--font-mono); font-size:12px; padding:7px 10px; margin-bottom:10px; resize:none; box-sizing:border-box; }
+.stch-log-btn { width:100%; background:var(--good); border:none; border-radius:8px; color:#0a0a0b; font-family:var(--font-mono); font-size:12px; font-weight:700; padding:10px; cursor:pointer; letter-spacing:0.10em; -webkit-tap-highlight-color:transparent; }
+.stch-log-btn:hover { opacity:0.88; }
+.stch-toast { margin-top:10px; background:rgba(110,231,183,0.12); border:1px solid rgba(110,231,183,0.25); border-radius:8px; padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; font-family:var(--font-mono); font-size:11px; color:var(--good); }
+.stch-toast.hidden { display:none !important; }
+.stch-toast-undo { background:transparent; border:1px solid rgba(110,231,183,0.4); border-radius:5px; color:var(--good); font-family:var(--font-mono); font-size:10px; font-weight:700; padding:3px 8px; cursor:pointer; white-space:nowrap; }
+.stch-section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.stch-section-label { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.16em; color:var(--text-3); text-transform:uppercase; }
+.stch-new-btn { background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--good); font-family:var(--font-mono); font-size:10px; font-weight:700; padding:4px 10px; cursor:pointer; letter-spacing:0.06em; transition:background 0.15s; -webkit-tap-highlight-color:transparent; }
+.stch-new-btn:hover { background:rgba(110,231,183,0.08); }
+.stch-collapse-btn { background:transparent; border:none; color:var(--text-3); font-family:var(--font-mono); font-size:10px; font-weight:700; cursor:pointer; letter-spacing:0.08em; -webkit-tap-highlight-color:transparent; }
+.stch-routine-card { display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:11px 12px; margin-bottom:8px; transition:border-color 0.15s; }
+.stch-routine-card:hover { border-color:rgba(110,231,183,0.2); }
+.stch-rc-info { flex:1; min-width:0; }
+.stch-rc-name { font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--text-1); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stch-rc-desc { font-size:11px; color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stch-rc-last { font-family:var(--font-mono); font-size:9px; color:var(--text-3); margin-top:2px; }
+.stch-rc-actions { display:flex; gap:4px; flex-shrink:0; }
+.stch-rc-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; color:var(--text-2); font-size:12px; padding:5px 8px; cursor:pointer; transition:background 0.15s; -webkit-tap-highlight-color:transparent; }
+.stch-rc-btn:hover { background:rgba(255,255,255,0.10); }
+.stch-rc-btn.danger:hover { background:rgba(239,68,68,0.14); border-color:rgba(239,68,68,0.3); color:#f87171; }
+.stch-empty { text-align:center; padding:24px; color:var(--text-3); font-family:var(--font-mono); font-size:11px; }
+.stch-loading { padding:24px; text-align:center; color:var(--text-3); font-family:var(--font-mono); font-size:12px; }
+.stch-cal { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:12px; }
+.stch-cal-cell { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:9px; color:var(--text-3); background:rgba(255,255,255,0.03); border-radius:4px; cursor:pointer; transition:background 0.1s; border:1px solid transparent; }
+.stch-cal-cell:hover { border-color:var(--border); }
+.stch-cal-cell.logged { background:rgba(110,231,183,0.14); color:var(--good); font-weight:700; }
+.stch-hist-totals { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px; }
+.stch-hist-stat { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:8px 4px; text-align:center; }
+.stch-hist-stat-val { font-family:var(--font-mono); font-size:15px; font-weight:700; color:var(--text-1); margin-bottom:2px; }
+.stch-hist-stat-lbl { font-family:var(--font-mono); font-size:8px; color:var(--text-3); line-height:1.3; text-transform:uppercase; letter-spacing:0.04em; }
+.stch-day-detail { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:12px; }
+.stch-day-date { font-family:var(--font-mono); font-size:10px; font-weight:700; color:var(--text-3); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.1em; }
+.stch-day-log-row { display:flex; align-items:baseline; gap:8px; font-size:12px; color:var(--text-2); padding:3px 0; flex-wrap:wrap; }
+.stch-day-dur { font-family:var(--font-mono); font-size:11px; color:var(--good); flex-shrink:0; }
+.stch-day-notes { font-size:11px; color:var(--text-3); width:100%; }
+/* Stretching modals */
+.stch-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.82); z-index:400; display:flex; align-items:flex-end; padding-bottom:env(safe-area-inset-bottom,0); }
+.stch-modal-overlay[hidden] { display:none !important; }
+.stch-modal-inner { width:100%; max-width:540px; margin:0 auto; background:#16181a; border:1px solid var(--border); border-bottom:none; border-radius:20px 20px 0 0; padding:20px 18px 32px; max-height:88vh; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.stch-modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.stch-modal-title { font-family:var(--font-mono); font-size:12px; font-weight:700; letter-spacing:0.14em; color:var(--text-1); text-transform:uppercase; }
+.stch-modal-close { background:transparent; border:none; color:var(--text-3); font-size:16px; cursor:pointer; padding:4px 8px; -webkit-tap-highlight-color:transparent; }
+.stch-modal-save { width:100%; background:var(--good); border:none; border-radius:8px; color:#0a0a0b; font-family:var(--font-mono); font-size:12px; font-weight:700; padding:10px; cursor:pointer; letter-spacing:0.10em; margin-top:14px; -webkit-tap-highlight-color:transparent; }
+.stch-modal-save:hover { opacity:0.88; }
+.stch-stretch-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+.stch-stretch-row:last-child { border-bottom:none; }
+.stch-stretch-photo-ph { width:44px; height:44px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.04); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.stch-stretch-thumb-img { width:100%; height:100%; object-fit:cover; display:block; }
+.stch-stretch-info { flex:1; min-width:0; }
+.stch-stretch-name { font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--text-1); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stch-stretch-meta { font-size:11px; color:var(--text-3); }
+.stch-stretch-acts { display:flex; gap:3px; flex-shrink:0; }
+.stch-stretch-act { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:5px; color:var(--text-2); font-size:11px; width:26px; height:26px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background 0.15s; -webkit-tap-highlight-color:transparent; padding:0; }
+.stch-stretch-act:hover { background:rgba(255,255,255,0.10); }
+.stch-stretch-act.danger:hover { background:rgba(239,68,68,0.14); border-color:rgba(239,68,68,0.3); color:#f87171; }
+.stch-detail-add-btn { width:100%; margin-top:12px; background:rgba(255,255,255,0.04); border:1px dashed var(--border); border-radius:8px; color:var(--text-2); font-family:var(--font-mono); font-size:11px; font-weight:700; padding:8px; cursor:pointer; letter-spacing:0.08em; transition:background 0.15s; }
+.stch-detail-add-btn:hover { background:rgba(255,255,255,0.08); }
+.stch-photo-upload-row { display:flex; gap:8px; align-items:center; margin-top:6px; }
+.stch-photo-upload-label { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; color:var(--text-2); font-family:var(--font-mono); font-size:10px; padding:5px 10px; cursor:pointer; transition:background 0.15s; }
+.stch-photo-upload-label:hover { background:rgba(255,255,255,0.10); }
+.stch-photo-remove-btn { background:transparent; border:1px solid rgba(239,68,68,0.28); border-radius:6px; color:#f87171; font-family:var(--font-mono); font-size:10px; padding:5px 10px; cursor:pointer; }
+.stch-photo-remove-btn.hidden { display:none !important; }
+.stch-photo-preview-img { max-width:100%; max-height:150px; border-radius:8px; display:block; margin-top:8px; }
 </style>
 </head>
 <body>
@@ -1987,11 +2060,42 @@ img, video, canvas, svg { max-width: 100%; }
 
   <!-- ══ STRETCHING ══ -->
   <div data-gym-panel="stretching" hidden>
-    <div class="gym-placeholder">
-      <div class="gym-ph-icon">🧘</div>
-      <div class="gym-ph-title">Stretching</div>
-      <div class="gym-ph-body">Stretch routines, hold timers, daily logs, and streak tracking. Coming in the next step.</div>
+
+    <!-- Today's check-in -->
+    <div class="stch-checkin-card">
+      <div class="stch-checkin-header">
+        <span class="stch-checkin-title">DID YOU STRETCH TODAY?</span>
+        <span class="stch-streak-badge" id="stchStreakBadge">—</span>
+      </div>
+      <div class="stch-checkin-row">
+        <select class="stch-select" id="stchRoutinePick">
+          <option value="">Pick a routine…</option>
+        </select>
+        <input class="stch-dur-input" id="stchDurationInput" type="number" inputmode="numeric" min="1" max="240" placeholder="min" aria-label="Duration in minutes">
+      </div>
+      <textarea class="stch-notes-input" id="stchNotesInput" placeholder="Optional notes…" rows="2"></textarea>
+      <button class="stch-log-btn" id="stchLogBtn">LOG SESSION</button>
+      <div class="stch-toast hidden" id="stchToast"></div>
     </div>
+
+    <!-- Routines -->
+    <div class="stch-section-header">
+      <span class="stch-section-label">ROUTINES</span>
+      <button class="stch-new-btn" id="stchNewRoutineBtn">+ NEW</button>
+    </div>
+    <div id="stchRoutinesList"><div class="stch-loading">Loading…</div></div>
+
+    <!-- History (collapsible) -->
+    <div class="stch-section-header" style="margin-top:20px">
+      <span class="stch-section-label">HISTORY</span>
+      <button class="stch-collapse-btn" id="stchHistoryToggle" aria-expanded="false">SHOW ▾</button>
+    </div>
+    <div id="stchHistoryPanel" hidden>
+      <div id="stchHistoryCal"></div>
+      <div class="stch-hist-totals" id="stchHistTotals"></div>
+      <div id="stchHistDayDetail"></div>
+    </div>
+
   </div>
 
   <!-- ══ RUNNING ══ -->
@@ -3854,6 +3958,7 @@ await initUserMenu();
     localStorage.setItem('gym:active_tab', name);
     document.querySelectorAll('.gym-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
     document.querySelectorAll('[data-gym-panel]').forEach(p => { p.hidden = p.dataset.gymPanel !== name; });
+    if (name === 'stretching') initStretchingTab();
   }
 
   function switchStrengthTab(name) {
@@ -4902,6 +5007,395 @@ await initUserMenu();
   };
 
 
+  // ── STRETCHING TAB ──────────────────────────────────────────────
+
+  let _stchMod = null;
+  let _stchInit = false;
+  let _stchRoutines = [];
+  let _stchLogs = [];
+  let _stchDetailRoutineId = null;
+  let _stchDetailStretches = [];
+  let _stchEditRoutineId = null;
+  let _stchEditStretchId = null;
+
+  async function getStchMod() {
+    if (!_stchMod) _stchMod = await import('./js/stretching-data.js');
+    return _stchMod;
+  }
+
+  function stchToday() { return new Date().toISOString().slice(0, 10); }
+  function stch30DaysAgo() {
+    const d = new Date(); d.setDate(d.getDate() - 29);
+    return d.toISOString().slice(0, 10);
+  }
+
+  async function initStretchingTab() {
+    if (_stchInit) { await refreshStchData(); return; }
+    _stchInit = true;
+    initStchEventListeners();
+    await refreshStchData();
+  }
+
+  async function refreshStchData() {
+    const mod = await getStchMod();
+    try {
+      [_stchRoutines, _stchLogs] = await Promise.all([
+        mod.loadRoutines(),
+        mod.loadStretchingLogs(stch30DaysAgo(), stchToday())
+      ]);
+    } catch (e) { console.error('Stretching load error:', e); return; }
+    stchPopulateSelect();
+    stchRenderStreak();
+    stchRenderRoutines();
+    const histPanel = document.getElementById('stchHistoryPanel');
+    if (!histPanel.hidden) stchRenderCalendar();
+  }
+
+  function stchPopulateSelect() {
+    const sel = document.getElementById('stchRoutinePick');
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">Pick a routine…</option>' +
+      _stchRoutines.map(r => `<option value="${escHtml(r.id)}">${escHtml(r.name)}</option>`).join('');
+    if (prev) sel.value = prev;
+  }
+
+  function stchRenderStreak() {
+    const streak = _stchMod.computeCurrentStreak(_stchLogs);
+    const badge = document.getElementById('stchStreakBadge');
+    badge.textContent = streak > 0 ? `🔥 ${streak} day streak` : 'No streak yet';
+    badge.style.color = streak > 0 ? 'var(--good)' : 'var(--text-3)';
+  }
+
+  function stchRenderRoutines() {
+    const el = document.getElementById('stchRoutinesList');
+    if (!_stchRoutines.length) {
+      el.innerHTML = '<div class="stch-empty">No routines yet — create one to get started.</div>';
+      return;
+    }
+    const lastUsed = {};
+    _stchLogs.forEach(l => {
+      if (l.routine_id && (!lastUsed[l.routine_id] || l.date > lastUsed[l.routine_id]))
+        lastUsed[l.routine_id] = l.date;
+    });
+    el.innerHTML = _stchRoutines.map(r => `
+      <div class="stch-routine-card">
+        <div class="stch-rc-info">
+          <div class="stch-rc-name">${escHtml(r.name)}</div>
+          ${r.description ? `<div class="stch-rc-desc">${escHtml(r.description)}</div>` : ''}
+          ${lastUsed[r.id] ? `<div class="stch-rc-last">Last: ${lastUsed[r.id]}</div>` : ''}
+        </div>
+        <div class="stch-rc-actions">
+          <button class="stch-rc-btn" data-action="start" data-rid="${escHtml(r.id)}" title="View stretches">▶</button>
+          <button class="stch-rc-btn" data-action="edit" data-rid="${escHtml(r.id)}" title="Edit">✎</button>
+          <button class="stch-rc-btn danger" data-action="delete" data-rid="${escHtml(r.id)}" title="Delete">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function stchRenderCalendar() {
+    const todayD = new Date();
+    const days = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(todayD); d.setDate(d.getDate() - i);
+      days.push(d.toISOString().slice(0, 10));
+    }
+    const loggedDates = new Set(_stchLogs.map(l => l.date));
+    document.getElementById('stchHistoryCal').innerHTML = `<div class="stch-cal">${
+      days.map(date => `<div class="stch-cal-cell${loggedDates.has(date) ? ' logged' : ''}" data-date="${date}" title="${date}">${date.slice(8)}</div>`).join('')
+    }</div>`;
+
+    const weekStart = new Date(todayD); weekStart.setDate(weekStart.getDate() - 6);
+    const ws = weekStart.toISOString().slice(0, 10);
+    const weekLogs  = _stchLogs.filter(l => l.date >= ws);
+    const monthLogs = _stchLogs;
+    document.getElementById('stchHistTotals').innerHTML = `
+      <div class="stch-hist-stat"><div class="stch-hist-stat-val">${weekLogs.length}</div><div class="stch-hist-stat-lbl">Sessions this week</div></div>
+      <div class="stch-hist-stat"><div class="stch-hist-stat-val">${weekLogs.reduce((s,l)=>s+(l.duration_min||0),0)||'—'}</div><div class="stch-hist-stat-lbl">Min this week</div></div>
+      <div class="stch-hist-stat"><div class="stch-hist-stat-val">${monthLogs.length}</div><div class="stch-hist-stat-lbl">Sessions (30d)</div></div>
+      <div class="stch-hist-stat"><div class="stch-hist-stat-val">${monthLogs.reduce((s,l)=>s+(l.duration_min||0),0)||'—'}</div><div class="stch-hist-stat-lbl">Min (30d)</div></div>
+    `;
+    document.getElementById('stchHistDayDetail').innerHTML = '';
+  }
+
+  function initStchEventListeners() {
+    document.getElementById('stchLogBtn').addEventListener('click', handleStchLog);
+    document.getElementById('stchNewRoutineBtn').addEventListener('click', () => openStchRoutineModal(null));
+
+    document.getElementById('stchHistoryToggle').addEventListener('click', function () {
+      const panel = document.getElementById('stchHistoryPanel');
+      const show = panel.hidden;
+      panel.hidden = !show;
+      this.textContent = show ? 'HIDE ▴' : 'SHOW ▾';
+      this.setAttribute('aria-expanded', String(show));
+      if (show) stchRenderCalendar();
+    });
+
+    document.getElementById('stchRoutinesList').addEventListener('click', async e => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const { action, rid } = btn.dataset;
+      if (action === 'start')  { openStchDetailModal(rid); return; }
+      if (action === 'edit')   { const r = _stchRoutines.find(x => x.id === rid); if (r) openStchRoutineModal(r); return; }
+      if (action === 'delete') {
+        if (!confirm('Delete this routine and all its stretches?')) return;
+        try { const mod = await getStchMod(); await mod.deleteRoutine(rid); await refreshStchData(); }
+        catch (e) { alert('Error: ' + e.message); }
+      }
+    });
+
+    // Calendar day click → show logs for that day
+    document.getElementById('stchHistoryCal').addEventListener('click', e => {
+      const cell = e.target.closest('.stch-cal-cell');
+      if (!cell) return;
+      const date = cell.dataset.date;
+      const dayLogs = _stchLogs.filter(l => l.date === date);
+      const el = document.getElementById('stchHistDayDetail');
+      if (!dayLogs.length) { el.innerHTML = ''; return; }
+      el.innerHTML = `<div class="stch-day-detail">
+        <div class="stch-day-date">${date}</div>
+        ${dayLogs.map(l => `
+          <div class="stch-day-log-row">
+            <span>${escHtml(l.stretch_routines?.name || 'No routine selected')}</span>
+            ${l.duration_min ? `<span class="stch-day-dur">${l.duration_min} min</span>` : ''}
+            ${l.notes ? `<div class="stch-day-notes">${escHtml(l.notes)}</div>` : ''}
+          </div>`).join('')}
+      </div>`;
+    });
+
+    // Routine modal
+    document.getElementById('stchRoutineModalClose').addEventListener('click', closeStchRoutineModal);
+    document.getElementById('stchRoutineModalSave').addEventListener('click', handleStchRoutineSave);
+
+    // Detail modal
+    document.getElementById('stchDetailModalClose').addEventListener('click', closeStchDetailModal);
+    document.getElementById('stchDetailAddStretchBtn').addEventListener('click', () => openStchStretchModal(null));
+    document.getElementById('stchDetailStretchList').addEventListener('click', async e => {
+      const btn = e.target.closest('[data-saction]');
+      if (!btn) return;
+      const { saction, sid } = btn.dataset;
+      if (saction === 'edit') {
+        const s = _stchDetailStretches.find(x => x.id === sid);
+        if (s) openStchStretchModal(s);
+      } else if (saction === 'delete') {
+        if (!confirm('Delete this stretch?')) return;
+        try { const mod = await getStchMod(); await mod.deleteStretch(sid); await openStchDetailModal(_stchDetailRoutineId); }
+        catch (e) { alert('Error: ' + e.message); }
+      } else if (saction === 'up' || saction === 'down') {
+        await stchMoveStretch(sid, saction === 'up' ? -1 : 1);
+      }
+    });
+
+    // Stretch modal
+    document.getElementById('stchStretchModalClose').addEventListener('click', closeStchStretchModal);
+    document.getElementById('stchStretchModalSave').addEventListener('click', handleStchStretchSave);
+    document.getElementById('stchStretchPhotoInput').addEventListener('change', e => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      document.getElementById('stchStretchPhotoPreview').innerHTML =
+        `<img src="${escHtml(url)}" class="stch-photo-preview-img" alt="Preview">`;
+    });
+    document.getElementById('stchStretchPhotoRemove').addEventListener('click', handleStchPhotoRemove);
+  }
+
+  async function handleStchLog() {
+    const routineId  = document.getElementById('stchRoutinePick').value || null;
+    const durationMin = parseInt(document.getElementById('stchDurationInput').value) || null;
+    const notes       = document.getElementById('stchNotesInput').value.trim();
+    try {
+      const mod = await getStchMod();
+      const log = await mod.addStretchingLog({ routine_id: routineId, date: stchToday(), duration_min: durationMin, notes });
+      const routineName = routineId ? (_stchRoutines.find(r => r.id === routineId)?.name || '') : '';
+      stchShowToast(
+        `✓ Logged${durationMin ? ' ' + durationMin + ' min' : ''}${routineName ? ' · ' + routineName : ''}`,
+        log.id
+      );
+      document.getElementById('stchRoutinePick').value = '';
+      document.getElementById('stchDurationInput').value = '';
+      document.getElementById('stchNotesInput').value = '';
+      await refreshStchData();
+    } catch (e) { alert('Error: ' + e.message); }
+  }
+
+  function stchShowToast(msg, logId) {
+    const toast = document.getElementById('stchToast');
+    toast.innerHTML = `<span>${escHtml(msg)}</span><button class="stch-toast-undo">UNDO</button>`;
+    toast.classList.remove('hidden');
+    toast.querySelector('.stch-toast-undo').onclick = async () => {
+      try {
+        const mod = await getStchMod();
+        await mod.deleteStretchingLog(logId);
+        toast.classList.add('hidden');
+        await refreshStchData();
+      } catch (e) { alert('Error: ' + e.message); }
+    };
+    setTimeout(() => toast.classList.add('hidden'), 5000);
+  }
+
+  // ── Routine modal ──────────────────────────────────────────────
+
+  function openStchRoutineModal(routine) {
+    _stchEditRoutineId = routine?.id || null;
+    document.getElementById('stchRoutineModalTitle').textContent = routine ? 'EDIT ROUTINE' : 'NEW ROUTINE';
+    document.getElementById('stchRoutineNameInput').value = routine?.name || '';
+    document.getElementById('stchRoutineDescInput').value = routine?.description || '';
+    document.getElementById('stchRoutineModal').removeAttribute('hidden');
+  }
+
+  function closeStchRoutineModal() {
+    document.getElementById('stchRoutineModal').setAttribute('hidden', '');
+    _stchEditRoutineId = null;
+  }
+
+  async function handleStchRoutineSave() {
+    const name = document.getElementById('stchRoutineNameInput').value.trim();
+    if (!name) { alert('Please enter a routine name.'); return; }
+    const description = document.getElementById('stchRoutineDescInput').value.trim() || '';
+    try {
+      const mod = await getStchMod();
+      if (_stchEditRoutineId) {
+        await mod.updateRoutine(_stchEditRoutineId, { name, description });
+      } else {
+        await mod.addRoutine({ name, description });
+      }
+      closeStchRoutineModal();
+      await refreshStchData();
+    } catch (e) { alert('Error: ' + e.message); }
+  }
+
+  // ── Routine detail modal ───────────────────────────────────────
+
+  async function openStchDetailModal(routineId) {
+    _stchDetailRoutineId = routineId;
+    const mod = await getStchMod();
+    let routine;
+    try { routine = await mod.loadRoutineWithStretches(routineId); }
+    catch (e) { alert('Error: ' + e.message); return; }
+    if (!routine) return;
+    _stchDetailStretches = (routine.stretches || []).slice().sort((a, b) => a.order_index - b.order_index);
+    document.getElementById('stchDetailTitle').textContent = routine.name;
+    document.getElementById('stchDetailDesc').textContent  = routine.description || '';
+    stchRenderDetailStretches();
+    document.getElementById('stchDetailModal').removeAttribute('hidden');
+  }
+
+  function closeStchDetailModal() {
+    document.getElementById('stchDetailModal').setAttribute('hidden', '');
+    _stchDetailRoutineId  = null;
+    _stchDetailStretches  = [];
+  }
+
+  function stchRenderDetailStretches() {
+    const list = document.getElementById('stchDetailStretchList');
+    if (!_stchDetailStretches.length) {
+      list.innerHTML = '<div class="stch-empty">No stretches yet — add one below.</div>';
+      return;
+    }
+    list.innerHTML = _stchDetailStretches.map((s, i) => `
+      <div class="stch-stretch-row" data-sid="${escHtml(s.id)}">
+        <div class="stch-stretch-photo-ph" id="stch-photo-${escHtml(s.id)}">${s.photo_url ? '⏳' : '📷'}</div>
+        <div class="stch-stretch-info">
+          <div class="stch-stretch-name">${escHtml(s.name)}</div>
+          <div class="stch-stretch-meta">${s.duration_sec}s${s.description ? ' · ' + escHtml(s.description) : ''}</div>
+        </div>
+        <div class="stch-stretch-acts">
+          ${i > 0 ? `<button class="stch-stretch-act" data-saction="up" data-sid="${escHtml(s.id)}" title="Move up">↑</button>` : '<span style="width:26px;display:inline-block"></span>'}
+          ${i < _stchDetailStretches.length - 1 ? `<button class="stch-stretch-act" data-saction="down" data-sid="${escHtml(s.id)}" title="Move down">↓</button>` : '<span style="width:26px;display:inline-block"></span>'}
+          <button class="stch-stretch-act" data-saction="edit" data-sid="${escHtml(s.id)}" title="Edit">✎</button>
+          <button class="stch-stretch-act danger" data-saction="delete" data-sid="${escHtml(s.id)}" title="Delete">✕</button>
+        </div>
+      </div>
+    `).join('');
+
+    // Load signed photo URLs asynchronously
+    _stchDetailStretches.forEach(s => {
+      if (!s.photo_url) return;
+      _stchMod.getStretchPhotoUrl(s.photo_url).then(url => {
+        const ph = document.getElementById('stch-photo-' + s.id);
+        if (ph) ph.innerHTML = `<img src="${escHtml(url)}" class="stch-stretch-thumb-img" alt="${escHtml(s.name)}">`;
+      }).catch(() => {});
+    });
+  }
+
+  async function stchMoveStretch(stretchId, dir) {
+    const idx = _stchDetailStretches.findIndex(s => s.id === stretchId);
+    if (idx < 0) return;
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= _stchDetailStretches.length) return;
+    const copy = [..._stchDetailStretches];
+    [copy[idx], copy[newIdx]] = [copy[newIdx], copy[idx]];
+    try {
+      const mod = await getStchMod();
+      await mod.reorderStretches(_stchDetailRoutineId, copy.map(s => s.id));
+      _stchDetailStretches = copy;
+      stchRenderDetailStretches();
+    } catch (e) { alert('Error: ' + e.message); }
+  }
+
+  // ── Stretch modal ──────────────────────────────────────────────
+
+  function openStchStretchModal(stretch) {
+    _stchEditStretchId = stretch?.id || null;
+    document.getElementById('stchStretchModalTitle').textContent = stretch ? 'EDIT STRETCH' : 'ADD STRETCH';
+    document.getElementById('stchStretchNameInput').value = stretch?.name || '';
+    document.getElementById('stchStretchDescInput').value = stretch?.description || '';
+    document.getElementById('stchStretchDurInput').value  = stretch?.duration_sec || 30;
+    document.getElementById('stchStretchPhotoInput').value = '';
+    document.getElementById('stchStretchPhotoPreview').innerHTML = '';
+    const removeBtn = document.getElementById('stchStretchPhotoRemove');
+    if (stretch?.photo_url) {
+      removeBtn.classList.remove('hidden');
+      _stchMod.getStretchPhotoUrl(stretch.photo_url).then(url => {
+        document.getElementById('stchStretchPhotoPreview').innerHTML =
+          `<img src="${escHtml(url)}" class="stch-photo-preview-img" alt="Current photo">`;
+      }).catch(() => {});
+    } else {
+      removeBtn.classList.add('hidden');
+    }
+    document.getElementById('stchStretchModal').removeAttribute('hidden');
+  }
+
+  function closeStchStretchModal() {
+    document.getElementById('stchStretchModal').setAttribute('hidden', '');
+    _stchEditStretchId = null;
+  }
+
+  async function handleStchStretchSave() {
+    const name        = document.getElementById('stchStretchNameInput').value.trim();
+    if (!name) { alert('Please enter a stretch name.'); return; }
+    const description = document.getElementById('stchStretchDescInput').value.trim() || '';
+    const duration_sec = parseInt(document.getElementById('stchStretchDurInput').value) || 30;
+    const file        = document.getElementById('stchStretchPhotoInput').files?.[0] || null;
+    try {
+      const mod = await getStchMod();
+      let stretchId = _stchEditStretchId;
+      if (stretchId) {
+        await mod.updateStretch(stretchId, { name, description, duration_sec });
+      } else {
+        const created = await mod.addStretch(_stchDetailRoutineId, { name, description, duration_sec });
+        stretchId = created.id;
+      }
+      if (file) await mod.uploadStretchPhoto(stretchId, file);
+      closeStchStretchModal();
+      await openStchDetailModal(_stchDetailRoutineId);
+    } catch (e) { alert('Error: ' + e.message); }
+  }
+
+  async function handleStchPhotoRemove() {
+    if (!_stchEditStretchId) return;
+    if (!confirm('Remove this photo?')) return;
+    try {
+      const mod = await getStchMod();
+      await mod.deleteStretchPhoto(_stchEditStretchId);
+      document.getElementById('stchStretchPhotoPreview').innerHTML = '';
+      document.getElementById('stchStretchPhotoRemove').classList.add('hidden');
+      const s = _stchDetailStretches.find(x => x.id === _stchEditStretchId);
+      if (s) s.photo_url = null;
+    } catch (e) { alert('Error: ' + e.message); }
+  }
+
+
 </script>
 
 <!-- ── Workout Player Overlay ─────────────────────────────── -->
@@ -5012,6 +5506,70 @@ await initUserMenu();
       <button class="pse-add-btn" id="pse-add-ex-btn">ADD EXERCISE</button>
     </div>
     <div style="height:24px"></div>
+  </div>
+</div>
+
+<!-- ── Stretching: New / Edit Routine Modal ───────────────── -->
+<div id="stchRoutineModal" class="stch-modal-overlay" hidden>
+  <div class="stch-modal-inner">
+    <div class="stch-modal-header">
+      <span class="stch-modal-title" id="stchRoutineModalTitle">NEW ROUTINE</span>
+      <button class="stch-modal-close" id="stchRoutineModalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="pe-form-row">
+      <label class="pe-label" for="stchRoutineNameInput">NAME</label>
+      <input class="pe-input" id="stchRoutineNameInput" type="text" placeholder="e.g. Morning Mobility" autocomplete="off">
+    </div>
+    <div class="pe-form-row">
+      <label class="pe-label" for="stchRoutineDescInput">DESCRIPTION (optional)</label>
+      <textarea class="pe-textarea" id="stchRoutineDescInput" placeholder="What is this routine for?"></textarea>
+    </div>
+    <button class="stch-modal-save" id="stchRoutineModalSave">SAVE ROUTINE</button>
+  </div>
+</div>
+
+<!-- ── Stretching: Routine Detail Modal ──────────────────── -->
+<div id="stchDetailModal" class="stch-modal-overlay" hidden>
+  <div class="stch-modal-inner">
+    <div class="stch-modal-header">
+      <span class="stch-modal-title" id="stchDetailTitle">ROUTINE</span>
+      <button class="stch-modal-close" id="stchDetailModalClose" aria-label="Close">✕</button>
+    </div>
+    <div id="stchDetailDesc" style="font-size:12px;color:var(--text-3);margin-bottom:12px;line-height:1.5"></div>
+    <div id="stchDetailStretchList"></div>
+    <button class="stch-detail-add-btn" id="stchDetailAddStretchBtn">+ ADD STRETCH</button>
+  </div>
+</div>
+
+<!-- ── Stretching: Add / Edit Stretch Modal ───────────────── -->
+<div id="stchStretchModal" class="stch-modal-overlay" hidden>
+  <div class="stch-modal-inner">
+    <div class="stch-modal-header">
+      <span class="stch-modal-title" id="stchStretchModalTitle">ADD STRETCH</span>
+      <button class="stch-modal-close" id="stchStretchModalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="pe-form-row">
+      <label class="pe-label" for="stchStretchNameInput">NAME</label>
+      <input class="pe-input" id="stchStretchNameInput" type="text" placeholder="e.g. Hip Flexor Stretch" autocomplete="off">
+    </div>
+    <div class="pe-form-row">
+      <label class="pe-label" for="stchStretchDescInput">DESCRIPTION (optional)</label>
+      <textarea class="pe-textarea" id="stchStretchDescInput" placeholder="How to perform it…"></textarea>
+    </div>
+    <div class="pe-form-row">
+      <label class="pe-label" for="stchStretchDurInput">HOLD DURATION (seconds)</label>
+      <input class="pe-input" id="stchStretchDurInput" type="number" inputmode="numeric" min="5" max="300" value="30" style="max-width:110px">
+    </div>
+    <div class="pe-form-row">
+      <label class="pe-label">PHOTO (optional)</label>
+      <div class="stch-photo-upload-row">
+        <label class="stch-photo-upload-label" for="stchStretchPhotoInput">📷 Choose photo</label>
+        <input type="file" id="stchStretchPhotoInput" accept="image/*" style="display:none">
+        <button class="stch-photo-remove-btn hidden" id="stchStretchPhotoRemove" type="button">Remove photo</button>
+      </div>
+      <div id="stchStretchPhotoPreview"></div>
+    </div>
+    <button class="stch-modal-save" id="stchStretchModalSave">SAVE STRETCH</button>
   </div>
 </div>
 
