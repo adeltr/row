@@ -1,6 +1,6 @@
 # CONTEXT_HANDOFF.md — Row Dashboard
 
-## Phase 2 — IN PROGRESS
+## Phase 2 — COMPLETE ✓
 
 ### Phase 2 status
 
@@ -9,9 +9,9 @@
 | 1 | SQL migration: `foods`, `meal_logs`, `nutrition_profile` tables + RLS + ~140 seed foods | ✓ Done |
 | 2 | `js/nutrition-data.js`: full CRUD + `computeDailyTargets` + realtime | ✓ Done |
 | 3 | `health.html`: 3-tab system (STACK \| WATER \| NUTRITION), water tracker embedded, NUTRITION placeholder | ✓ Done |
-| 4 | NUTRITION tab full UI: calorie ring, meal slots, food search, profile modal, weekly summary | ⬜ Not started — next session |
+| 4 | NUTRITION tab full UI: calorie ring, meal slots, food search, profile modal, weekly summary | ✓ Done |
 
-### Phase 2 architecture decisions so far
+### Phase 2 architecture decisions
 
 - Tab bar in `health.html` — active tab persists in `localStorage('intake:active_tab')`
 - Water tab lazy-inits on first visit (loads Supabase data only when tab opened)
@@ -20,6 +20,13 @@
 - `po-water.html` kept as fallback (not deleted)
 - `nutrition-data.js` uses `getUserId()` pattern matching all other data modules
 - `computeDailyTargets()` is a pure function (no Supabase) — Mifflin-St Jeor BMR + activity multiplier + goal adjustment
+- Nutrition tab lazy-inits on first visit (`_nutInited` flag), same pattern as water tab
+- Meal slots default all-open on first render; open state preserved across re-renders via `openKeys` Set
+- Food picker is inline per meal slot (no full-screen modal); custom food modal is separate
+- Quick favorites query `meal_logs` last 30 days, tally by `food_id`, fetch top 10 via `loadFoodsById`
+- Exercise kcal estimate: `exercise_logs.sets × 50 kcal` per set (rough placeholder — Phase 3 refines)
+- Ring SVG: `r=50`, `stroke-dasharray=314`, `stroke-dashoffset` interpolated from 314→0 as pct 0→1
+- `_nutDate` tracks viewed date; date nav disabled for future dates; all loads re-query with this date
 
 ---
 

@@ -1,3 +1,26 @@
+# Phase 2 Step 4 — NUTRITION tab full UI (2026-06-03)
+
+Full nutrition tracker built inside `health.html` NUTRITION tab:
+- Calorie ring: SVG circle progress, color-coded (green/amber/red vs target). Circumference r=50, dash=314.
+- 3 macro bars: Protein (green), Carbs (blue), Fat (amber), each with % of target fill.
+- Target breakdown panel (collapsible): BMR → TDEE → goal adj → gym bonus.
+- Date navigator: prev/next day with localStorage-persisted `_nutDate`; next-day disabled when today.
+- 4 meal slots (Breakfast/Lunch/Dinner/Snacks): collapsible, open state preserved across renders.
+- Inline food picker per meal: search input → async `loadFoods()` autocomplete dropdown (debounced 220ms) → portion input → preview → confirm.
+- "Add custom food" flow: from dropdown → modal → auto-selects new food in picker.
+- Quick favorites: top 10 used foods (last 30 days) as chip buttons — clicking opens picker in first open meal.
+- Weekly summary: SVG bar chart (7 days, target line, color-coded bars) + day labels + avg kcal/P/C/F.
+- Nutrition profile modal: weight/height/age/sex/activity/goal + optional macro overrides.
+- Smart target: Mifflin-St Jeor BMR + multiplier + goal adj + gym activity bonus (exercise_logs × 50 kcal/set).
+- All data via `nutrition-data.js`. Realtime subscription on `meal_logs`. No profile → setup modal auto-opens.
+- New modals: `nutProfileModalBg`, `nutCustomFoodModalBg`. Both close on background click.
+- `_nutInited` lazy-init flag — nutrition JS only runs on first tab switch.
+- No new files created in Step 4 — all UI added to `health.html`.
+
+Food data source: pre-seeded `foods` table (SQL migration Step 1). ~140 global foods (CIQUAL/USDA approximate values).
+
+---
+
 # Phase 2 Step 3 — INTAKE tab restructure (2026-06-03)
 
 Phase 2 Step 3 done — `health.html` now has STACK | WATER | NUTRITION tabs. NUTRITION tab is placeholder, Step 4 will build the full UI in next session.

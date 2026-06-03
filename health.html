@@ -207,9 +207,139 @@ main { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; padding
 .w-sub-row-del { background: transparent; border: none; color: var(--text-quaternary); font-size: 16px; cursor: pointer; padding: 4px 8px; }
 .w-sub-row-del:hover { color: var(--bad); }
 
-/* ── NUTRITION PLACEHOLDER ── */
-.nut-placeholder { padding: 48px 20px; text-align: center; background: var(--bg-card); border-radius: 16px; border: 1px dashed var(--border-strong); }
-.nut-placeholder p { color: var(--text-tertiary); font-size: 13px; margin: 8px 0 0; }
+/* ── NUTRITION TAB ── */
+.nut-date-bar { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px; }
+.nut-date-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 20px; line-height: 1; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.nut-date-btn:hover { background: rgba(255,255,255,0.06); }
+.nut-date-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.nut-date-label { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.10em; color: var(--text-primary); min-width: 160px; text-align: center; }
+
+.nut-ring-card { background: var(--bg-card); border-radius: 16px; padding: 20px 20px 16px; margin-bottom: 14px; backdrop-filter: blur(24px) saturate(1.2); -webkit-backdrop-filter: blur(24px) saturate(1.2); box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
+.nut-ring-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.nut-gear-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-tertiary); width: 32px; height: 32px; border-radius: 9px; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.nut-gear-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+.nut-ring-area { display: flex; align-items: center; gap: 20px; }
+.nut-ring-svg-wrap { position: relative; flex-shrink: 0; width: 120px; height: 120px; }
+.nut-ring-svg { width: 120px; height: 120px; transform: rotate(-90deg); display: block; }
+.nut-ring-track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 12; }
+.nut-ring-fill { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 0.6s cubic-bezier(0.22,1,0.36,1), stroke 0.4s; }
+.nut-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+.nut-ring-kcal { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1; }
+.nut-ring-unit { font-size: 9px; color: var(--text-tertiary); font-family: var(--font-mono); letter-spacing: 0.12em; margin-top: 2px; }
+.nut-ring-stats { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.nut-ring-stat-label { font-size: 10px; color: var(--text-tertiary); font-family: var(--font-mono); letter-spacing: 0.10em; text-transform: uppercase; margin-bottom: 2px; }
+.nut-ring-stat-val { font-size: 22px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; }
+.nut-ring-stat-val.good { color: var(--good); }
+.nut-ring-stat-val.warn { color: var(--warn); }
+.nut-ring-stat-val.bad { color: var(--bad); }
+
+.nut-macros { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; }
+.nut-macro { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px 12px; }
+.nut-macro-label { font-size: 10px; font-family: var(--font-mono); letter-spacing: 0.10em; color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 4px; }
+.nut-macro-val { font-size: 14px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1.1; margin-bottom: 6px; }
+.nut-macro-bar-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.nut-macro-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s cubic-bezier(0.22,1,0.36,1); }
+.nut-macro-bar-fill.protein { background: var(--good); }
+.nut-macro-bar-fill.carbs { background: var(--info); }
+.nut-macro-bar-fill.fat { background: var(--warn); }
+
+.nut-breakdown-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; background: transparent; border: none; border-top: 1px solid var(--border-soft); color: var(--text-tertiary); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 0 0; margin-top: 14px; cursor: pointer; transition: color 0.15s; }
+.nut-breakdown-toggle:hover { color: var(--text-secondary); }
+.nut-breakdown-body { margin-top: 8px; display: none; }
+.nut-breakdown-body.show { display: block; }
+.nut-bd-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; padding: 3px 0; }
+.nut-bd-label { color: var(--text-secondary); }
+.nut-bd-val { font-family: var(--font-mono); color: var(--text-primary); font-weight: 600; font-variant-numeric: tabular-nums; }
+.nut-bd-row.total { border-top: 1px solid var(--border); margin-top: 6px; padding-top: 8px; }
+.nut-bd-row.total .nut-bd-label { color: var(--good); font-weight: 700; }
+.nut-bd-row.total .nut-bd-val { color: var(--good); }
+
+.nut-section { margin-bottom: 16px; }
+.nut-section-head { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; }
+.nut-favs { display: flex; gap: 6px; flex-wrap: wrap; }
+.nut-fav-chip { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 6px 12px; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; white-space: nowrap; font-family: inherit; }
+.nut-fav-chip:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); border-color: var(--border-strong); }
+.nut-fav-kcal { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); margin-left: 4px; }
+.nut-favs-empty { font-size: 12px; color: var(--text-quaternary); font-style: italic; }
+
+.nut-meal { background: var(--bg-card); border-radius: 14px; margin-bottom: 10px; border: 1px solid var(--border-soft); }
+.nut-meal-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; border-radius: 14px; }
+.nut-meal-header:hover { background: rgba(255,255,255,0.02); }
+.nut-meal-icon { font-size: 18px; flex-shrink: 0; }
+.nut-meal-info { flex: 1; min-width: 0; }
+.nut-meal-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.nut-meal-sub { font-size: 11px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; margin-top: 2px; font-family: var(--font-mono); }
+.nut-meal-caret { font-size: 11px; color: var(--text-tertiary); transition: transform 0.2s; flex-shrink: 0; }
+.nut-meal.open .nut-meal-caret { transform: rotate(180deg); }
+.nut-meal-body { display: none; padding: 0 16px 14px; }
+.nut-meal.open .nut-meal-body { display: block; }
+
+.nut-entry { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border-soft); }
+.nut-entry:last-of-type { border-bottom: none; }
+.nut-entry-info { flex: 1; min-width: 0; }
+.nut-entry-name { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nut-entry-meta { font-size: 11px; color: var(--text-tertiary); font-family: var(--font-mono); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.nut-entry-kcal { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--text-secondary); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.nut-entry-del { background: transparent; border: none; color: var(--text-quaternary); font-size: 16px; cursor: pointer; padding: 4px 6px; border-radius: 6px; transition: color 0.15s, background 0.15s; line-height: 1; }
+.nut-entry-del:hover { color: var(--bad); background: rgba(255,138,138,0.08); }
+
+.nut-add-panel { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+.nut-add-food-btn { display: flex; align-items: center; gap: 6px; background: transparent; border: 1px dashed var(--border-strong); color: var(--text-tertiary); border-radius: 10px; padding: 10px 14px; width: 100%; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+.nut-add-food-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(29,158,117,0.04); }
+.nut-food-picker { margin-top: 10px; display: none; }
+.nut-food-picker.show { display: block; }
+.nut-food-search-wrap { position: relative; margin-bottom: 8px; }
+.nut-food-search-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border-strong); color: var(--text-primary); font-family: inherit; font-size: 13px; padding: 10px 12px; border-radius: 10px; outline: none; transition: border-color 0.18s; }
+.nut-food-search-input:focus { border-color: rgba(29,158,117,0.40); }
+.nut-food-search-input::placeholder { color: var(--text-tertiary); }
+.nut-food-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--bg-dropdown); border: 1px solid var(--border-strong); border-radius: 10px; max-height: 260px; overflow-y: auto; z-index: 20; padding: 4px; display: none; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 16px 40px rgba(0,0,0,0.65); }
+.nut-food-dropdown.show { display: block; }
+.nut-food-opt { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 11px; border-radius: 7px; cursor: pointer; transition: background 0.12s; }
+.nut-food-opt:hover { background: rgba(255,255,255,0.06); }
+.nut-food-opt-left { min-width: 0; flex: 1; }
+.nut-food-opt-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.nut-food-opt-meta { font-size: 10.5px; color: var(--text-tertiary); font-family: var(--font-mono); margin-top: 1px; }
+.nut-food-opt-kcal { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); font-variant-numeric: tabular-nums; flex-shrink: 0; white-space: nowrap; }
+.nut-food-custom-row { padding: 9px 12px; border-top: 1px solid var(--border-soft); cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--accent); font-size: 12px; font-weight: 600; border-radius: 7px; transition: background 0.12s; }
+.nut-food-custom-row:hover { background: rgba(29,158,117,0.06); }
+.nut-portion-row { display: grid; grid-template-columns: 1fr 80px auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+.nut-portion-preview { font-size: 12px; color: var(--text-tertiary); line-height: 1.35; }
+.nut-portion-preview strong { display: block; font-size: 13px; color: var(--text-primary); font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nut-portion-input { background: var(--bg-input); border: 1px solid var(--border-strong); color: var(--text-primary); font-family: var(--font-mono); font-size: 14px; padding: 9px 10px; border-radius: 10px; outline: none; text-align: center; width: 100%; -moz-appearance: textfield; }
+.nut-portion-input::-webkit-outer-spin-button, .nut-portion-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.nut-portion-input:focus { border-color: rgba(29,158,117,0.40); }
+.nut-portion-unit { font-size: 12px; color: var(--text-tertiary); font-family: var(--font-mono); }
+.nut-picker-actions { display: flex; gap: 8px; }
+.nut-picker-confirm { flex: 1; padding: 10px; border: none; background: linear-gradient(180deg,#ffffff 0%,#e8e5dd 100%); color: #0a0a0b; border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: transform 0.12s; box-shadow: inset 0 1px 0 rgba(255,255,255,0.55); }
+.nut-picker-confirm:disabled { opacity: 0.45; cursor: not-allowed; }
+.nut-picker-confirm:not(:disabled):hover { transform: translateY(-1px); }
+.nut-picker-cancel { padding: 10px 14px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); border-radius: 10px; font-family: inherit; font-size: 13px; cursor: pointer; transition: background 0.15s; }
+.nut-picker-cancel:hover { background: rgba(255,255,255,0.04); }
+
+.nut-weekly { background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border-soft); overflow: hidden; margin-top: 6px; }
+.nut-weekly summary { list-style: none; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-tertiary); -webkit-tap-highlight-color: transparent; user-select: none; }
+.nut-weekly summary:hover { color: var(--text-secondary); }
+.nut-weekly summary::-webkit-details-marker { display: none; }
+.nut-weekly-caret { transition: transform 0.2s; font-size: 12px; }
+.nut-weekly[open] .nut-weekly-caret { transform: rotate(180deg); }
+.nut-weekly-body { padding: 0 16px 16px; }
+.nut-weekly-svg { width: 100%; height: 80px; display: block; margin-bottom: 14px; overflow: visible; }
+.nut-weekly-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+.nut-weekly-day-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-quaternary); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 3px; }
+.nut-weekly-day-kcal { font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--text-tertiary); font-variant-numeric: tabular-nums; display: block; }
+.nut-weekly-day-kcal.today { color: var(--good); }
+.nut-weekly-avg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-soft); text-align: center; }
+.nut-weekly-avg-label { font-size: 10px; color: var(--text-tertiary); font-family: var(--font-mono); letter-spacing: 0.08em; display: block; margin-bottom: 3px; }
+.nut-weekly-avg-val { font-size: 14px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; display: block; }
+
+@media (max-width: 600px) {
+  .nut-ring-svg-wrap { width: 100px; height: 100px; }
+  .nut-ring-svg { width: 100px; height: 100px; }
+  .nut-ring-kcal { font-size: 20px; }
+  .nut-macro { padding: 8px 9px; }
+  .nut-portion-row { grid-template-columns: 1fr 70px auto; }
+  .nut-weekly-avg { grid-template-columns: repeat(2, 1fr); }
+}
 
 /* ── SHARED MODAL ── */
 .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); z-index: 100; align-items: center; justify-content: center; padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom)); }
@@ -354,12 +484,91 @@ main { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; padding
     </div>
   </div>
 
-  <!-- ══ NUTRITION TAB (placeholder — Step 4) ══ -->
+  <!-- ══ NUTRITION TAB ══ -->
   <div data-tab-panel="nutrition" hidden>
-    <div class="nut-placeholder">
-      <div class="sf-eyebrow">Nutrition</div>
-      <p>Full nutrition tracker coming in Step 4.</p>
+
+    <!-- Date navigation -->
+    <div class="nut-date-bar">
+      <button class="nut-date-btn" id="nutPrevDay" aria-label="Previous day">‹</button>
+      <span class="nut-date-label" id="nutDateLabel">Today</span>
+      <button class="nut-date-btn" id="nutNextDay" aria-label="Next day" disabled>›</button>
     </div>
+
+    <!-- Calorie ring + macros -->
+    <div class="nut-ring-card">
+      <div class="nut-ring-topbar">
+        <div class="sf-eyebrow">Daily target</div>
+        <button class="nut-gear-btn" id="nutProfileBtn" title="Nutrition profile" aria-label="Edit nutrition profile">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+      <div class="nut-ring-area">
+        <div class="nut-ring-svg-wrap">
+          <svg class="nut-ring-svg" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="nut-ring-track" cx="60" cy="60" r="50"/>
+            <circle class="nut-ring-fill" id="nutRingFill" cx="60" cy="60" r="50"
+                    stroke-dasharray="314" stroke-dashoffset="314" stroke="var(--good)"/>
+          </svg>
+          <div class="nut-ring-center">
+            <div class="nut-ring-kcal" id="nutRingKcal">0</div>
+            <div class="nut-ring-unit">kcal</div>
+          </div>
+        </div>
+        <div class="nut-ring-stats">
+          <div>
+            <div class="nut-ring-stat-label">Target</div>
+            <div class="nut-ring-stat-val" id="nutStatTarget">—</div>
+          </div>
+          <div>
+            <div class="nut-ring-stat-label">Remaining</div>
+            <div class="nut-ring-stat-val good" id="nutStatRemaining">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="nut-macros">
+        <div class="nut-macro">
+          <div class="nut-macro-label">Protein</div>
+          <div class="nut-macro-val" id="nutMacroProtein">0 g</div>
+          <div class="nut-macro-bar-track"><div class="nut-macro-bar-fill protein" id="nutBarProtein" style="width:0%"></div></div>
+        </div>
+        <div class="nut-macro">
+          <div class="nut-macro-label">Carbs</div>
+          <div class="nut-macro-val" id="nutMacroCarbs">0 g</div>
+          <div class="nut-macro-bar-track"><div class="nut-macro-bar-fill carbs" id="nutBarCarbs" style="width:0%"></div></div>
+        </div>
+        <div class="nut-macro">
+          <div class="nut-macro-label">Fat</div>
+          <div class="nut-macro-val" id="nutMacroFat">0 g</div>
+          <div class="nut-macro-bar-track"><div class="nut-macro-bar-fill fat" id="nutBarFat" style="width:0%"></div></div>
+        </div>
+      </div>
+      <button class="nut-breakdown-toggle" id="nutBreakdownToggle">
+        <span>Target breakdown</span><span>▾</span>
+      </button>
+      <div class="nut-breakdown-body" id="nutBreakdownBody"></div>
+    </div>
+
+    <!-- Quick favorites -->
+    <div class="nut-section">
+      <div class="nut-section-head">Quick add · most used</div>
+      <div class="nut-favs" id="nutFavs">
+        <span class="nut-favs-empty">Log a few foods to see your top picks here.</span>
+      </div>
+    </div>
+
+    <!-- Meal slots -->
+    <div id="nutMeals"></div>
+
+    <!-- Weekly summary -->
+    <details class="nut-weekly" id="nutWeekly">
+      <summary>Weekly summary <span class="nut-weekly-caret">▾</span></summary>
+      <div class="nut-weekly-body">
+        <svg class="nut-weekly-svg" id="nutWeeklySvg" viewBox="0 0 300 80" preserveAspectRatio="none"></svg>
+        <div class="nut-weekly-days" id="nutWeeklyDays"></div>
+        <div class="nut-weekly-avg" id="nutWeeklyAvg"></div>
+      </div>
+    </details>
+
   </div>
 </main>
 
@@ -421,23 +630,104 @@ main { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; padding
   </div>
 </div>
 
+<!-- Nutrition profile modal -->
+<div class="modal-bg" id="nutProfileModalBg">
+  <div class="modal">
+    <h3>Nutrition profile</h3>
+    <div class="modal-section">
+      <h4>Body</h4>
+      <div class="field-row">
+        <div class="field"><label>Weight (kg)</label><input type="number" id="nutProfWeight" step="0.5" min="30" max="300" placeholder="70"></div>
+        <div class="field"><label>Height (cm)</label><input type="number" id="nutProfHeight" step="1" min="100" max="250" placeholder="170"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Age</label><input type="number" id="nutProfAge" min="13" max="100" placeholder="30"></div>
+        <div class="field"><label>Sex</label>
+          <div class="seg" id="nutProfSex">
+            <button data-v="male">Male</button>
+            <button data-v="female">Female</button>
+            <button data-v="other">Other</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>Activity level</h4>
+      <div class="field">
+        <select id="nutProfActivity" class="field input" style="background:rgba(0,0,0,0.28);border:1px solid var(--border);color:var(--text-primary);font-family:inherit;font-size:14px;padding:10px 12px;border-radius:10px;outline:none;width:100%">
+          <option value="sedentary">Sedentary (desk job, no exercise)</option>
+          <option value="light">Light (1–3 days/week)</option>
+          <option value="moderate" selected>Moderate (3–5 days/week)</option>
+          <option value="active">Active (6–7 days/week)</option>
+          <option value="very_active">Very active (2× / day)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>Goal</h4>
+      <div class="seg" id="nutProfGoal">
+        <button data-v="lose">Lose −500</button>
+        <button data-v="maintain">Maintain</button>
+        <button data-v="gain">Gain +300</button>
+      </div>
+      <div style="font-size:11px;color:var(--text-tertiary);margin-top:8px;line-height:1.5">Adjustment in kcal/day vs your TDEE. Gym activity adds a bonus on top.</div>
+    </div>
+    <div class="modal-section">
+      <h4>Macro overrides <span style="font-weight:500;opacity:0.6">(optional)</span></h4>
+      <div class="field-row">
+        <div class="field"><label>Protein (g/day)</label><input type="number" id="nutProfProtein" placeholder="auto" min="0" max="500"></div>
+        <div class="field"><label>Carbs (g/day)</label><input type="number" id="nutProfCarbs" placeholder="auto" min="0" max="1000"></div>
+      </div>
+      <div class="field" style="max-width:50%"><label>Fat (g/day)</label><input type="number" id="nutProfFat" placeholder="auto" min="0" max="500"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="nutProfCancel">Cancel</button>
+      <button class="btn-primary" id="nutProfSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add custom food modal -->
+<div class="modal-bg" id="nutCustomFoodModalBg">
+  <div class="modal">
+    <h3>Add custom food</h3>
+    <div class="field"><label>Name</label><input type="text" id="nutCfName" placeholder="e.g. Homemade granola" autocomplete="off"></div>
+    <div class="field-row">
+      <div class="field"><label>Calories / 100g</label><input type="number" id="nutCfKcal" placeholder="0" min="0" step="0.1"></div>
+      <div class="field"><label>Protein (g / 100g)</label><input type="number" id="nutCfProtein" placeholder="0" min="0" step="0.1"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Carbs (g / 100g)</label><input type="number" id="nutCfCarbs" placeholder="0" min="0" step="0.1"></div>
+      <div class="field"><label>Fat (g / 100g)</label><input type="number" id="nutCfFat" placeholder="0" min="0" step="0.1"></div>
+    </div>
+    <div class="field" style="max-width:50%"><label>Default portion (g)</label><input type="number" id="nutCfPortion" value="100" min="1" step="5"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="nutCfCancel">Cancel</button>
+      <button class="btn-primary" id="nutCfSave">Save food</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { requireAuth } from './js/auth.js';
 import { initUserMenu } from './js/user-menu.js';
 import * as StackData from './js/stack-data.js';
 import * as WaterData from './js/water-data.js';
+import * as NutData from './js/nutrition-data.js';
 
 await requireAuth();
 await initUserMenu();
 
 // ── TAB SYSTEM ────────────────────────────────────────────────
 let _waterInited = false;
+let _nutInited = false;
 
 function switchTab(name) {
   localStorage.setItem('intake:active_tab', name);
   document.querySelectorAll('.intake-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
   document.querySelectorAll('[data-tab-panel]').forEach(p => { p.hidden = p.dataset.tabPanel !== name; });
   if (name === 'water' && !_waterInited) { _waterInited = true; initWaterTab().catch(console.error); }
+  if (name === 'nutrition' && !_nutInited) { _nutInited = true; initNutritionTab().catch(console.error); }
 }
 document.querySelectorAll('.intake-tab').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 const _savedTab = localStorage.getItem('intake:active_tab') || 'stack';
@@ -866,6 +1156,555 @@ async function initWaterTab() {
   WaterData.subscribeLog(()=>{ WaterData.loadLog(wToday()).then(n=>{wState.logs[wToday()]=n;wRenderWater();}).catch(console.error); });
   wRenderWater();
 }
+
+// ════════════════════════════════════════════════════════════
+// NUTRITION TAB
+// ════════════════════════════════════════════════════════════
+
+let _nutProfile = null;
+let _nutTargets = { calories: 2000, protein_g: 150, carbs_g: 250, fat_g: 67, breakdown: null };
+let _nutLogs = [];
+let _nutDate = nutTodayStr();
+let _nutPickerFood = null;
+let _nutPickerMeal = null;
+let _nutProfSexVal = 'male';
+let _nutProfGoalVal = 'maintain';
+
+function nutTodayStr() { return new Date().toISOString().slice(0, 10); }
+function nutEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function nutR(n, d=0) { return Number(n||0).toFixed(d); }
+
+function nutFmtDate(str) {
+  const d = new Date(str + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+}
+function nutDateLabel(str) {
+  const today = nutTodayStr();
+  const yd = new Date(today); yd.setDate(yd.getDate()-1);
+  if (str === today) return 'Today · ' + nutFmtDate(str);
+  if (str === yd.toISOString().slice(0,10)) return 'Yesterday · ' + nutFmtDate(str);
+  return nutFmtDate(str);
+}
+
+// ── Date navigation ──
+document.getElementById('nutPrevDay').addEventListener('click', () => {
+  const d = new Date(_nutDate); d.setDate(d.getDate()-1);
+  _nutDate = d.toISOString().slice(0,10);
+  nutRefreshDate(); nutLoad();
+});
+document.getElementById('nutNextDay').addEventListener('click', () => {
+  const d = new Date(_nutDate); d.setDate(d.getDate()+1);
+  _nutDate = d.toISOString().slice(0,10);
+  nutRefreshDate(); nutLoad();
+});
+function nutRefreshDate() {
+  document.getElementById('nutDateLabel').textContent = nutDateLabel(_nutDate);
+  document.getElementById('nutNextDay').disabled = _nutDate >= nutTodayStr();
+}
+
+// ── Init ──
+async function initNutritionTab() {
+  nutRefreshDate();
+  _nutProfile = await NutData.loadProfile();
+  if (!_nutProfile) { nutOpenProfileModal(true); }
+  else { _nutTargets = NutData.computeDailyTargets(_nutProfile, 0); }
+  await nutLoad();
+  nutLoadFavs();
+  nutLoadWeekly();
+  NutData.subscribeNutrition(async () => {
+    _nutLogs = await NutData.loadDailyLogs(_nutDate);
+    nutRenderAll();
+    nutLoadWeekly();
+  });
+}
+
+async function nutLoad() {
+  _nutLogs = await NutData.loadDailyLogs(_nutDate);
+  let actKcal = 0;
+  try {
+    const { data } = await window.__supabase.from('exercise_logs').select('sets').eq('date', _nutDate);
+    if (data) data.forEach(r => { actKcal += (r.sets||0) * 50; });
+  } catch {}
+  if (_nutProfile) _nutTargets = NutData.computeDailyTargets(_nutProfile, actKcal);
+  nutRenderAll();
+}
+
+function nutTotals() {
+  return _nutLogs.reduce((a, r) => {
+    a.calories  += r.calories  || 0;
+    a.protein_g += r.protein_g || 0;
+    a.carbs_g   += r.carbs_g   || 0;
+    a.fat_g     += r.fat_g     || 0;
+    return a;
+  }, { calories:0, protein_g:0, carbs_g:0, fat_g:0 });
+}
+
+// ── Ring + macros ──
+const NUT_C = 314; // 2π×50, matches SVG stroke-dasharray
+
+function nutRenderAll() { nutRenderRing(); nutRenderMeals(); }
+
+function nutRenderRing() {
+  const t = nutTotals();
+  const target = _nutTargets.calories;
+  const consumed = Math.round(t.calories);
+  const remaining = target - consumed;
+  const pct = target > 0 ? consumed / target : 0;
+
+  const ringColor = pct > 1.05 ? 'var(--bad)' : pct > 0.9 ? 'var(--warn)' : 'var(--good)';
+  const fill = document.getElementById('nutRingFill');
+  fill.setAttribute('stroke-dashoffset', (NUT_C * (1 - Math.min(1, pct))).toFixed(2));
+  fill.setAttribute('stroke', ringColor);
+
+  document.getElementById('nutRingKcal').textContent = consumed;
+  document.getElementById('nutStatTarget').textContent = target;
+
+  const remEl = document.getElementById('nutStatRemaining');
+  remEl.textContent = Math.abs(remaining);
+  remEl.className = 'nut-ring-stat-val ' + (remaining < 0 ? 'bad' : remaining < 200 ? 'warn' : 'good');
+
+  const pPct = _nutTargets.protein_g > 0 ? Math.min(100, (t.protein_g/_nutTargets.protein_g)*100) : 0;
+  const cPct = _nutTargets.carbs_g   > 0 ? Math.min(100, (t.carbs_g/_nutTargets.carbs_g)*100)   : 0;
+  const fPct = _nutTargets.fat_g     > 0 ? Math.min(100, (t.fat_g/_nutTargets.fat_g)*100)       : 0;
+  document.getElementById('nutMacroProtein').textContent = nutR(t.protein_g) + ' g';
+  document.getElementById('nutMacroCarbs').textContent   = nutR(t.carbs_g)   + ' g';
+  document.getElementById('nutMacroFat').textContent     = nutR(t.fat_g)     + ' g';
+  document.getElementById('nutBarProtein').style.width = pPct + '%';
+  document.getElementById('nutBarCarbs').style.width   = cPct + '%';
+  document.getElementById('nutBarFat').style.width     = fPct + '%';
+
+  const bd = _nutTargets.breakdown;
+  if (bd) {
+    let h = `
+      <div class="nut-bd-row"><span class="nut-bd-label">BMR (${_nutProfile?.sex||'—'})</span><span class="nut-bd-val">${bd.bmr} kcal</span></div>
+      <div class="nut-bd-row"><span class="nut-bd-label">TDEE × activity multiplier</span><span class="nut-bd-val">${bd.tdee} kcal</span></div>
+      <div class="nut-bd-row"><span class="nut-bd-label">Goal (${_nutProfile?.goal||'—'})</span><span class="nut-bd-val">${bd.goalAdj>=0?'+':''}${bd.goalAdj} kcal</span></div>`;
+    if (bd.actBonus) h += `<div class="nut-bd-row"><span class="nut-bd-label">Gym bonus (today)</span><span class="nut-bd-val">+${bd.actBonus} kcal</span></div>`;
+    h += `<div class="nut-bd-row total"><span class="nut-bd-label">Daily target</span><span class="nut-bd-val">${_nutTargets.calories} kcal</span></div>`;
+    document.getElementById('nutBreakdownBody').innerHTML = h;
+  }
+}
+
+// ── Breakdown toggle ──
+document.getElementById('nutBreakdownToggle').addEventListener('click', () => {
+  document.getElementById('nutBreakdownBody').classList.toggle('show');
+});
+
+// ── Meal slots ──
+const NUT_MEALS = [
+  { key:'breakfast', icon:'🌅', label:'Breakfast' },
+  { key:'lunch',     icon:'🍽️', label:'Lunch'      },
+  { key:'dinner',    icon:'🍳', label:'Dinner'     },
+  { key:'snacks',    icon:'🍎', label:'Snacks'     },
+];
+
+function nutRenderMeals() {
+  const container = document.getElementById('nutMeals');
+  const openKeys = new Set();
+  container.querySelectorAll('.nut-meal.open').forEach(el => openKeys.add(el.dataset.meal));
+
+  container.innerHTML = '';
+  NUT_MEALS.forEach(mt => {
+    const entries = _nutLogs.filter(l => l.meal_type === mt.key);
+    const mKcal = entries.reduce((s, e) => s + (e.calories||0), 0);
+    const isOpen = openKeys.size === 0 || openKeys.has(mt.key);
+
+    const el = document.createElement('div');
+    el.className = 'nut-meal' + (isOpen ? ' open' : '');
+    el.dataset.meal = mt.key;
+
+    const entriesHtml = entries.map(e => `
+      <div class="nut-entry">
+        <div class="nut-entry-info">
+          <div class="nut-entry-name">${nutEsc(e.custom_name||'—')}</div>
+          <div class="nut-entry-meta">${nutR(e.quantity_g)} g · P${nutR(e.protein_g)}g · C${nutR(e.carbs_g)}g · F${nutR(e.fat_g)}g</div>
+        </div>
+        <span class="nut-entry-kcal">${Math.round(e.calories||0)}</span>
+        <button class="nut-entry-del" data-log-id="${e.id}" aria-label="Remove">×</button>
+      </div>`).join('');
+
+    el.innerHTML = `
+      <div class="nut-meal-header">
+        <span class="nut-meal-icon">${mt.icon}</span>
+        <div class="nut-meal-info">
+          <div class="nut-meal-name">${mt.label}</div>
+          <div class="nut-meal-sub">${entries.length ? Math.round(mKcal)+' kcal · '+entries.length+' item'+(entries.length!==1?'s':'') : 'Nothing logged yet'}</div>
+        </div>
+        <span class="nut-meal-caret">▾</span>
+      </div>
+      <div class="nut-meal-body">
+        ${entriesHtml}
+        <div class="nut-add-panel">
+          <button class="nut-add-food-btn" data-meal="${mt.key}">
+            <span style="font-size:17px;line-height:1;margin-right:2px">+</span> Add food
+          </button>
+          <div class="nut-food-picker" id="nutPicker_${mt.key}">
+            <div class="nut-food-search-wrap">
+              <input type="text" class="nut-food-search-input" placeholder="Search foods…" data-meal="${mt.key}" autocomplete="off" spellcheck="false">
+              <div class="nut-food-dropdown" id="nutDrop_${mt.key}"></div>
+            </div>
+            <div class="nut-portion-row" id="nutPortionRow_${mt.key}" style="display:none">
+              <div class="nut-portion-preview" id="nutPortionPreview_${mt.key}"><strong>—</strong>0 kcal</div>
+              <input type="number" class="nut-portion-input" id="nutPortionInput_${mt.key}" value="100" min="1" step="5">
+              <span class="nut-portion-unit">g</span>
+            </div>
+            <div class="nut-picker-actions">
+              <button class="nut-picker-cancel" data-meal="${mt.key}">Cancel</button>
+              <button class="nut-picker-confirm" data-meal="${mt.key}" id="nutConfirm_${mt.key}" disabled>Add</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(el);
+  });
+
+  // Toggle meal open/close
+  container.querySelectorAll('.nut-meal-header').forEach(hdr => {
+    hdr.addEventListener('click', e => {
+      if (e.target.closest('.nut-add-panel')) return;
+      hdr.closest('.nut-meal').classList.toggle('open');
+    });
+  });
+
+  // Delete entry
+  container.querySelectorAll('.nut-entry-del').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      await NutData.deleteMealLog(btn.dataset.logId);
+      _nutLogs = await NutData.loadDailyLogs(_nutDate);
+      nutRenderAll(); nutLoadFavs(); nutLoadWeekly();
+    });
+  });
+
+  // Open food picker
+  container.querySelectorAll('.nut-add-food-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const meal = btn.dataset.meal;
+      const picker = document.getElementById('nutPicker_' + meal);
+      const wasOpen = picker.classList.contains('show');
+      document.querySelectorAll('.nut-food-picker.show').forEach(p => p.classList.remove('show'));
+      if (!wasOpen) {
+        picker.classList.add('show');
+        picker.querySelector('.nut-food-search-input').focus();
+        _nutPickerMeal = meal;
+        _nutPickerFood = null;
+      }
+    });
+  });
+
+  // Food search (debounced)
+  container.querySelectorAll('.nut-food-search-input').forEach(inp => {
+    let _t = null;
+    inp.addEventListener('input', () => { clearTimeout(_t); _t = setTimeout(() => nutDoSearch(inp), 220); });
+    inp.addEventListener('focus', () => { if (inp.value.trim()) nutDoSearch(inp); });
+  });
+
+  // Cancel picker
+  container.querySelectorAll('.nut-picker-cancel').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      nutResetPicker(btn.dataset.meal);
+      _nutPickerFood = null; _nutPickerMeal = null;
+    });
+  });
+
+  // Confirm add
+  container.querySelectorAll('.nut-picker-confirm').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!_nutPickerFood) return;
+      const meal = btn.dataset.meal;
+      const portionInput = document.getElementById('nutPortionInput_' + meal);
+      const portion = parseFloat(portionInput.value) || 100;
+      const f = _nutPickerFood;
+      const factor = portion / 100;
+      await NutData.addMealLog({
+        date: _nutDate, meal_type: meal,
+        food_id: f.id || null,
+        custom_name: f.name,
+        quantity_g: portion,
+        calories:  Math.round((f.calories_per_100g||0) * factor),
+        protein_g: Math.round((f.protein_g||0) * factor * 10) / 10,
+        carbs_g:   Math.round((f.carbs_g||0)   * factor * 10) / 10,
+        fat_g:     Math.round((f.fat_g||0)     * factor * 10) / 10,
+        fiber_g:   Math.round((f.fiber_g||0)   * factor * 10) / 10,
+      });
+      nutResetPicker(meal);
+      _nutPickerFood = null; _nutPickerMeal = null;
+      _nutLogs = await NutData.loadDailyLogs(_nutDate);
+      nutRenderAll(); nutLoadFavs(); nutLoadWeekly();
+    });
+  });
+
+  // Portion input live preview (delegated via oninput, set in nutSelectFood)
+}
+
+function nutResetPicker(meal) {
+  const picker = document.getElementById('nutPicker_' + meal);
+  if (!picker) return;
+  picker.classList.remove('show');
+  const inp = picker.querySelector('.nut-food-search-input');
+  if (inp) inp.value = '';
+  const drop = document.getElementById('nutDrop_' + meal);
+  if (drop) { drop.classList.remove('show'); drop.innerHTML = ''; }
+  const row = document.getElementById('nutPortionRow_' + meal);
+  if (row) row.style.display = 'none';
+  const confirm = document.getElementById('nutConfirm_' + meal);
+  if (confirm) confirm.disabled = true;
+}
+
+async function nutDoSearch(inp) {
+  const meal = inp.dataset.meal;
+  const q = inp.value.trim();
+  const drop = document.getElementById('nutDrop_' + meal);
+  if (!q) { drop.classList.remove('show'); drop.innerHTML = ''; return; }
+
+  const results = await NutData.loadFoods(q, 8);
+  drop.innerHTML = '';
+
+  if (results.length) {
+    results.forEach(food => {
+      const portionKcal = Math.round((food.calories_per_100g||0) * (food.default_portion_g||100) / 100);
+      const opt = document.createElement('div');
+      opt.className = 'nut-food-opt';
+      opt.innerHTML = `
+        <div class="nut-food-opt-left">
+          <div class="nut-food-opt-name">${nutEsc(food.name)}${food.is_custom ? '<span style="margin-left:6px;font-size:9px;color:var(--accent);font-family:var(--font-mono);font-weight:700">CUSTOM</span>' : ''}</div>
+          <div class="nut-food-opt-meta">${food.calories_per_100g} kcal · P${food.protein_g}g · C${food.carbs_g}g · F${food.fat_g}g per 100g</div>
+        </div>
+        <span class="nut-food-opt-kcal">${food.default_portion_g}g → ${portionKcal}</span>`;
+      opt.addEventListener('click', () => nutSelectFood(food, meal));
+      drop.appendChild(opt);
+    });
+  } else {
+    drop.innerHTML = '<div style="padding:10px 12px;font-size:12px;color:var(--text-tertiary)">No results — try a different term.</div>';
+  }
+
+  // Add custom food row
+  const cr = document.createElement('div');
+  cr.className = 'nut-food-custom-row';
+  cr.innerHTML = `<span style="font-size:15px;line-height:1">+</span> Add "<strong>${nutEsc(q)}</strong>" as a custom food`;
+  cr.addEventListener('click', () => {
+    drop.classList.remove('show');
+    document.getElementById('nutCfName').value = q;
+    document.getElementById('nutCustomFoodModalBg').dataset.meal = meal;
+    document.getElementById('nutCustomFoodModalBg').classList.add('show');
+  });
+  drop.appendChild(cr);
+  drop.classList.add('show');
+}
+
+function nutSelectFood(food, meal) {
+  _nutPickerFood = food;
+  _nutPickerMeal = meal;
+  document.getElementById('nutDrop_' + meal).classList.remove('show');
+
+  const portionInput = document.getElementById('nutPortionInput_' + meal);
+  portionInput.value = food.default_portion_g || 100;
+  document.getElementById('nutPortionRow_' + meal).style.display = 'grid';
+  document.getElementById('nutConfirm_' + meal).disabled = false;
+
+  nutUpdatePreview(meal);
+  portionInput.oninput = () => nutUpdatePreview(meal);
+}
+
+function nutUpdatePreview(meal) {
+  const inp = document.getElementById('nutPortionInput_' + meal);
+  const prev = document.getElementById('nutPortionPreview_' + meal);
+  if (!_nutPickerFood || !prev || !inp) return;
+  const portion = parseFloat(inp.value) || 100;
+  const kcal = Math.round((_nutPickerFood.calories_per_100g||0) * portion / 100);
+  prev.innerHTML = `<strong>${nutEsc(_nutPickerFood.name)}</strong>${kcal} kcal · ${portion} g`;
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('.nut-food-search-wrap') && !e.target.closest('.nut-add-food-btn')) {
+    document.querySelectorAll('.nut-food-dropdown.show').forEach(d => d.classList.remove('show'));
+  }
+});
+
+// ── Quick favorites ──
+async function nutLoadFavs() {
+  const favs = await NutData.getTopUsedFoods(10);
+  const el = document.getElementById('nutFavs');
+  if (!el) return;
+  if (!favs.length) {
+    el.innerHTML = '<span class="nut-favs-empty">Log a few foods to see your top picks here.</span>';
+    return;
+  }
+  el.innerHTML = favs.map(f => {
+    const portKcal = Math.round((f.calories_per_100g||0)*(f.default_portion_g||100)/100);
+    return `<button class="nut-fav-chip" data-food-id="${f.id}">${nutEsc(f.name)}<span class="nut-fav-kcal">${portKcal}</span></button>`;
+  }).join('');
+  el.querySelectorAll('.nut-fav-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const food = favs.find(f => f.id === btn.dataset.foodId);
+      if (!food) return;
+      // Find first open meal, fallback to snacks
+      const openMeal = document.querySelector('.nut-meal.open');
+      const mealKey = openMeal ? openMeal.dataset.meal : 'snacks';
+      if (!openMeal) {
+        const target = document.querySelector(`[data-meal="${mealKey}"].nut-meal`);
+        if (target) target.classList.add('open');
+      }
+      document.querySelectorAll('.nut-food-picker.show').forEach(p => p.classList.remove('show'));
+      const picker = document.getElementById('nutPicker_' + mealKey);
+      if (picker) { picker.classList.add('show'); nutSelectFood(food, mealKey); _nutPickerMeal = mealKey; }
+    });
+  });
+}
+
+// ── Weekly summary ──
+async function nutLoadWeekly() {
+  const today = new Date(_nutDate + 'T00:00:00');
+  const mon = new Date(today);
+  mon.setDate(today.getDate() - ((today.getDay()+6) % 7));
+  const weekStart = mon.toISOString().slice(0,10);
+  const days = await NutData.loadWeeklyTotals(weekStart);
+  const target = _nutTargets.calories;
+  const todayStr = nutTodayStr();
+
+  // Day labels
+  const DAY_LABELS = ['M','T','W','T','F','S','S'];
+  const daysEl = document.getElementById('nutWeeklyDays');
+  if (daysEl) {
+    daysEl.innerHTML = days.map((d, i) => {
+      const isToday = d.date === todayStr;
+      return `<div><span class="nut-weekly-day-label">${DAY_LABELS[i]}</span><span class="nut-weekly-day-kcal${isToday?' today':''}">${d.calories>0?Math.round(d.calories):'—'}</span></div>`;
+    }).join('');
+  }
+
+  // SVG bar chart
+  const svg = document.getElementById('nutWeeklySvg');
+  if (svg) {
+    const W=300, H=80, pad=6;
+    const maxV = Math.max(target*1.2, ...days.map(d=>d.calories), 1);
+    const colW = (W-pad*2)/7;
+    const bW = colW * 0.6;
+    const ty = H - pad - (target/maxV)*(H-pad*2);
+    let html = `<line stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="3 3" x1="0" x2="${W}" y1="${ty.toFixed(1)}" y2="${ty.toFixed(1)}"/>`;
+    days.forEach((d, i) => {
+      const x = pad + i*colW + (colW-bW)/2;
+      const h = d.calories>0 ? (d.calories/maxV)*(H-pad*2) : 2;
+      const y = H - pad - h;
+      const over = d.calories > target*1.1;
+      const hit  = d.calories >= target*0.85 && d.calories <= target*1.1;
+      const empty = d.calories === 0;
+      const color = empty ? 'rgba(255,255,255,0.05)' : over ? 'rgba(255,138,138,0.65)' : hit ? 'rgba(110,231,183,0.70)' : 'rgba(125,211,252,0.50)';
+      html += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bW.toFixed(1)}" height="${Math.max(2,h).toFixed(1)}" rx="2" fill="${color}"/>`;
+    });
+    svg.innerHTML = html;
+  }
+
+  // Averages
+  const logged = days.filter(d => d.calories > 0);
+  const avg = (arr, key) => arr.length ? Math.round(arr.reduce((s,d)=>s+(d[key]||0),0)/arr.length) : 0;
+  const avgK = avg(logged,'calories'), avgP = avg(logged,'protein_g'), avgC = avg(logged,'carbs_g'), avgF = avg(logged,'fat_g');
+  const avgEl = document.getElementById('nutWeeklyAvg');
+  if (avgEl) {
+    avgEl.innerHTML = `
+      <div><span class="nut-weekly-avg-label">Avg kcal</span><span class="nut-weekly-avg-val">${avgK||'—'}</span></div>
+      <div><span class="nut-weekly-avg-label">Protein</span><span class="nut-weekly-avg-val">${avgP?avgP+'g':'—'}</span></div>
+      <div><span class="nut-weekly-avg-label">Carbs</span><span class="nut-weekly-avg-val">${avgC?avgC+'g':'—'}</span></div>
+      <div><span class="nut-weekly-avg-label">Fat</span><span class="nut-weekly-avg-val">${avgF?avgF+'g':'—'}</span></div>`;
+  }
+}
+
+// ── Profile modal ──
+function nutOpenProfileModal(required = false) {
+  document.getElementById('nutProfCancel').style.display = required ? 'none' : '';
+  if (_nutProfile) {
+    document.getElementById('nutProfWeight').value   = _nutProfile.weight_kg   || '';
+    document.getElementById('nutProfHeight').value   = _nutProfile.height_cm   || '';
+    document.getElementById('nutProfAge').value      = _nutProfile.age         || '';
+    document.getElementById('nutProfActivity').value = _nutProfile.activity_level || 'moderate';
+    document.getElementById('nutProfProtein').value  = _nutProfile.protein_target_g || '';
+    document.getElementById('nutProfCarbs').value    = _nutProfile.carbs_target_g   || '';
+    document.getElementById('nutProfFat').value      = _nutProfile.fat_target_g     || '';
+    _nutProfSexVal  = _nutProfile.sex  || 'male';
+    _nutProfGoalVal = _nutProfile.goal || 'maintain';
+  } else {
+    _nutProfSexVal = 'male'; _nutProfGoalVal = 'maintain';
+  }
+  nutSegActive('nutProfSex', _nutProfSexVal);
+  nutSegActive('nutProfGoal', _nutProfGoalVal);
+  document.getElementById('nutProfileModalBg').classList.add('show');
+}
+
+function nutSegActive(id, val) {
+  document.getElementById(id).querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.v === val));
+}
+
+document.getElementById('nutProfSex').querySelectorAll('button').forEach(b => {
+  b.addEventListener('click', () => { _nutProfSexVal = b.dataset.v; nutSegActive('nutProfSex', _nutProfSexVal); });
+});
+document.getElementById('nutProfGoal').querySelectorAll('button').forEach(b => {
+  b.addEventListener('click', () => { _nutProfGoalVal = b.dataset.v; nutSegActive('nutProfGoal', _nutProfGoalVal); });
+});
+
+document.getElementById('nutProfileBtn').addEventListener('click', () => nutOpenProfileModal(false));
+document.getElementById('nutProfCancel').addEventListener('click', () => {
+  document.getElementById('nutProfileModalBg').classList.remove('show');
+});
+document.getElementById('nutProfSave').addEventListener('click', async () => {
+  const w = parseFloat(document.getElementById('nutProfWeight').value);
+  const h = parseFloat(document.getElementById('nutProfHeight').value);
+  const a = parseInt(document.getElementById('nutProfAge').value, 10);
+  if (!w || !h || !a) { alert('Weight, height, and age are required.'); return; }
+  await NutData.upsertProfile({
+    weight_kg: w, height_cm: h, age: a,
+    sex: _nutProfSexVal,
+    activity_level: document.getElementById('nutProfActivity').value,
+    goal: _nutProfGoalVal,
+    protein_target_g: parseFloat(document.getElementById('nutProfProtein').value) || null,
+    carbs_target_g:   parseFloat(document.getElementById('nutProfCarbs').value)   || null,
+    fat_target_g:     parseFloat(document.getElementById('nutProfFat').value)     || null,
+  });
+  _nutProfile = await NutData.loadProfile();
+  _nutTargets = NutData.computeDailyTargets(_nutProfile, 0);
+  document.getElementById('nutProfileModalBg').classList.remove('show');
+  nutRenderRing(); nutLoadWeekly();
+});
+
+// ── Custom food modal ──
+document.getElementById('nutCfCancel').addEventListener('click', () => {
+  document.getElementById('nutCustomFoodModalBg').classList.remove('show');
+});
+document.getElementById('nutCfSave').addEventListener('click', async () => {
+  const name = document.getElementById('nutCfName').value.trim();
+  const kcal = parseFloat(document.getElementById('nutCfKcal').value);
+  if (!name || !kcal) { alert('Name and calories are required.'); return; }
+  const food = await NutData.addCustomFood({
+    name,
+    calories_per_100g: kcal,
+    protein_g:  parseFloat(document.getElementById('nutCfProtein').value) || 0,
+    carbs_g:    parseFloat(document.getElementById('nutCfCarbs').value)   || 0,
+    fat_g:      parseFloat(document.getElementById('nutCfFat').value)     || 0,
+    default_portion_g: parseFloat(document.getElementById('nutCfPortion').value) || 100,
+  });
+  const meal = document.getElementById('nutCustomFoodModalBg').dataset.meal || _nutPickerMeal || 'snacks';
+  document.getElementById('nutCustomFoodModalBg').classList.remove('show');
+  ['nutCfName','nutCfKcal','nutCfProtein','nutCfCarbs','nutCfFat'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nutCfPortion').value = '100';
+  // Open picker with newly created food pre-selected
+  const picker = document.getElementById('nutPicker_' + meal);
+  if (picker) { picker.classList.add('show'); nutSelectFood(food, meal); _nutPickerMeal = meal; }
+});
+
+// Close modals on background click
+document.getElementById('nutProfileModalBg').addEventListener('click', e => {
+  if (e.target === document.getElementById('nutProfileModalBg')) {
+    if (document.getElementById('nutProfCancel').style.display !== 'none') {
+      document.getElementById('nutProfileModalBg').classList.remove('show');
+    }
+  }
+});
+document.getElementById('nutCustomFoodModalBg').addEventListener('click', e => {
+  if (e.target === document.getElementById('nutCustomFoodModalBg'))
+    document.getElementById('nutCustomFoodModalBg').classList.remove('show');
+});
 </script>
 
 </body>
