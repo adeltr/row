@@ -1,5 +1,45 @@
 # CONTEXT_HANDOFF.md — Row Dashboard
 
+## Phase 3A-1 — COMPLETE ✓ (needs prod test before 3A-2)
+
+### What Phase 3A-1 adds
+
+| Step | Deliverable | Status |
+|------|---|---|
+| 1 | SQL migration: 7 new tables + RLS + "Sèche Essan" seed | ✓ Done |
+| 2 | `js/programs-data.js` + `js/workouts-data.js` | ✓ Done |
+| 3 | gym.html: outer tabs (STRENGTH/STRETCHING/RUNNING) + strength sub-tabs | ✓ Done |
+| 4 | PROGRAMS sub-tab: marketplace, detail, my programs, editor | ✓ Done |
+| 5 | Workout Player: full-screen, sets table, rest timer, supersets, finish modal | ✓ Done |
+| 6 | HISTORY sub-tab: paginated list + detail view | ✓ Done |
+| 7 | STATS sub-tab: PR Tracker with Epley 1RM + sparklines | ✓ Done |
+| 8 | CHANGES.md + CONTEXT_HANDOFF.md updated | ✓ Done |
+
+### Architecture decisions
+
+- `programs` table: `is_official=true, user_id=NULL` for global seed programs; users copy to own namespace
+- Superset seed: two-pass SQL (insert both rows without FK, then UPDATE to link)
+- `workout_logs` tracks completed sessions; `exercise_logs.sets` (JSONB) stores individual sets
+- Set objects from workout player: `{ set_num, weight_kg, reps, rir, completed, timestamp }`
+- Set objects from freestyle tracker: `{ weight, reps, ... }` — PR tracker handles both via `s.weight_kg ?? s.weight`
+- Day-of-week: JS `getDay()` Sunday=0 → DB Monday=0 via `(jsDay + 6) % 7`
+- `loadActiveBanner()` is a named async function (refactored from IIFE) — callable after setActiveProgram
+- `switchStrengthTab` is wrapped twice via closure chain: base → +programs-lazy-init → +history+stats-lazy-init
+- Workout player state in `_wp` object; all timers (elapsed, rest, auto-advance) use `setInterval` + clearInterval on quit
+- PR tracker: Epley 1RM = `weight * (1 + reps/30)`; sparkline = last 10 sessions, oldest→newest
+
+### What comes next — Phase 3A-2
+
+**DO NOT start until 3A-1 is tested in prod.**
+
+Phase 3A-2 = STRETCHING tab:
+- Step 9: SQL migration (`stretch_routines`, `stretches`, `stretching_logs`, `stretch-photos` Storage bucket)
+- Step 10: `js/stretching-data.js`
+- Step 11: STRETCHING tab UI (check-in, routines, history calendar, streak)
+- Step 12: Final docs
+
+---
+
 ## Phase 2 — COMPLETE ✓
 
 ### Phase 2 status

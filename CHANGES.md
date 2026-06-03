@@ -1,3 +1,51 @@
+# Phase 3A-1 — Programs + Workout Player + History + Stats (2026-06-03)
+
+## SQL migration
+File: `supabase/migrations/20260603_phase3a1_programs.sql`  
+Run in Supabase SQL Editor — idempotent (safe to re-run).  
+New tables: `programs`, `program_sessions`, `program_exercises`, `program_schedules`, `user_active_programs`, `workout_logs`, `program_ratings`.  
+Seeded official program: **"Sèche Essan — 7 semaines"** (`is_official=true`, 4 sessions, 8 superset pairs).
+
+## New JS modules
+- `js/programs-data.js` — full programs CRUD + schedule + copy + active program
+- `js/workouts-data.js` — workout log start/finish, set logging, previous performance, history
+
+## gym.html restructure
+- 3 outer tabs: **STRENGTH | STRETCHING | RUNNING** (localStorage `gym:active_tab`)
+- STRENGTH has 4 sub-tabs: **PROGRAMS | FREESTYLE | HISTORY | STATS** (localStorage `gym:strength_tab`)
+- Active program banner shows today's session + Start Workout button
+- All sub-tabs lazy-init on first visit
+
+## PROGRAMS sub-tab
+- Marketplace grid with goal/level/sort filters and search
+- Program detail: sessions expandable, schedule mini-calendar, Copy + Set Active + Edit
+- My Programs list with edit/delete/set-active
+- Program editor: create/edit program, session editor overlay with exercises + weekly schedule
+
+## Workout Player (Step 5)
+- Full-screen overlay — `#wpOverlay`
+- Exercise card with sets table (# | PREV | KG | REPS | ✓) — Hevy-style
+- Previous performance pre-filled from last session
+- Rest timer with green→yellow→red color shift, −30s / SKIP / +30s, vibration on complete
+- Superset support: auto-switches to partner exercise, rest only after both done
+- Auto-advance countdown (5s) after last set, with "Stay" option
+- Finish modal: duration / sets / volume stats, feeling picker, notes, Save
+- Entry from banner "Start Workout" and from "▶ Start" in session detail
+
+## HISTORY sub-tab (Step 6)
+- Paginated list of past workouts: date, session name, feeling emoji, duration, volume
+- Detail view: all exercises with per-set weight/reps
+- "Load more" pagination (20 per page)
+
+## STATS sub-tab — PR Tracker (Step 7)
+- Weight tracker was already present (from prior phase)
+- PR Tracker: Epley 1RM (`weight × (1 + reps/30)`) per exercise
+- Sortable: TOP 1RM / RECENT / A→Z
+- SVG sparkline for each exercise (last 10 sessions)
+- Handles both freestyle (`s.weight`) and workout-player (`s.weight_kg`) set formats
+
+---
+
 # Phase 2 Step 4 — NUTRITION tab full UI (2026-06-03)
 
 Full nutrition tracker built inside `health.html` NUTRITION tab:

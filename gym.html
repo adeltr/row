@@ -1262,175 +1262,329 @@ img, video, canvas, svg { max-width: 100%; }
 }
 
 .hidden { display: none !important; }
+
+/* ── GYM OUTER TAB BAR (STRENGTH / STRETCHING / RUNNING) ── */
+.gym-tabs {
+  display: flex; gap: 4px;
+  background: rgba(0,0,0,0.30);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 4px;
+  margin-bottom: 18px;
+}
+.gym-tab {
+  flex: 1; background: transparent; border: none;
+  border-radius: 9px; color: var(--text-3);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 8px 10px; cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.gym-tab:hover { color: var(--text-2); }
+.gym-tab.active { background: rgba(255,255,255,0.08); color: var(--text-1); }
+
+/* ── STRENGTH SUB-TAB BAR (PROGRAMS / FREESTYLE / HISTORY / STATS) ── */
+.strength-tabs {
+  display: flex; gap: 3px; margin-bottom: 18px;
+}
+.strength-tab {
+  flex: 1; background: transparent; border: none;
+  border-bottom: 2px solid var(--border);
+  color: var(--text-3);
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  padding: 9px 6px 8px; cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.strength-tab:hover { color: var(--text-2); }
+.strength-tab.active {
+  color: var(--text-1);
+  border-bottom-color: var(--text-1);
+}
+
+/* ── ACTIVE PROGRAM BANNER ── */
+.gym-active-banner {
+  background: linear-gradient(135deg, rgba(110,231,183,0.07), rgba(255,255,255,0.025));
+  border: 1px solid rgba(110,231,183,0.18);
+  border-radius: 16px; padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.gym-banner-inner {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 14px;
+}
+.gym-banner-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--good); margin-bottom: 4px;
+}
+.gym-banner-name {
+  font-size: 16px; font-weight: 700; color: var(--text-1);
+  letter-spacing: -0.01em; margin-bottom: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.gym-banner-session {
+  font-size: 12px; color: var(--text-2); font-weight: 500;
+}
+.gym-banner-btn {
+  flex-shrink: 0;
+  padding: 11px 16px;
+  border: 1px solid rgba(255,255,255,0.85);
+  background: linear-gradient(180deg, #ffffff 0%, #e8e5dd 100%);
+  color: #0a0a0b; border-radius: 10px;
+  font-family: inherit; font-size: 12px; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 3px 10px rgba(0,0,0,0.35);
+  -webkit-tap-highlight-color: transparent;
+}
+.gym-banner-btn:hover { transform: translateY(-1px); }
+.gym-banner-btn:disabled {
+  background: rgba(255,255,255,0.08); color: var(--text-3);
+  border-color: var(--border); box-shadow: none; cursor: default; transform: none;
+}
+
+/* ── PLACEHOLDER PANELS ── */
+.gym-placeholder {
+  text-align: center; padding: 56px 20px;
+  color: var(--text-3);
+}
+.gym-ph-icon { font-size: 34px; margin-bottom: 14px; line-height: 1; }
+.gym-ph-title {
+  font-size: 15px; font-weight: 700; color: var(--text-2);
+  letter-spacing: -0.01em; margin-bottom: 8px;
+}
+.gym-ph-body { font-size: 13px; line-height: 1.55; max-width: 280px; margin: 0 auto; }
+
+/* ── PROGRAMS PANEL ─────────────────────────────────────────── */
+.prog-toolbar { display:flex; gap:8px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+.prog-toggle { display:flex; background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:8px; padding:3px; gap:3px; flex-shrink:0; }
+.prog-tog-btn { background:transparent; border:none; border-radius:5px; color:var(--text-3); font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:0.1em; padding:5px 10px; cursor:pointer; transition:background 0.15s,color 0.15s; }
+.prog-tog-btn.active { background:rgba(255,255,255,0.1); color:var(--text-1); }
+.prog-search { flex:1; min-width:100px; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text-1); font-family:var(--font-mono); font-size:12px; padding:7px 10px; }
+.prog-search::placeholder { color:var(--text-3); }
+.prog-filters { display:flex; gap:5px; align-items:center; margin-bottom:7px; flex-wrap:wrap; }
+.prog-filter-label { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.12em; color:var(--text-3); text-transform:uppercase; min-width:34px; }
+.prog-chip { background:transparent; border:1px solid var(--border); border-radius:20px; color:var(--text-3); font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.06em; padding:3px 9px; cursor:pointer; transition:all 0.15s; -webkit-tap-highlight-color:transparent; }
+.prog-chip.active,.prog-chip:hover { background:rgba(110,231,183,0.1); border-color:var(--good); color:var(--good); }
+.prog-sort-bar { display:flex; gap:6px; align-items:center; margin-bottom:14px; }
+.prog-sort-btn { background:transparent; border:none; color:var(--text-3); font-family:var(--font-mono); font-size:10px; font-weight:700; cursor:pointer; padding:4px 2px; border-bottom:2px solid transparent; -webkit-tap-highlight-color:transparent; }
+.prog-sort-btn.active { color:var(--text-1); border-bottom-color:var(--good); }
+.prog-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media(max-width:380px){.prog-grid{grid-template-columns:1fr;}}
+.prog-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; transition:border-color 0.15s; -webkit-tap-highlight-color:transparent; }
+.prog-card:hover { border-color:rgba(110,231,183,0.3); }
+.prog-card-cover { width:100%; height:80px; object-fit:cover; display:block; }
+.prog-card-cover-ph { width:100%; height:80px; display:flex; align-items:center; justify-content:center; font-size:26px; }
+.prog-card-body { padding:9px; }
+.prog-card-meta { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:4px; }
+.prog-badge { font-family:var(--font-mono); font-size:8px; font-weight:700; letter-spacing:0.08em; color:var(--text-3); background:rgba(255,255,255,0.06); border-radius:4px; padding:2px 5px; white-space:nowrap; }
+.prog-badge-official { background:rgba(110,231,183,0.15); color:var(--good); }
+.prog-card-name { font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--text-1); margin-bottom:4px; line-height:1.3; }
+.prog-card-desc { font-size:11px; color:var(--text-3); line-height:1.4; margin-bottom:5px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.prog-card-stats { display:flex; gap:7px; font-family:var(--font-mono); font-size:9px; color:var(--text-3); }
+.prog-loading { padding:32px; text-align:center; color:var(--text-3); font-family:var(--font-mono); font-size:12px; }
+.prog-empty { padding:16px; text-align:center; color:var(--text-3); font-family:var(--font-mono); font-size:11px; }
+/* detail */
+.prog-back-btn { background:transparent; border:none; color:var(--good); font-family:var(--font-mono); font-size:11px; font-weight:700; cursor:pointer; padding:0 0 12px; letter-spacing:0.08em; display:block; }
+.prog-detail-head { margin-bottom:14px; }
+.prog-detail-cover { width:100%; height:110px; object-fit:cover; border-radius:10px; margin-bottom:10px; display:block; }
+.prog-detail-meta { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:6px; }
+.prog-detail-name { font-family:var(--font-mono); font-size:17px; font-weight:700; color:var(--text-1); margin:0 0 6px; }
+.prog-detail-desc { font-size:13px; color:var(--text-2); line-height:1.5; margin:0 0 12px; }
+.prog-detail-actions { display:flex; gap:7px; flex-wrap:wrap; }
+.prog-action-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; color:var(--text-1); font-family:var(--font-mono); font-size:11px; font-weight:600; padding:7px 12px; cursor:pointer; transition:background 0.15s; -webkit-tap-highlight-color:transparent; }
+.prog-action-btn:hover { background:rgba(255,255,255,0.10); }
+.prog-action-btn:disabled { opacity:0.5; cursor:not-allowed; }
+.prog-section-label { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.14em; color:var(--text-3); text-transform:uppercase; margin:16px 0 8px; }
+.prog-sched-mini { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:4px; }
+.prog-sched-day { text-align:center; }
+.prog-sched-d { font-family:var(--font-mono); font-size:8px; color:var(--text-3); margin-bottom:2px; }
+.prog-sched-s { font-family:var(--font-mono); font-size:7px; font-weight:700; padding:3px 2px; border-radius:4px; line-height:1.3; word-break:break-all; }
+.prog-sched-s.active { background:rgba(110,231,183,0.15); color:var(--good); }
+.prog-sched-s.rest { background:rgba(255,255,255,0.04); color:var(--text-3); }
+.prog-sched-s.empty { color:var(--text-3); }
+.prog-sess-list { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:4px; }
+.prog-sess-item { border-bottom:1px solid var(--border); }
+.prog-sess-item:last-child { border-bottom:none; }
+.prog-sess-hd { display:flex; align-items:center; gap:8px; padding:10px 12px; }
+.prog-sess-toggle { background:transparent; border:none; color:var(--text-2); font-size:13px; cursor:pointer; width:18px; flex-shrink:0; -webkit-tap-highlight-color:transparent; }
+.prog-sess-name { flex:1; font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-1); }
+.prog-sess-ct { font-family:var(--font-mono); font-size:10px; color:var(--text-3); }
+.prog-sess-body { padding:0 12px 10px 38px; }
+.prog-ex-row { display:flex; gap:7px; align-items:flex-start; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.prog-ex-row:last-child { border-bottom:none; }
+.prog-ex-tag { font-family:var(--font-mono); font-size:8px; font-weight:700; padding:2px 5px; border-radius:3px; flex-shrink:0; margin-top:1px; }
+.prog-ex-tag.ss { background:rgba(147,197,253,0.15); color:#93c5fd; }
+.prog-ex-info { flex:1; min-width:0; }
+.prog-ex-name { font-family:var(--font-mono); font-size:11px; color:var(--text-1); margin-bottom:2px; }
+.prog-ex-target { font-size:10px; color:var(--text-3); }
+.prog-ex-tech { font-size:10px; color:var(--text-2); font-style:italic; margin-top:1px; }
+.prog-rating-row { display:flex; gap:8px; align-items:baseline; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:12px; }
+.prog-rating-row:last-child { border-bottom:none; }
+.prog-rating-stars { color:#fcd34d; letter-spacing:1px; font-size:11px; }
+.prog-rating-comment { color:var(--text-2); font-size:11px; }
+/* my programs */
+.prog-create-btn { width:100%; background:rgba(110,231,183,0.07); border:1px dashed rgba(110,231,183,0.3); border-radius:10px; color:var(--good); font-family:var(--font-mono); font-size:12px; font-weight:700; padding:11px; cursor:pointer; margin-bottom:12px; transition:background 0.15s; letter-spacing:0.1em; -webkit-tap-highlight-color:transparent; }
+.prog-create-btn:hover { background:rgba(110,231,183,0.13); }
+.prog-mine-row { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:7px; }
+.prog-mine-info { flex:1; min-width:0; }
+.prog-mine-name { font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--text-1); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.prog-mine-meta { font-family:var(--font-mono); font-size:9px; color:var(--text-3); text-transform:uppercase; letter-spacing:0.06em; }
+.prog-mine-actions { display:flex; gap:5px; flex-shrink:0; }
+.prog-mine-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; color:var(--text-2); font-size:12px; padding:5px 8px; cursor:pointer; transition:background 0.15s; -webkit-tap-highlight-color:transparent; }
+.prog-mine-btn:hover { background:rgba(255,255,255,0.10); }
+.prog-mine-btn.danger:hover { background:rgba(239,68,68,0.14); border-color:rgba(239,68,68,0.3); color:#f87171; }
+/* editor */
+.prog-editor-header { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.prog-editor-title { font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--text-1); letter-spacing:0.1em; }
+.pe-form-row { margin-bottom:11px; }
+.pe-label { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.12em; color:var(--text-3); display:block; margin-bottom:4px; text-transform:uppercase; }
+.pe-input,.pe-select,.pe-textarea { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text-1); font-family:var(--font-mono); font-size:12px; padding:7px 10px; box-sizing:border-box; }
+.pe-textarea { min-height:56px; resize:vertical; }
+.pe-input:focus,.pe-select:focus,.pe-textarea:focus { outline:none; border-color:rgba(110,231,183,0.4); }
+.pe-form-inline { display:flex; gap:8px; }
+.pe-form-inline .pe-form-row { flex:1; }
+.pe-checkbox-row { display:flex; align-items:center; gap:8px; margin-bottom:11px; }
+.pe-checkbox-row label { font-family:var(--font-mono); font-size:11px; color:var(--text-2); cursor:pointer; }
+.pe-save-btn { background:var(--good); border:none; border-radius:8px; color:#0a0a0b; font-family:var(--font-mono); font-size:12px; font-weight:700; padding:9px 20px; cursor:pointer; letter-spacing:0.08em; }
+.pe-save-btn:hover { opacity:0.88; }
+.pe-add-sess-btn { background:rgba(255,255,255,0.04); border:1px dashed var(--border); border-radius:8px; color:var(--text-2); font-family:var(--font-mono); font-size:11px; padding:7px 14px; cursor:pointer; margin-top:6px; width:100%; }
+.pe-add-sess-btn:hover { background:rgba(255,255,255,0.08); }
+.pe-sess-row { display:flex; align-items:center; gap:8px; padding:7px 10px; background:rgba(255,255,255,0.03); border-radius:8px; margin-bottom:5px; }
+.pe-sess-name { flex:1; font-family:var(--font-mono); font-size:11px; color:var(--text-1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pe-sess-ct { font-family:var(--font-mono); font-size:10px; color:var(--text-3); flex-shrink:0; }
+.pe-sess-acts { display:flex; gap:4px; flex-shrink:0; }
+.pe-sched-row { display:flex; align-items:center; gap:7px; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.pe-sched-row:last-child { border-bottom:none; }
+.pe-sched-day { font-family:var(--font-mono); font-size:10px; font-weight:700; color:var(--text-3); width:30px; flex-shrink:0; }
+.pe-sched-sel { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:6px; color:var(--text-1); font-size:11px; padding:5px 7px; }
+.pe-sched-label { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:6px; color:var(--text-2); font-size:10px; padding:5px 7px; font-style:italic; }
+/* session editor overlay */
+.prog-sess-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; display:flex; align-items:flex-end; justify-content:center; }
+.prog-sess-overlay[hidden] { display:none !important; }
+.prog-sess-overlay-inner { background:#111; border:1px solid var(--border); border-top:1px solid rgba(110,231,183,0.2); border-radius:16px 16px 0 0; width:100%; max-width:600px; max-height:88vh; overflow-y:auto; padding:18px; box-sizing:border-box; }
+.pse-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.pse-title { font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--text-1); letter-spacing:0.1em; }
+.pse-close { background:transparent; border:none; color:var(--text-3); font-size:18px; cursor:pointer; padding:0; line-height:1; }
+.pse-ex-row { display:flex; align-items:center; gap:7px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+.pse-ex-row:last-child { border-bottom:none; }
+.pse-ex-name { flex:1; font-family:var(--font-mono); font-size:11px; color:var(--text-1); }
+.pse-ex-target { font-family:var(--font-mono); font-size:10px; color:var(--text-3); flex-shrink:0; }
+.pse-ex-acts { display:flex; gap:4px; flex-shrink:0; }
+.pse-add-ex-form { margin-top:14px; padding-top:14px; border-top:1px solid var(--border); }
+.pse-add-ex-form .pse-form-label { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.12em; color:var(--text-3); text-transform:uppercase; margin:0 0 9px; }
+.pse-form-inline { display:flex; gap:8px; flex-wrap:wrap; }
+.pse-form-inline .pe-form-row { min-width:60px; }
+.pse-add-btn { background:var(--good); border:none; border-radius:8px; color:#0a0a0b; font-family:var(--font-mono); font-size:11px; font-weight:700; padding:8px 16px; cursor:pointer; margin-top:8px; }
+.prog-sess-start { background:rgba(110,231,183,0.1); border:1px solid rgba(110,231,183,0.25); border-radius:6px; color:var(--good); font-family:var(--font-mono); font-size:9px; font-weight:700; padding:3px 9px; cursor:pointer; margin-left:auto; flex-shrink:0; letter-spacing:0.06em; -webkit-tap-highlight-color:transparent; }
+
+/* ── HISTORY ─────────────────────────────────────────────────── */
+.hist-load-more { width:100%; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:10px; color:var(--text-2); font-family:var(--font-mono); font-size:11px; padding:10px; cursor:pointer; margin-top:4px; }
+.hist-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:8px; cursor:pointer; transition:border-color 0.15s; display:flex; align-items:center; gap:12px; -webkit-tap-highlight-color:transparent; }
+.hist-card:hover { border-color:rgba(110,231,183,0.3); }
+.hist-card-feeling { font-size:20px; flex-shrink:0; line-height:1; }
+.hist-card-main { flex:1; min-width:0; }
+.hist-card-date { font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--text-1); }
+.hist-card-session { font-size:11px; color:var(--text-2); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hist-card-meta { display:flex; gap:10px; margin-top:5px; font-family:var(--font-mono); font-size:9px; color:var(--text-3); }
+.hist-card-arrow { color:var(--text-3); font-size:14px; flex-shrink:0; }
+.hist-det-head { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px; }
+.hist-det-date { font-family:var(--font-mono); font-size:16px; font-weight:700; color:var(--text-1); margin-bottom:6px; }
+.hist-det-stats { display:flex; gap:16px; flex-wrap:wrap; font-family:var(--font-mono); font-size:10px; color:var(--text-3); }
+.hist-det-session { font-size:12px; color:var(--text-2); margin-top:5px; }
+.hist-ex-block { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:8px; }
+.hist-ex-name { font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--text-1); margin-bottom:8px; }
+.hist-sets-head { display:grid; grid-template-columns:28px 1fr 1fr; gap:8px; font-family:var(--font-mono); font-size:8px; font-weight:700; letter-spacing:0.1em; color:var(--text-3); border-bottom:1px solid var(--border); padding-bottom:5px; margin-bottom:4px; text-transform:uppercase; }
+.hist-set-row { display:grid; grid-template-columns:28px 1fr 1fr; gap:8px; padding:4px 0; font-family:var(--font-mono); font-size:12px; color:var(--text-1); border-bottom:1px solid rgba(255,255,255,0.04); }
+.hist-set-row:last-child { border-bottom:none; }
+.hist-set-num { color:var(--text-3); font-size:11px; text-align:center; }
+/* ── PR TRACKER ──────────────────────────────────────────────── */
+.pr-sort-bar { display:flex; gap:6px; align-items:center; margin-bottom:12px; }
+.pr-sort-btn { background:transparent; border:none; color:var(--text-3); font-family:var(--font-mono); font-size:10px; font-weight:700; cursor:pointer; padding:4px 2px; border-bottom:2px solid transparent; -webkit-tap-highlight-color:transparent; }
+.pr-sort-btn.active { color:var(--text-1); border-bottom-color:var(--good); }
+.pr-row { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:7px; }
+.pr-name { flex:1; min-width:0; font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--text-1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pr-1rm { font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--good); flex-shrink:0; min-width:60px; text-align:right; }
+.pr-spark { display:block; flex-shrink:0; }
+.pr-spark-line { fill:none; stroke:rgba(110,231,183,0.5); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.pr-meta { font-family:var(--font-mono); font-size:9px; color:var(--text-3); flex-shrink:0; }
+
+/* ── WORKOUT PLAYER ─────────────────────────────────────────── */
+.wp-overlay { position:fixed; inset:0; z-index:300; background:#0a0a0b; display:flex; flex-direction:column; overflow:hidden; }
+.wp-overlay.hidden { display:none !important; }
+.wp-header { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(0,0,0,0.5); border-bottom:1px solid var(--border); flex-shrink:0; }
+.wp-quit-btn { background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--text-3); font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:0.08em; padding:5px 9px; cursor:pointer; flex-shrink:0; -webkit-tap-highlight-color:transparent; }
+.wp-quit-btn:hover { color:var(--text-2); }
+.wp-header-mid { flex:1; text-align:center; min-width:0; }
+.wp-sess-label { font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-1); letter-spacing:0.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wp-ex-idx { font-family:var(--font-mono); font-size:9px; color:var(--text-3); margin-top:1px; letter-spacing:0.08em; }
+.wp-elapsed { font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--good); letter-spacing:0.04em; min-width:44px; text-align:right; }
+.wp-body { flex:1; overflow-y:auto; padding:14px; -webkit-overflow-scrolling:touch; }
+.wp-ex-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:10px; }
+.wp-superset-tag { display:inline-flex; align-items:center; gap:5px; background:rgba(147,197,253,0.12); color:#93c5fd; font-family:var(--font-mono); font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; margin-bottom:10px; }
+.wp-ex-name { font-family:var(--font-mono); font-size:22px; font-weight:700; color:var(--text-1); margin-bottom:4px; line-height:1.2; }
+.wp-ex-technique { font-size:12px; color:var(--text-2); font-style:italic; margin-bottom:6px; line-height:1.4; }
+.wp-ex-target-line { font-family:var(--font-mono); font-size:11px; color:var(--text-3); margin-bottom:14px; }
+.wp-sets-head { display:grid; grid-template-columns:24px 1fr 72px 62px 38px; gap:5px; padding:0 0 5px; font-family:var(--font-mono); font-size:8px; font-weight:700; letter-spacing:0.10em; color:var(--text-3); border-bottom:1px solid var(--border); margin-bottom:3px; align-items:center; text-transform:uppercase; }
+.wp-set-row { display:grid; grid-template-columns:24px 1fr 72px 62px 38px; gap:5px; padding:4px 0; align-items:center; border-bottom:1px solid rgba(255,255,255,0.04); }
+.wp-set-row:last-child { border-bottom:none; }
+.wp-set-row.logged { opacity:0.55; }
+.wp-set-num { font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--text-3); text-align:center; }
+.wp-set-prev { font-family:var(--font-mono); font-size:10px; color:var(--text-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.wp-set-input { background:rgba(255,255,255,0.07); border:1px solid var(--border); border-radius:8px; color:var(--text-1); font-family:var(--font-mono); font-size:17px; font-weight:700; padding:7px 4px; text-align:center; width:100%; box-sizing:border-box; -moz-appearance:textfield; }
+.wp-set-input::-webkit-inner-spin-button,.wp-set-input::-webkit-outer-spin-button{-webkit-appearance:none;}
+.wp-set-input:focus { outline:none; border-color:rgba(110,231,183,0.5); background:rgba(110,231,183,0.06); }
+.wp-check-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; color:var(--text-3); font-size:15px; width:100%; height:38px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; -webkit-tap-highlight-color:transparent; }
+.wp-check-btn:hover { background:rgba(110,231,183,0.1); border-color:var(--good); }
+.wp-check-btn.done { background:rgba(110,231,183,0.15); border-color:var(--good); color:var(--good); }
+.wp-add-set-btn { background:transparent; border:1px dashed var(--border); border-radius:8px; color:var(--text-3); font-family:var(--font-mono); font-size:10px; padding:7px; width:100%; cursor:pointer; margin-top:8px; -webkit-tap-highlight-color:transparent; letter-spacing:0.08em; }
+.wp-ss-switch { width:100%; background:rgba(147,197,253,0.07); border:1px solid rgba(147,197,253,0.25); border-radius:8px; color:#93c5fd; font-family:var(--font-mono); font-size:11px; font-weight:700; padding:9px; cursor:pointer; margin-top:10px; letter-spacing:0.06em; -webkit-tap-highlight-color:transparent; }
+/* rest timer */
+.wp-rest-bar { flex-shrink:0; padding:10px 16px; border-top:1px solid var(--border); transition:background 0.5s; }
+.wp-rest-bar.hidden { display:none !important; }
+.wp-rest-inner { display:flex; align-items:center; gap:10px; justify-content:center; flex-wrap:wrap; }
+.wp-rest-label { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.12em; color:var(--text-3); }
+.wp-rest-time { font-family:var(--font-mono); font-size:34px; font-weight:700; color:var(--good); letter-spacing:0.02em; min-width:84px; text-align:center; transition:color 0.5s; }
+.wp-rest-btns { display:flex; gap:6px; }
+.wp-rest-adj,.wp-rest-skip { background:rgba(255,255,255,0.07); border:1px solid var(--border); border-radius:7px; color:var(--text-2); font-family:var(--font-mono); font-size:10px; font-weight:700; padding:6px 11px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.wp-rest-skip { background:rgba(110,231,183,0.1); border-color:rgba(110,231,183,0.3); color:var(--good); }
+/* bottom bar */
+.wp-bottom-bar { display:flex; align-items:center; gap:8px; padding:10px 14px; border-top:1px solid var(--border); background:rgba(0,0,0,0.3); flex-shrink:0; }
+.wp-nav-btn { background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:8px; color:var(--text-2); font-family:var(--font-mono); font-size:10px; font-weight:700; padding:10px 12px; cursor:pointer; letter-spacing:0.08em; -webkit-tap-highlight-color:transparent; white-space:nowrap; }
+.wp-nav-btn:hover { background:rgba(255,255,255,0.10); }
+.wp-nav-btn:disabled { opacity:0.3; cursor:not-allowed; }
+.wp-finish-btn { flex:1; background:rgba(239,68,68,0.13); border:1px solid rgba(239,68,68,0.28); border-radius:8px; color:#f87171; font-family:var(--font-mono); font-size:11px; font-weight:700; padding:10px; cursor:pointer; letter-spacing:0.1em; -webkit-tap-highlight-color:transparent; }
+.wp-finish-btn:hover { background:rgba(239,68,68,0.20); }
+/* auto-advance */
+.wp-auto-advance { background:rgba(110,231,183,0.08); border:1px solid rgba(110,231,183,0.25); border-radius:10px; padding:9px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.wp-auto-advance.hidden { display:none !important; }
+.wp-aa-text { font-family:var(--font-mono); font-size:11px; color:var(--good); }
+.wp-aa-stay { background:transparent; border:1px solid rgba(110,231,183,0.4); border-radius:6px; color:var(--good); font-family:var(--font-mono); font-size:10px; padding:4px 9px; cursor:pointer; flex-shrink:0; -webkit-tap-highlight-color:transparent; }
+/* finish modal */
+.wp-finish-modal { position:fixed; inset:0; z-index:400; background:rgba(0,0,0,0.85); display:flex; align-items:flex-end; justify-content:center; }
+.wp-finish-modal.hidden { display:none !important; }
+.wp-finish-inner { background:#111; border:1px solid var(--border); border-top:1px solid rgba(110,231,183,0.25); border-radius:16px 16px 0 0; width:100%; max-width:500px; padding:20px; box-sizing:border-box; max-height:82vh; overflow-y:auto; }
+.wp-finish-title { font-family:var(--font-mono); font-size:15px; font-weight:700; color:var(--good); letter-spacing:0.1em; text-align:center; margin:0 0 16px; }
+.wp-finish-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px; }
+.wp-stat-box { background:rgba(255,255,255,0.04); border-radius:10px; padding:11px; text-align:center; }
+.wp-stat-val { font-family:var(--font-mono); font-size:22px; font-weight:700; color:var(--text-1); }
+.wp-stat-lbl { font-family:var(--font-mono); font-size:8px; color:var(--text-3); margin-top:3px; letter-spacing:0.1em; }
+.wp-feeling-label { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.12em; color:var(--text-3); text-align:center; margin-bottom:9px; text-transform:uppercase; }
+.wp-feeling-row { display:flex; justify-content:center; gap:8px; margin-bottom:4px; }
+.wp-feel-btn { background:transparent; border:2px solid transparent; border-radius:50%; font-size:26px; cursor:pointer; padding:4px; transition:border-color 0.15s; -webkit-tap-highlight-color:transparent; }
+.wp-feel-btn.selected { border-color:var(--good); }
+.wp-feeling-labels { display:flex; justify-content:center; font-family:var(--font-mono); font-size:8px; color:var(--text-3); margin-bottom:14px; }
+.wp-feeling-labels span { width:44px; text-align:center; }
+.wp-finish-notes { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:8px; color:var(--text-1); font-family:var(--font-mono); font-size:12px; padding:8px 10px; box-sizing:border-box; min-height:56px; resize:vertical; margin-bottom:12px; }
+.wp-save-btn { width:100%; background:var(--good); border:none; border-radius:10px; color:#0a0a0b; font-family:var(--font-mono); font-size:13px; font-weight:700; padding:12px; cursor:pointer; letter-spacing:0.1em; margin-bottom:8px; }
+.wp-discard-btn { width:100%; background:transparent; border:1px solid rgba(239,68,68,0.28); border-radius:10px; color:#f87171; font-family:var(--font-mono); font-size:11px; padding:9px; cursor:pointer; }
 </style>
 </head>
 <body>
 
 <div class="po-shell">
-  <button class="po-day-pill" type="button" id="dayPill" title="Tap to switch the day filter to today's split">
-    <span class="po-day-date" id="dayPillDate">—</span>
-    <span class="po-day-sep">·</span>
-    <span class="po-day-split" id="dayPillSplit">—</span>
-  </button>
 
-  <!-- WEIGHT + PROGRESS PHOTOS -->
-  <div class="wt-section">
-    <div class="wt-divider"><span>WEIGHT</span></div>
-
-    <div class="wt-card">
-      <div class="wt-row">
-        <span class="wt-num" id="wtNum">—</span>
-        <span class="wt-unit" id="wtUnit">kg</span>
-      </div>
-      <div class="wt-delta hidden" id="wtDelta"></div>
-      <div class="wt-streak hidden" id="wtStreak">🔥<span id="wtStreakNum">0 day streak</span></div>
-
-      <div class="wt-empty" id="wtEmpty">Log your first weight to start tracking.</div>
-
-      <div class="wt-chart-wrap hidden" id="wtChartWrap">
-        <div class="wt-chart-yaxis">
-          <span id="wtYAxisMax">—</span>
-          <span id="wtYAxisMin">—</span>
-        </div>
-        <svg class="wt-chart" viewBox="0 0 320 130" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="wtFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.25"/>
-              <stop offset="100%" stop-color="#6ee7b7" stop-opacity="0"/>
-            </linearGradient>
-            <filter id="wtGlow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          </defs>
-          <line class="wt-grid" x1="0" y1="20" x2="320" y2="20"></line>
-          <line class="wt-grid" x1="0" y1="65" x2="320" y2="65"></line>
-          <line class="wt-grid" x1="0" y1="110" x2="320" y2="110"></line>
-          <g id="wtChartContent"></g>
-        </svg>
-        <div class="wt-meta" id="wtMeta">0 entries</div>
-      </div>
-
-      <div class="wt-legend hidden" id="wtLegend">
-        <span class="wt-legend-item"><span class="wt-legend-dot"></span>DAILY</span>
-        <span class="wt-legend-item"><span class="wt-legend-dot wt-legend-dot-avg"></span>7-DAY AVG</span>
-      </div>
-
-      <!-- Composition estimate — uses strength trend + weight trend to guess
-           how much of recent weight change was muscle vs fat. -->
-      <div class="wt-comp hidden" id="wtComp">
-        <div class="wt-comp-h">
-          <span class="wt-comp-label">Composition estimate</span>
-          <span class="wt-comp-window" id="wtCompWindow">last 30d</span>
-        </div>
-        <div class="wt-comp-headline" id="wtCompHeadline">—</div>
-        <div class="wt-comp-bars" id="wtCompBars"></div>
-        <div class="wt-comp-foot" id="wtCompFoot">—</div>
-      </div>
-
-      <div class="wt-locked hidden" id="wtLocked">
-        <div class="wt-locked-info">
-          <span class="wt-locked-check">✓</span>
-          <div>
-            <div class="wt-locked-label">LOGGED TODAY</div>
-            <div class="wt-locked-value" id="wtLockedValue">— kg</div>
-          </div>
-        </div>
-        <button class="wt-edit-btn" id="wtEditBtn">Edit</button>
-      </div>
-
-      <div class="wt-input-row" id="wtInputRow">
-        <div class="wt-input-top">
-          <input type="number" step="0.1" class="wt-input" id="wtInput" placeholder="Enter weight" inputmode="decimal" aria-label="Today's weight">
-          <span class="wt-unit-static" id="wtUnitStatic">kg</span>
-          <button class="wt-save-btn" id="wtSaveBtn">Save</button>
-        </div>
-      </div>
-    </div>
-
-    <button class="wt-progress-link" id="wtProgressLink" type="button" aria-label="Open progress photos">
-      <div>
-        <div class="wt-progress-label">PROGRESS PHOTOS</div>
-        <div class="wt-progress-count" id="wtProgressCount">0 photos</div>
-      </div>
-      <span class="wt-progress-arrow">→</span>
-    </button>
-  </div>
-
-  <!-- Progress photos overlay -->
-  <div class="wt-overlay" id="wtOverlay" aria-hidden="true">
-    <div class="wt-overlay-inner">
-      <div class="wt-overlay-h">
-        <button class="wt-back" id="wtBack" aria-label="Back">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        </button>
-        <div class="wt-overlay-title">Progress</div>
-      </div>
-      <div class="wt-overlay-actions">
-        <button class="wt-overlay-action wt-overlay-primary" id="wtTakePhotoBtn">Take Photo</button>
-        <button class="wt-overlay-action wt-overlay-secondary" id="wtFromLibraryBtn">From Library</button>
-      </div>
-      <input type="file" id="wtFileCamera" accept="image/*" capture="environment" style="display:none">
-      <input type="file" id="wtFileLibrary" accept="image/*" style="display:none">
-      <div class="wt-photo-grid" id="wtPhotoGrid">
-        <div class="wt-photo-empty">No photos yet · tap Take Photo to start</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Camera modal -->
-  <div class="wt-cam" id="wtCam" aria-hidden="true">
-    <div class="wt-cam-stage">
-      <video class="wt-cam-video" id="wtCamVideo" autoplay playsinline muted></video>
-      <canvas id="wtCamCanvas" style="display:none"></canvas>
-    </div>
-    <div class="wt-cam-actions">
-      <button class="wt-cam-btn" id="wtCamCancel">Cancel</button>
-      <button class="wt-cam-shutter" id="wtCamShutter" aria-label="Capture"></button>
-      <button class="wt-cam-btn" id="wtCamFlip" aria-label="Flip camera">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Photo viewer — has two modes: single (one photo) and compare (two photos side-by-side) -->
-  <div class="wt-viewer" id="wtViewer" data-mode="single" aria-hidden="true">
-
-    <!-- SINGLE MODE -->
-    <div class="wt-viewer-single">
-      <div class="wt-viewer-stage">
-        <img id="wtViewerImg" alt="" style="max-width:100%; max-height:100%; object-fit:contain;">
-      </div>
-      <div class="wt-viewer-meta">
-        <div class="wt-viewer-date" id="wtViewerDate">—</div>
-        <div class="wt-viewer-weight" id="wtViewerWeight">—</div>
-      </div>
-      <div class="wt-viewer-actions">
-        <button class="wt-viewer-btn wt-viewer-compare" id="wtViewerCompare">Compare</button>
-        <button class="wt-viewer-btn wt-viewer-close" id="wtViewerClose">Close</button>
-        <button class="wt-viewer-btn wt-viewer-delete" id="wtViewerDelete">Delete</button>
-      </div>
-    </div>
-
-    <!-- COMPARE MODE -->
-    <div class="wt-viewer-compare-view">
-      <div class="wt-compare-stage">
-        <div class="wt-compare-side" id="wtCmpSideA">
-          <img id="wtCmpImgA" alt="">
-          <div class="wt-compare-meta-line" id="wtCmpMetaA">—</div>
-        </div>
-        <button type="button" class="wt-compare-side wt-compare-other" id="wtCmpSideB" title="Tap to compare to a different photo" aria-label="Compare to a different photo">
-          <img id="wtCmpImgB" alt="">
-          <div class="wt-compare-meta-line" id="wtCmpMetaB">—</div>
-        </button>
-      </div>
-      <div class="wt-compare-headline" id="wtCompareHeadline">—</div>
-      <div class="wt-viewer-actions">
-        <button class="wt-viewer-btn wt-viewer-back" id="wtCompareBack">← Back</button>
-        <button class="wt-viewer-btn wt-viewer-close" id="wtCompareClose">Close</button>
-        <button class="wt-viewer-btn wt-viewer-delete" id="wtCompareDelete">Delete</button>
-      </div>
-    </div>
-
-  </div>
-
+  <!-- Header -->
   <div class="po-header">
     <h1 class="po-title" id="appTitle">Progressive Overload Coach</h1>
     <div id="user-menu" style="margin-left:auto;margin-right:8px"></div>
@@ -1439,147 +1593,486 @@ img, video, canvas, svg { max-width: 100%; }
     </button>
   </div>
 
-  <div class="card">
-    <!-- Filters -->
-    <div class="po-filters">
-      <div class="po-seg-row">
-        <span class="po-seg-label">Gym</span>
-        <div class="po-seg-control" id="gymSeg"></div>
-      </div>
-      <div class="po-seg-row">
-        <span class="po-seg-label">Day</span>
-        <div class="po-seg-control" id="daySeg"></div>
+  <!-- Outer gym tab bar -->
+  <div class="gym-tabs" role="tablist">
+    <button class="gym-tab active" data-tab="strength" role="tab">STRENGTH</button>
+    <button class="gym-tab" data-tab="stretching" role="tab">STRETCHING</button>
+    <button class="gym-tab" data-tab="running" role="tab">RUNNING</button>
+  </div>
+
+  <!-- ══ STRENGTH ══ -->
+  <div data-gym-panel="strength">
+
+    <!-- Active program banner (hidden until a program is set) -->
+    <div class="gym-active-banner hidden" id="gymActiveBanner">
+      <div class="gym-banner-inner">
+        <div style="min-width:0">
+          <div class="gym-banner-label" id="gymBannerLabel">ACTIVE PROGRAM</div>
+          <div class="gym-banner-name" id="gymBannerName">—</div>
+          <div class="gym-banner-session" id="gymBannerSession">—</div>
+        </div>
+        <button class="gym-banner-btn" id="gymStartWorkoutBtn">Start Workout</button>
       </div>
     </div>
 
-    <!-- Exercise -->
-    <div class="po-sub-section">
-      <div class="po-sub-title">Exercise</div>
-      <div class="po-exercise-bar">
-        <select class="po-ex-select" id="exSelect"></select>
-        <button class="po-btn-icon" id="addExBtn" title="Add exercise" aria-label="Add">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-        <button class="po-btn-icon" id="editExBtn" title="Edit / delete" aria-label="Edit">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-        </button>
-      </div>
-      <div class="po-no-ex" id="noExMsg" style="display:none">No exercises here yet. Tap <strong>+</strong> to add one.</div>
+    <!-- Strength sub-tab bar -->
+    <div class="strength-tabs" role="tablist">
+      <button class="strength-tab" data-tab="programs" role="tab">PROGRAMS</button>
+      <button class="strength-tab active" data-tab="freestyle" role="tab">FREESTYLE</button>
+      <button class="strength-tab" data-tab="history" role="tab">HISTORY</button>
+      <button class="strength-tab" data-tab="stats" role="tab">STATS</button>
     </div>
 
-    <!-- Log a set -->
-    <div class="po-sub-section">
-      <div class="po-sub-title">Log today's top set</div>
-      <div class="po-bw-banner" id="bwBanner">Bodyweight — log reps only</div>
-      <div class="po-last-set" id="lastSet">
-        <span class="po-last-label">Last time</span>
-        <span class="po-last-value" id="lastSetValue"></span>
-        <span class="po-last-meta" id="lastSetMeta"></span>
+    <!-- PROGRAMS sub-tab -->
+    <div data-strength-panel="programs" hidden>
+
+      <!-- toolbar: Discover | My Programs + search -->
+      <div class="prog-toolbar">
+        <div class="prog-toggle">
+          <button class="prog-tog-btn active" id="progTogDiscover">DISCOVER</button>
+          <button class="prog-tog-btn" id="progTogMine">MY PROGRAMS</button>
+        </div>
+        <input class="prog-search" id="progSearch" type="search" placeholder="Search...">
       </div>
-      <div class="po-log-grid" id="logGrid">
-        <div class="po-field" id="weightField">
-          <label id="weightLabel">Weight (kg)</label>
-          <div class="po-weight-row">
-            <button class="po-w-btn" id="weightDownBtn" type="button">−</button>
-            <input type="number" id="weightInput" step="0.5" inputmode="decimal" placeholder="0">
-            <button class="po-w-btn" id="weightUpBtn" type="button">+</button>
+
+      <!-- ── DISCOVER VIEW ──────────────────────────────────── -->
+      <div id="progViewDiscover">
+        <div class="prog-filters" id="progGoalFilters">
+          <span class="prog-filter-label">GOAL</span>
+          <button class="prog-chip active" data-goal="">ALL</button>
+          <button class="prog-chip" data-goal="strength">STRENGTH</button>
+          <button class="prog-chip" data-goal="hypertrophy">HYPERTROPHY</button>
+          <button class="prog-chip" data-goal="cutting">CUTTING</button>
+          <button class="prog-chip" data-goal="recomp">RECOMP</button>
+          <button class="prog-chip" data-goal="endurance">ENDURANCE</button>
+        </div>
+        <div class="prog-filters" id="progLevelFilters">
+          <span class="prog-filter-label">LEVEL</span>
+          <button class="prog-chip active" data-level="">ALL</button>
+          <button class="prog-chip" data-level="beginner">BEGINNER</button>
+          <button class="prog-chip" data-level="intermediate">INTERMEDIATE</button>
+          <button class="prog-chip" data-level="advanced">ADVANCED</button>
+        </div>
+        <div class="prog-sort-bar">
+          <span class="prog-filter-label">SORT</span>
+          <button class="prog-sort-btn active" data-sort="">POPULAR</button>
+          <button class="prog-sort-btn" data-sort="rating">TOP RATED</button>
+          <button class="prog-sort-btn" data-sort="newest">NEWEST</button>
+        </div>
+        <div class="prog-grid" id="progGrid"></div>
+      </div>
+
+      <!-- ── MY PROGRAMS VIEW ──────────────────────────────── -->
+      <div id="progViewMine" hidden>
+        <button class="prog-create-btn" id="progCreateBtn">+ CREATE NEW PROGRAM</button>
+        <div id="progMineList"></div>
+      </div>
+
+      <!-- ── DETAIL VIEW ────────────────────────────────────── -->
+      <div id="progViewDetail" hidden>
+        <button class="prog-back-btn" id="progDetailBack">← BACK</button>
+        <div id="progDetailContent"></div>
+      </div>
+
+      <!-- ── EDITOR VIEW ────────────────────────────────────── -->
+      <div id="progViewEditor" hidden>
+        <div class="prog-editor-header">
+          <button class="prog-back-btn" id="progEditorBack" style="padding:0">← BACK</button>
+          <span class="prog-editor-title" id="progEditorTitle">NEW PROGRAM</span>
+        </div>
+        <form id="progEditorForm" onsubmit="return false">
+          <div class="pe-form-row">
+            <label class="pe-label" for="pe-name">PROGRAM NAME</label>
+            <input class="pe-input" id="pe-name" type="text" placeholder="e.g. Sèche Essan — 7 semaines" required>
           </div>
-        </div>
-        <div class="po-field">
-          <label>Reps</label>
-          <div class="po-reps-row" id="repsRow" data-value="8">
-            <button type="button" class="po-reps-pill" data-v="4">4</button>
-            <button type="button" class="po-reps-pill" data-v="5">5</button>
-            <button type="button" class="po-reps-pill" data-v="6">6</button>
-            <button type="button" class="po-reps-pill" data-v="7">7</button>
-            <button type="button" class="po-reps-pill active" data-v="8">8</button>
-            <button type="button" class="po-reps-pill" data-v="9">9</button>
-            <button type="button" class="po-reps-pill" data-v="10">10</button>
-            <button type="button" class="po-reps-pill" data-v="11">11</button>
-            <button type="button" class="po-reps-pill" data-v="12">12</button>
+          <div class="pe-form-row">
+            <label class="pe-label" for="pe-desc">DESCRIPTION</label>
+            <textarea class="pe-textarea" id="pe-desc" placeholder="What's this program about?"></textarea>
           </div>
-        </div>
-      </div>
-      <button class="po-btn-primary" id="logBtn">Log set</button>
-    </div>
-
-    <!-- Prescription -->
-    <div class="po-sub-section">
-      <div class="po-sub-title">Next session</div>
-      <div id="rxWrap"></div>
-    </div>
-
-    <!-- Stats -->
-    <div class="po-sub-section">
-      <div class="po-sub-title">Stats</div>
-      <div class="po-stats-row">
-        <div class="po-stat-box">
-          <div class="po-stat-label" id="oneRmLabel">Est. 1RM</div>
-          <div class="po-stat-val" id="oneRm">—<span class="po-unit" id="oneRmUnit">kg</span></div>
-        </div>
-        <div class="po-stat-box">
-          <div class="po-stat-label">Best set</div>
-          <div class="po-stat-val" id="bestSet">—</div>
-        </div>
-        <div class="po-stat-box">
-          <div class="po-stat-label">Sessions</div>
-          <div class="po-stat-val" id="sessionCount">—</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Trend -->
-    <div class="po-sub-section">
-      <div class="po-sub-title">Trend (last 10 sessions)</div>
-      <div class="po-spark-wrap">
-        <svg class="po-spark-svg" id="sparkline" viewBox="0 0 300 60" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="sparkGrad" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
-              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div class="po-spark-empty" id="sparkEmpty">Need 2+ sessions for trend</div>
-      </div>
-    </div>
-
-    <!-- History -->
-    <div class="po-sub-section">
-      <div class="po-sub-title">History</div>
-      <div id="historyCard">
-        <div class="po-empty">No logs yet.</div>
-      </div>
-    </div>
-
-    <!-- Today's Workout — every set logged today, grouped by exercise.
-         "Mark done" stamps the day so the past-workouts list shows it
-         as a completed session. The volume here also feeds the
-         composition estimate at the top of the page. -->
-    <div class="po-sub-section">
-      <div class="po-sub-title">Today's workout</div>
-      <div class="po-tw" id="poTw">
-        <div class="po-tw-head">
-          <div>
-            <div class="po-tw-eyebrow" id="poTwDateLabel">TODAY</div>
-            <div class="po-tw-summary">
-              <span class="po-tw-summary-num" id="poTwSetCount">0</span>
-              <span class="po-tw-summary-label">sets</span>
-              <span class="po-tw-summary-sep">·</span>
-              <span class="po-tw-summary-vol" id="poTwTotalVol">0 kg lifted</span>
+          <div class="pe-form-inline">
+            <div class="pe-form-row">
+              <label class="pe-label" for="pe-goal">GOAL</label>
+              <select class="pe-select" id="pe-goal">
+                <option value="">—</option>
+                <option value="strength">Strength</option>
+                <option value="hypertrophy">Hypertrophy</option>
+                <option value="cutting">Cutting</option>
+                <option value="recomp">Recomp</option>
+                <option value="endurance">Endurance</option>
+                <option value="general">General</option>
+              </select>
+            </div>
+            <div class="pe-form-row">
+              <label class="pe-label" for="pe-level">LEVEL</label>
+              <select class="pe-select" id="pe-level">
+                <option value="">—</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
+            <div class="pe-form-row" style="max-width:80px">
+              <label class="pe-label" for="pe-weeks">WEEKS</label>
+              <input class="pe-input" id="pe-weeks" type="number" min="1" max="52" value="4">
             </div>
           </div>
-          <button class="po-tw-done-btn" id="poTwDoneBtn" type="button">Mark workout done</button>
-        </div>
-        <ul class="po-tw-list" id="poTwList"></ul>
-        <div class="po-tw-empty" id="poTwEmpty">No sets logged today — log one above and it'll appear here.</div>
+          <div class="pe-checkbox-row">
+            <input type="checkbox" id="pe-public">
+            <label for="pe-public">Make public (others can browse & copy)</label>
+          </div>
+          <button class="pe-save-btn" id="peProgSaveBtn">SAVE PROGRAM</button>
+
+          <!-- Sessions section (shown after program saved) -->
+          <div id="peSectSessions" style="display:none">
+            <div class="prog-section-label">SESSIONS</div>
+            <div id="peSessionsList"></div>
+            <button class="pe-add-sess-btn" id="peAddSessBtn">+ ADD SESSION</button>
+            <div class="prog-section-label" style="margin-top:18px">WEEKLY SCHEDULE</div>
+            <div id="peSchedule"></div>
+          </div>
+        </form>
       </div>
 
-      <button type="button" class="po-tw-past-toggle" id="poTwPastToggle" aria-expanded="false">
-        <span>Past workouts <span class="po-tw-past-count" id="poTwPastCount">0</span></span>
-        <span class="po-tw-past-arrow" id="poTwPastArrow">▾</span>
+    </div>
+
+    <!-- FREESTYLE sub-tab — existing strength tracker (untouched) -->
+    <div data-strength-panel="freestyle">
+      <button class="po-day-pill" type="button" id="dayPill" title="Tap to switch the day filter to today's split">
+        <span class="po-day-date" id="dayPillDate">—</span>
+        <span class="po-day-sep">·</span>
+        <span class="po-day-split" id="dayPillSplit">—</span>
       </button>
-      <div class="po-tw-past-body" id="poTwPastBody" style="display:none"></div>
+
+      <div class="card">
+        <!-- Filters -->
+        <div class="po-filters">
+          <div class="po-seg-row">
+            <span class="po-seg-label">Gym</span>
+            <div class="po-seg-control" id="gymSeg"></div>
+          </div>
+          <div class="po-seg-row">
+            <span class="po-seg-label">Day</span>
+            <div class="po-seg-control" id="daySeg"></div>
+          </div>
+        </div>
+
+        <!-- Exercise -->
+        <div class="po-sub-section">
+          <div class="po-sub-title">Exercise</div>
+          <div class="po-exercise-bar">
+            <select class="po-ex-select" id="exSelect"></select>
+            <button class="po-btn-icon" id="addExBtn" title="Add exercise" aria-label="Add">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <button class="po-btn-icon" id="editExBtn" title="Edit / delete" aria-label="Edit">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+            </button>
+          </div>
+          <div class="po-no-ex" id="noExMsg" style="display:none">No exercises here yet. Tap <strong>+</strong> to add one.</div>
+        </div>
+
+        <!-- Log a set -->
+        <div class="po-sub-section">
+          <div class="po-sub-title">Log today's top set</div>
+          <div class="po-bw-banner" id="bwBanner">Bodyweight — log reps only</div>
+          <div class="po-last-set" id="lastSet">
+            <span class="po-last-label">Last time</span>
+            <span class="po-last-value" id="lastSetValue"></span>
+            <span class="po-last-meta" id="lastSetMeta"></span>
+          </div>
+          <div class="po-log-grid" id="logGrid">
+            <div class="po-field" id="weightField">
+              <label id="weightLabel">Weight (kg)</label>
+              <div class="po-weight-row">
+                <button class="po-w-btn" id="weightDownBtn" type="button">−</button>
+                <input type="number" id="weightInput" step="0.5" inputmode="decimal" placeholder="0">
+                <button class="po-w-btn" id="weightUpBtn" type="button">+</button>
+              </div>
+            </div>
+            <div class="po-field">
+              <label>Reps</label>
+              <div class="po-reps-row" id="repsRow" data-value="8">
+                <button type="button" class="po-reps-pill" data-v="4">4</button>
+                <button type="button" class="po-reps-pill" data-v="5">5</button>
+                <button type="button" class="po-reps-pill" data-v="6">6</button>
+                <button type="button" class="po-reps-pill" data-v="7">7</button>
+                <button type="button" class="po-reps-pill active" data-v="8">8</button>
+                <button type="button" class="po-reps-pill" data-v="9">9</button>
+                <button type="button" class="po-reps-pill" data-v="10">10</button>
+                <button type="button" class="po-reps-pill" data-v="11">11</button>
+                <button type="button" class="po-reps-pill" data-v="12">12</button>
+              </div>
+            </div>
+          </div>
+          <button class="po-btn-primary" id="logBtn">Log set</button>
+        </div>
+
+        <!-- Prescription -->
+        <div class="po-sub-section">
+          <div class="po-sub-title">Next session</div>
+          <div id="rxWrap"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="po-sub-section">
+          <div class="po-sub-title">Stats</div>
+          <div class="po-stats-row">
+            <div class="po-stat-box">
+              <div class="po-stat-label" id="oneRmLabel">Est. 1RM</div>
+              <div class="po-stat-val" id="oneRm">—<span class="po-unit" id="oneRmUnit">kg</span></div>
+            </div>
+            <div class="po-stat-box">
+              <div class="po-stat-label">Best set</div>
+              <div class="po-stat-val" id="bestSet">—</div>
+            </div>
+            <div class="po-stat-box">
+              <div class="po-stat-label">Sessions</div>
+              <div class="po-stat-val" id="sessionCount">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trend -->
+        <div class="po-sub-section">
+          <div class="po-sub-title">Trend (last 10 sessions)</div>
+          <div class="po-spark-wrap">
+            <svg class="po-spark-svg" id="sparkline" viewBox="0 0 300 60" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="sparkGrad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+                  <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="po-spark-empty" id="sparkEmpty">Need 2+ sessions for trend</div>
+          </div>
+        </div>
+
+        <!-- History -->
+        <div class="po-sub-section">
+          <div class="po-sub-title">History</div>
+          <div id="historyCard">
+            <div class="po-empty">No logs yet.</div>
+          </div>
+        </div>
+
+        <!-- Today's Workout -->
+        <div class="po-sub-section">
+          <div class="po-sub-title">Today's workout</div>
+          <div class="po-tw" id="poTw">
+            <div class="po-tw-head">
+              <div>
+                <div class="po-tw-eyebrow" id="poTwDateLabel">TODAY</div>
+                <div class="po-tw-summary">
+                  <span class="po-tw-summary-num" id="poTwSetCount">0</span>
+                  <span class="po-tw-summary-label">sets</span>
+                  <span class="po-tw-summary-sep">·</span>
+                  <span class="po-tw-summary-vol" id="poTwTotalVol">0 kg lifted</span>
+                </div>
+              </div>
+              <button class="po-tw-done-btn" id="poTwDoneBtn" type="button">Mark workout done</button>
+            </div>
+            <ul class="po-tw-list" id="poTwList"></ul>
+            <div class="po-tw-empty" id="poTwEmpty">No sets logged today — log one above and it'll appear here.</div>
+          </div>
+
+          <button type="button" class="po-tw-past-toggle" id="poTwPastToggle" aria-expanded="false">
+            <span>Past workouts <span class="po-tw-past-count" id="poTwPastCount">0</span></span>
+            <span class="po-tw-past-arrow" id="poTwPastArrow">▾</span>
+          </button>
+          <div class="po-tw-past-body" id="poTwPastBody" style="display:none"></div>
+        </div>
+      </div>
+    </div><!-- /freestyle -->
+
+    <!-- HISTORY sub-tab (placeholder for Step 6) -->
+    <div data-strength-panel="history" hidden>
+      <!-- List view -->
+      <div id="histViewList">
+        <div id="histList"></div>
+        <button class="hist-load-more hidden" id="histLoadMore">Load more</button>
+      </div>
+      <!-- Detail view -->
+      <div id="histViewDetail" hidden>
+        <button class="prog-back-btn" id="histDetailBack">← BACK</button>
+        <div id="histDetailContent"></div>
+      </div>
+    </div>
+
+    <!-- STATS sub-tab — body weight tracker + PR tracker (placeholder) -->
+    <div data-strength-panel="stats" hidden>
+      <div class="wt-section">
+        <div class="wt-divider"><span>WEIGHT</span></div>
+        <div class="wt-card">
+          <div class="wt-row">
+            <span class="wt-num" id="wtNum">—</span>
+            <span class="wt-unit" id="wtUnit">kg</span>
+          </div>
+          <div class="wt-delta hidden" id="wtDelta"></div>
+          <div class="wt-streak hidden" id="wtStreak">🔥<span id="wtStreakNum">0 day streak</span></div>
+          <div class="wt-empty" id="wtEmpty">Log your first weight to start tracking.</div>
+          <div class="wt-chart-wrap hidden" id="wtChartWrap">
+            <div class="wt-chart-yaxis">
+              <span id="wtYAxisMax">—</span>
+              <span id="wtYAxisMin">—</span>
+            </div>
+            <svg class="wt-chart" viewBox="0 0 320 130" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="wtFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#6ee7b7" stop-opacity="0"/>
+                </linearGradient>
+                <filter id="wtGlow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <line class="wt-grid" x1="0" y1="20" x2="320" y2="20"></line>
+              <line class="wt-grid" x1="0" y1="65" x2="320" y2="65"></line>
+              <line class="wt-grid" x1="0" y1="110" x2="320" y2="110"></line>
+              <g id="wtChartContent"></g>
+            </svg>
+            <div class="wt-meta" id="wtMeta">0 entries</div>
+          </div>
+          <div class="wt-legend hidden" id="wtLegend">
+            <span class="wt-legend-item"><span class="wt-legend-dot"></span>DAILY</span>
+            <span class="wt-legend-item"><span class="wt-legend-dot wt-legend-dot-avg"></span>7-DAY AVG</span>
+          </div>
+          <div class="wt-comp hidden" id="wtComp">
+            <div class="wt-comp-h">
+              <span class="wt-comp-label">Composition estimate</span>
+              <span class="wt-comp-window" id="wtCompWindow">last 30d</span>
+            </div>
+            <div class="wt-comp-headline" id="wtCompHeadline">—</div>
+            <div class="wt-comp-bars" id="wtCompBars"></div>
+            <div class="wt-comp-foot" id="wtCompFoot">—</div>
+          </div>
+          <div class="wt-locked hidden" id="wtLocked">
+            <div class="wt-locked-info">
+              <span class="wt-locked-check">✓</span>
+              <div>
+                <div class="wt-locked-label">LOGGED TODAY</div>
+                <div class="wt-locked-value" id="wtLockedValue">— kg</div>
+              </div>
+            </div>
+            <button class="wt-edit-btn" id="wtEditBtn">Edit</button>
+          </div>
+          <div class="wt-input-row" id="wtInputRow">
+            <div class="wt-input-top">
+              <input type="number" step="0.1" class="wt-input" id="wtInput" placeholder="Enter weight" inputmode="decimal" aria-label="Today's weight">
+              <span class="wt-unit-static" id="wtUnitStatic">kg</span>
+              <button class="wt-save-btn" id="wtSaveBtn">Save</button>
+            </div>
+          </div>
+        </div>
+        <button class="wt-progress-link" id="wtProgressLink" type="button" aria-label="Open progress photos">
+          <div>
+            <div class="wt-progress-label">PROGRESS PHOTOS</div>
+            <div class="wt-progress-count" id="wtProgressCount">0 photos</div>
+          </div>
+          <span class="wt-progress-arrow">→</span>
+        </button>
+      </div>
+
+      <!-- PR Tracker -->
+      <div id="prPanel">
+        <div class="prog-section-label" style="margin-top:8px">PR TRACKER — ESTIMATED 1RM</div>
+        <div class="pr-sort-bar">
+          <button class="pr-sort-btn active" data-sort="1rm">TOP 1RM</button>
+          <button class="pr-sort-btn" data-sort="recent">RECENT</button>
+          <button class="pr-sort-btn" data-sort="name">A→Z</button>
+        </div>
+        <div id="prList"><div class="prog-loading">Loading PRs…</div></div>
+      </div>
+    </div><!-- /stats -->
+
+  </div><!-- /strength -->
+
+  <!-- ══ STRETCHING ══ -->
+  <div data-gym-panel="stretching" hidden>
+    <div class="gym-placeholder">
+      <div class="gym-ph-icon">🧘</div>
+      <div class="gym-ph-title">Stretching</div>
+      <div class="gym-ph-body">Stretch routines, hold timers, daily logs, and streak tracking. Coming in the next step.</div>
+    </div>
+  </div>
+
+  <!-- ══ RUNNING ══ -->
+  <div data-gym-panel="running" hidden>
+    <div class="gym-placeholder">
+      <div class="gym-ph-icon">🏃</div>
+      <div class="gym-ph-title">Running</div>
+      <div class="gym-ph-body">Run tracking, pace analysis, and training plans. Coming in Phase 3B.</div>
+    </div>
+  </div>
+
+</div><!-- /po-shell -->
+
+<!-- Progress photos overlay (fixed, outside po-shell) -->
+<div class="wt-overlay" id="wtOverlay" aria-hidden="true">
+  <div class="wt-overlay-inner">
+    <div class="wt-overlay-h">
+      <button class="wt-back" id="wtBack" aria-label="Back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <div class="wt-overlay-title">Progress</div>
+    </div>
+    <div class="wt-overlay-actions">
+      <button class="wt-overlay-action wt-overlay-primary" id="wtTakePhotoBtn">Take Photo</button>
+      <button class="wt-overlay-action wt-overlay-secondary" id="wtFromLibraryBtn">From Library</button>
+    </div>
+    <input type="file" id="wtFileCamera" accept="image/*" capture="environment" style="display:none">
+    <input type="file" id="wtFileLibrary" accept="image/*" style="display:none">
+    <div class="wt-photo-grid" id="wtPhotoGrid">
+      <div class="wt-photo-empty">No photos yet · tap Take Photo to start</div>
+    </div>
+  </div>
+</div>
+
+<!-- Camera modal -->
+<div class="wt-cam" id="wtCam" aria-hidden="true">
+  <div class="wt-cam-stage">
+    <video class="wt-cam-video" id="wtCamVideo" autoplay playsinline muted></video>
+    <canvas id="wtCamCanvas" style="display:none"></canvas>
+  </div>
+  <div class="wt-cam-actions">
+    <button class="wt-cam-btn" id="wtCamCancel">Cancel</button>
+    <button class="wt-cam-shutter" id="wtCamShutter" aria-label="Capture"></button>
+    <button class="wt-cam-btn" id="wtCamFlip" aria-label="Flip camera">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Photo viewer -->
+<div class="wt-viewer" id="wtViewer" data-mode="single" aria-hidden="true">
+  <div class="wt-viewer-single">
+    <div class="wt-viewer-stage">
+      <img id="wtViewerImg" alt="" style="max-width:100%; max-height:100%; object-fit:contain;">
+    </div>
+    <div class="wt-viewer-meta">
+      <div class="wt-viewer-date" id="wtViewerDate">—</div>
+      <div class="wt-viewer-weight" id="wtViewerWeight">—</div>
+    </div>
+    <div class="wt-viewer-actions">
+      <button class="wt-viewer-btn wt-viewer-compare" id="wtViewerCompare">Compare</button>
+      <button class="wt-viewer-btn wt-viewer-close" id="wtViewerClose">Close</button>
+      <button class="wt-viewer-btn wt-viewer-delete" id="wtViewerDelete">Delete</button>
+    </div>
+  </div>
+  <div class="wt-viewer-compare-view">
+    <div class="wt-compare-stage">
+      <div class="wt-compare-side" id="wtCmpSideA">
+        <img id="wtCmpImgA" alt="">
+        <div class="wt-compare-meta-line" id="wtCmpMetaA">—</div>
+      </div>
+      <button type="button" class="wt-compare-side wt-compare-other" id="wtCmpSideB" title="Tap to compare to a different photo" aria-label="Compare to a different photo">
+        <img id="wtCmpImgB" alt="">
+        <div class="wt-compare-meta-line" id="wtCmpMetaB">—</div>
+      </button>
+    </div>
+    <div class="wt-compare-headline" id="wtCompareHeadline">—</div>
+    <div class="wt-viewer-actions">
+      <button class="wt-viewer-btn wt-viewer-back" id="wtCompareBack">← Back</button>
+      <button class="wt-viewer-btn wt-viewer-close" id="wtCompareClose">Close</button>
+      <button class="wt-viewer-btn wt-viewer-delete" id="wtCompareDelete">Delete</button>
     </div>
   </div>
 </div>
@@ -3355,9 +3848,1172 @@ await initUserMenu();
   });
 
 
+  // ── Gym tab system ────────────────────────────────────────────
+
+  function switchGymTab(name) {
+    localStorage.setItem('gym:active_tab', name);
+    document.querySelectorAll('.gym-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('[data-gym-panel]').forEach(p => { p.hidden = p.dataset.gymPanel !== name; });
+  }
+
+  function switchStrengthTab(name) {
+    localStorage.setItem('gym:strength_tab', name);
+    document.querySelectorAll('.strength-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('[data-strength-panel]').forEach(p => { p.hidden = p.dataset.strengthPanel !== name; });
+  }
+
+  (function initGymTabs() {
+    document.querySelectorAll('.gym-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchGymTab(btn.dataset.tab));
+    });
+    document.querySelectorAll('.strength-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchStrengthTab(btn.dataset.tab));
+    });
+    const savedGymTab = localStorage.getItem('gym:active_tab') || 'strength';
+    switchGymTab(savedGymTab);
+    const savedStrengthTab = localStorage.getItem('gym:strength_tab') || 'freestyle';
+    switchStrengthTab(savedStrengthTab);
+  })();
+
+  async function loadActiveBanner() {
+    try {
+      const { getActiveProgram } = await import('./js/programs-data.js');
+      const active = await getActiveProgram();
+      const banner = document.getElementById('gymActiveBanner');
+      if (!active || !active.program) { banner.classList.add('hidden'); return; }
+      banner.classList.remove('hidden');
+      document.getElementById('gymBannerLabel').textContent =
+        'WEEK ' + active.activeRecord.current_week + ' / ' + active.program.duration_weeks + ' WEEKS';
+      document.getElementById('gymBannerName').textContent = active.program.name;
+      const startBtn = document.getElementById('gymStartWorkoutBtn');
+      startBtn.style.opacity = '';
+      if (active.todaySession) {
+        document.getElementById('gymBannerSession').textContent = 'TODAY — ' + active.todaySession.name;
+        startBtn.textContent = 'Start Workout';
+        startBtn.disabled = false;
+        startBtn.onclick = () => openWorkoutPlayer(active.program.id, active.todaySession.id, active.todaySession.name, active.todaySession.exercises || []);
+      } else if (active.todaySchedule && active.todaySchedule.rest_label) {
+        document.getElementById('gymBannerSession').textContent = 'TODAY — ' + active.todaySchedule.rest_label;
+        startBtn.textContent = 'Rest Day';
+        startBtn.disabled = true;
+        startBtn.style.opacity = '0.5';
+        startBtn.onclick = null;
+      } else {
+        document.getElementById('gymBannerSession').textContent = 'No session scheduled today';
+        startBtn.textContent = 'Browse Programs';
+        startBtn.disabled = false;
+        startBtn.onclick = () => switchStrengthTab('programs');
+      }
+    } catch(e) { console.error('Active banner error:', e); }
+  }
+  loadActiveBanner();
+
+
+  // ── Programs panel ────────────────────────────────────────────
+
+  let _progInited = false;
+  let _progMod = null;
+  const _progState = { view: 'discover', goal: '', level: '', sort: '', selectedId: null, editingProg: null, _fromMine: false };
+
+  async function getProgMod() {
+    if (!_progMod) _progMod = await import('./js/programs-data.js');
+    return _progMod;
+  }
+
+  function showProgView(view) {
+    _progState.view = view;
+    ['discover','mine','detail','editor'].forEach(v => {
+      const el = document.getElementById('progView' + v.charAt(0).toUpperCase() + v.slice(1));
+      if (el) el.hidden = v !== view;
+    });
+  }
+
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function goalEmoji(goal) {
+    return {strength:'🏋️',hypertrophy:'💪',cutting:'🔥',recomp:'⚖️',endurance:'🏃',general:'⚡'}[goal]||'🎯';
+  }
+
+  async function initPrograms() {
+    if (_progInited) return;
+    _progInited = true;
+
+    document.getElementById('progTogDiscover').addEventListener('click', () => {
+      document.getElementById('progTogDiscover').classList.add('active');
+      document.getElementById('progTogMine').classList.remove('active');
+      showProgView('discover');
+      loadProgGrid();
+    });
+    document.getElementById('progTogMine').addEventListener('click', () => {
+      document.getElementById('progTogMine').classList.add('active');
+      document.getElementById('progTogDiscover').classList.remove('active');
+      showProgView('mine');
+      loadMineList();
+    });
+    document.getElementById('progGoalFilters').addEventListener('click', e => {
+      const btn = e.target.closest('.prog-chip[data-goal]');
+      if (!btn) return;
+      document.querySelectorAll('#progGoalFilters .prog-chip').forEach(b => b.classList.toggle('active', b === btn));
+      _progState.goal = btn.dataset.goal;
+      loadProgGrid();
+    });
+    document.getElementById('progLevelFilters').addEventListener('click', e => {
+      const btn = e.target.closest('.prog-chip[data-level]');
+      if (!btn) return;
+      document.querySelectorAll('#progLevelFilters .prog-chip').forEach(b => b.classList.toggle('active', b === btn));
+      _progState.level = btn.dataset.level;
+      loadProgGrid();
+    });
+    document.querySelectorAll('.prog-sort-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.prog-sort-btn').forEach(b => b.classList.toggle('active', b === btn));
+        _progState.sort = btn.dataset.sort;
+        loadProgGrid();
+      });
+    });
+    let _searchTimer;
+    document.getElementById('progSearch').addEventListener('input', () => {
+      clearTimeout(_searchTimer);
+      _searchTimer = setTimeout(loadProgGrid, 350);
+    });
+    document.getElementById('progDetailBack').addEventListener('click', () => {
+      if (_progState._fromMine) { showProgView('mine'); loadMineList(); }
+      else showProgView('discover');
+    });
+    document.getElementById('progEditorBack').addEventListener('click', () => {
+      showProgView('mine');
+      loadMineList();
+    });
+    document.getElementById('progCreateBtn').addEventListener('click', () => openEditor(null));
+    document.getElementById('peProgSaveBtn').addEventListener('click', saveEditorProgram);
+    document.getElementById('peAddSessBtn').addEventListener('click', () => openSessEditor(null, _progState.editingProg));
+    // session editor overlay close
+    document.getElementById('progSessEditorClose').addEventListener('click', closeSessEditor);
+    document.getElementById('progSessSaveBtn').addEventListener('click', saveSessEditor);
+    document.getElementById('pse-add-ex-btn').addEventListener('click', addExerciseFromForm);
+
+    loadProgGrid();
+  }
+
+  async function loadProgGrid() {
+    const grid = document.getElementById('progGrid');
+    grid.innerHTML = '<div class="prog-loading">Loading...</div>';
+    try {
+      const { loadPublicPrograms } = await getProgMod();
+      let programs = await loadPublicPrograms({
+        goal: _progState.goal || undefined,
+        level: _progState.level || undefined,
+        sortBy: _progState.sort || undefined,
+      });
+      const q = (document.getElementById('progSearch').value || '').trim().toLowerCase();
+      if (q) programs = programs.filter(p => (p.name||'').toLowerCase().includes(q) || (p.description||'').toLowerCase().includes(q));
+      if (!programs.length) { grid.innerHTML = '<div class="prog-empty">No programs found.</div>'; return; }
+      grid.innerHTML = programs.map(renderProgCard).join('');
+      grid.querySelectorAll('.prog-card').forEach(card => {
+        card.addEventListener('click', () => { _progState._fromMine = false; showProgDetail(card.dataset.id); });
+      });
+    } catch(e) {
+      grid.innerHTML = '<div class="prog-empty">Failed to load programs.</div>';
+      console.error(e);
+    }
+  }
+
+  function renderProgCard(p) {
+    const gc = {strength:'#6ee7b7',hypertrophy:'#93c5fd',cutting:'#fcd34d',recomp:'#f9a8d4',endurance:'#a78bfa',general:'#94a3b8'};
+    const cover = p.cover_image_url
+      ? `<img class="prog-card-cover" src="${escHtml(p.cover_image_url)}" alt="" loading="lazy">`
+      : `<div class="prog-card-cover-ph" style="background:linear-gradient(135deg,${gc[p.goal]||'#374151'}18,${gc[p.goal]||'#374151'}38)">${goalEmoji(p.goal)}</div>`;
+    return `<div class="prog-card" data-id="${p.id}">
+      ${cover}
+      <div class="prog-card-body">
+        <div class="prog-card-meta">
+          ${p.is_official?'<span class="prog-badge prog-badge-official">OFFICIAL</span>':''}
+          ${p.goal?`<span class="prog-badge" style="color:${gc[p.goal]||'var(--text-3)'}">${p.goal.toUpperCase()}</span>`:''}
+          ${p.level?`<span class="prog-badge">${p.level.toUpperCase()}</span>`:''}
+        </div>
+        <div class="prog-card-name">${escHtml(p.name)}</div>
+        ${p.description?`<div class="prog-card-desc">${escHtml(p.description)}</div>`:''}
+        <div class="prog-card-stats">
+          ${p.duration_weeks?`<span>${p.duration_weeks}W</span>`:''}
+          <span>${p.rating_avg?'⭐ '+Number(p.rating_avg).toFixed(1):'—'}</span>
+          ${p.copy_count?`<span>📋 ${p.copy_count}</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  async function showProgDetail(programId) {
+    _progState.selectedId = programId;
+    showProgView('detail');
+    const content = document.getElementById('progDetailContent');
+    content.innerHTML = '<div class="prog-loading">Loading...</div>';
+    try {
+      const { loadProgramFull, loadRatings } = await getProgMod();
+      const [{ program: p, sessions, schedule }, ratings] = await Promise.all([
+        loadProgramFull(programId),
+        loadRatings(programId),
+      ]);
+      content.innerHTML = renderProgDetail(p, sessions, schedule, ratings);
+      content.querySelector('.prog-detail-copy')?.addEventListener('click', e => copyProgram(programId, e.currentTarget));
+      content.querySelector('.prog-detail-setactive')?.addEventListener('click', e => setProgActive(programId, e.currentTarget));
+      content.querySelector('.prog-detail-edit')?.addEventListener('click', () => openEditor(p));
+      content.querySelectorAll('.prog-sess-start').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sess = sessions.find(s => s.id === btn.dataset.sessId);
+          if (sess) openWorkoutPlayer(programId, sess.id, sess.name, sess.exercises || []);
+        });
+      });
+      content.querySelectorAll('.prog-sess-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const body = btn.closest('.prog-sess-item').querySelector('.prog-sess-body');
+          body.hidden = !body.hidden;
+          btn.textContent = body.hidden ? '▸' : '▾';
+        });
+      });
+    } catch(e) {
+      content.innerHTML = '<div class="prog-empty">Failed to load.</div>';
+      console.error(e);
+    }
+  }
+
+  function renderProgDetail(p, sessions, schedule, ratings) {
+    const gc = {strength:'#6ee7b7',hypertrophy:'#93c5fd',cutting:'#fcd34d',recomp:'#f9a8d4',endurance:'#a78bfa',general:'#94a3b8'};
+    const days = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+    const schedMini = days.map((d, i) => {
+      const s = schedule.find(x => x.day_of_week === i);
+      let label = '—', cls = 'empty', tip = '';
+      if (s && s.session_id) {
+        const sess = sessions.find(x => x.id === s.session_id);
+        label = sess ? sess.name.replace(/^SÉANCE\s*\d+\s*[:\-–]?\s*/i,'').split(' ').slice(0,2).join(' ') || sess.name.substring(0,8) : '?';
+        cls = 'active'; tip = sess ? sess.name : '';
+      } else if (s && s.rest_label) { label = 'REST'; cls = 'rest'; tip = s.rest_label; }
+      return `<div class="prog-sched-day" title="${escHtml(tip)}"><div class="prog-sched-d">${d}</div><div class="prog-sched-s ${cls}">${escHtml(label.substring(0,9))}</div></div>`;
+    }).join('');
+
+    const sessHTML = sessions.map(s => {
+      const exHTML = (s.exercises||[]).map(ex => `
+        <div class="prog-ex-row">
+          ${ex.is_superset?'<span class="prog-ex-tag ss">SS</span>':''}
+          <div class="prog-ex-info">
+            <div class="prog-ex-name">${escHtml(ex.name)}</div>
+            <div class="prog-ex-target">${ex.target_sets} × ${ex.target_reps} · ${ex.rest_sec}s</div>
+            ${ex.technique?`<div class="prog-ex-tech">${escHtml(ex.technique)}</div>`:''}
+          </div>
+        </div>`).join('');
+      return `<div class="prog-sess-item">
+        <div class="prog-sess-hd"><button class="prog-sess-toggle">▸</button><span class="prog-sess-name">${escHtml(s.name)}</span><span class="prog-sess-ct">${(s.exercises||[]).length} ex</span><button class="prog-sess-start" data-sess-id="${s.id}">▶ Start</button></div>
+        <div class="prog-sess-body" hidden>${exHTML||'<div class="prog-empty" style="padding:10px">No exercises.</div>'}</div>
+      </div>`;
+    }).join('');
+
+    const ratingHTML = ratings.length
+      ? ratings.slice(0,5).map(r=>`<div class="prog-rating-row"><span class="prog-rating-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span><span class="prog-rating-comment">${escHtml(r.comment||'')}</span></div>`).join('')
+      : '<div class="prog-empty">No ratings yet.</div>';
+
+    const copyBtn = `<button class="prog-action-btn prog-detail-copy">📋 Copy</button>`;
+    const activeBtn = `<button class="prog-action-btn prog-detail-setactive">▶ Set Active</button>`;
+    const editBtn = p.is_official ? '' : `<button class="prog-action-btn prog-detail-edit">✏️ Edit</button>`;
+
+    return `<div class="prog-detail-head">
+      ${p.cover_image_url?`<img class="prog-detail-cover" src="${escHtml(p.cover_image_url)}" alt="">`:''}
+      <div class="prog-detail-meta">
+        ${p.is_official?'<span class="prog-badge prog-badge-official">OFFICIAL</span>':''}
+        ${p.goal?`<span class="prog-badge" style="color:${gc[p.goal]||'var(--text-3)'}">${p.goal.toUpperCase()}</span>`:''}
+        ${p.level?`<span class="prog-badge">${p.level.toUpperCase()}</span>`:''}
+        ${p.duration_weeks?`<span class="prog-badge">${p.duration_weeks}W</span>`:''}
+      </div>
+      <h2 class="prog-detail-name">${escHtml(p.name)}</h2>
+      ${p.description?`<p class="prog-detail-desc">${escHtml(p.description)}</p>`:''}
+      <div class="prog-detail-actions">${copyBtn}${activeBtn}${editBtn}</div>
+    </div>
+    <div class="prog-section-label">WEEKLY SCHEDULE</div>
+    <div class="prog-sched-mini">${schedMini}</div>
+    <div class="prog-section-label">SESSIONS (${sessions.length})</div>
+    <div class="prog-sess-list">${sessHTML||'<div class="prog-empty">No sessions.</div>'}</div>
+    <div class="prog-section-label">RATINGS</div>
+    <div class="prog-ratings-wrap">${ratingHTML}</div>`;
+  }
+
+  async function copyProgram(programId, btn) {
+    btn.disabled = true; btn.textContent = 'Copying...';
+    try {
+      const { copyProgramToMine } = await getProgMod();
+      await copyProgramToMine(programId);
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.disabled = false; btn.textContent = '📋 Copy'; }, 2000);
+    } catch(e) { btn.disabled = false; btn.textContent = '📋 Copy'; alert('Copy failed: ' + e.message); }
+  }
+
+  async function setProgActive(programId, btn) {
+    btn.disabled = true; btn.textContent = 'Setting...';
+    try {
+      const { setActiveProgram } = await getProgMod();
+      await setActiveProgram(programId);
+      btn.textContent = '✓ Active!';
+      loadActiveBanner();
+      setTimeout(() => { btn.disabled = false; btn.textContent = '▶ Set Active'; }, 2000);
+    } catch(e) { btn.disabled = false; btn.textContent = '▶ Set Active'; alert('Failed: ' + e.message); }
+  }
+
+  async function loadMineList() {
+    const list = document.getElementById('progMineList');
+    list.innerHTML = '<div class="prog-loading">Loading...</div>';
+    try {
+      const { loadMyPrograms } = await getProgMod();
+      const programs = await loadMyPrograms();
+      if (!programs.length) { list.innerHTML = '<div class="prog-empty">No programs yet. Create one!</div>'; return; }
+      list.innerHTML = programs.map(p => `
+        <div class="prog-mine-row">
+          <div class="prog-mine-info">
+            <div class="prog-mine-name">${escHtml(p.name)}</div>
+            <div class="prog-mine-meta">${[p.duration_weeks?p.duration_weeks+'W':null, p.goal, p.is_public?'PUBLIC':'PRIVATE'].filter(Boolean).join(' · ')}</div>
+          </div>
+          <div class="prog-mine-actions">
+            <button class="prog-mine-btn" data-action="view" data-id="${p.id}" title="View">👁</button>
+            <button class="prog-mine-btn" data-action="setactive" data-id="${p.id}" title="Set active">▶</button>
+            <button class="prog-mine-btn" data-action="edit" data-id="${p.id}" title="Edit">✏️</button>
+            <button class="prog-mine-btn danger" data-action="delete" data-id="${p.id}" title="Delete">🗑️</button>
+          </div>
+        </div>`).join('');
+      list.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          if (btn.dataset.action === 'view') { _progState._fromMine = true; showProgDetail(id); }
+          else if (btn.dataset.action === 'setactive') {
+            btn.textContent = '...'; btn.disabled = true;
+            try { const { setActiveProgram } = await getProgMod(); await setActiveProgram(id); loadActiveBanner(); } catch(e) { alert(e.message); }
+            btn.textContent = '▶'; btn.disabled = false;
+          } else if (btn.dataset.action === 'edit') {
+            const { loadProgramFull } = await getProgMod();
+            const { program } = await loadProgramFull(id);
+            openEditor(program);
+          } else if (btn.dataset.action === 'delete') {
+            if (!confirm('Delete this program?')) return;
+            const { deleteProgram } = await getProgMod();
+            await deleteProgram(id);
+            loadMineList();
+          }
+        });
+      });
+    } catch(e) { list.innerHTML = '<div class="prog-empty">Failed to load.</div>'; console.error(e); }
+  }
+
+  // ── Editor ────────────────────────────────────────────────────
+
+  function openEditor(program) {
+    _progState.editingProg = program || null;
+    showProgView('editor');
+    document.getElementById('progEditorTitle').textContent = program ? 'EDIT PROGRAM' : 'NEW PROGRAM';
+    const p = program || {};
+    document.getElementById('pe-name').value = p.name || '';
+    document.getElementById('pe-desc').value = p.description || '';
+    document.getElementById('pe-goal').value = p.goal || '';
+    document.getElementById('pe-level').value = p.level || '';
+    document.getElementById('pe-weeks').value = p.duration_weeks || 4;
+    document.getElementById('pe-public').checked = p.is_public || false;
+    document.getElementById('peSectSessions').style.display = program ? '' : 'none';
+    if (program) refreshEditorSessions(program.id);
+  }
+
+  async function saveEditorProgram() {
+    const name = document.getElementById('pe-name').value.trim();
+    if (!name) { document.getElementById('pe-name').focus(); return; }
+    const fields = {
+      name,
+      description: document.getElementById('pe-desc').value.trim() || null,
+      goal: document.getElementById('pe-goal').value || null,
+      level: document.getElementById('pe-level').value || null,
+      duration_weeks: Number(document.getElementById('pe-weeks').value) || 4,
+      is_public: document.getElementById('pe-public').checked,
+    };
+    const btn = document.getElementById('peProgSaveBtn');
+    btn.disabled = true; btn.textContent = 'SAVING...';
+    try {
+      const { createProgram, updateProgram } = await getProgMod();
+      let saved;
+      if (_progState.editingProg) {
+        saved = await updateProgram(_progState.editingProg.id, fields);
+      } else {
+        saved = await createProgram(fields);
+      }
+      _progState.editingProg = saved;
+      document.getElementById('peSectSessions').style.display = '';
+      await refreshEditorSessions(saved.id);
+      btn.textContent = '✓ SAVED';
+      setTimeout(() => { btn.disabled = false; btn.textContent = 'SAVE PROGRAM'; }, 1500);
+    } catch(e) { btn.disabled = false; btn.textContent = 'SAVE PROGRAM'; alert('Save failed: ' + e.message); }
+  }
+
+  async function refreshEditorSessions(programId) {
+    const { loadProgramFull } = await getProgMod();
+    const { sessions, schedule } = await loadProgramFull(programId);
+    const list = document.getElementById('peSessionsList');
+    list.innerHTML = sessions.map(s => `
+      <div class="pe-sess-row">
+        <span class="pe-sess-name">${escHtml(s.name)}</span>
+        <span class="pe-sess-ct">${(s.exercises||[]).length} ex</span>
+        <div class="pe-sess-acts">
+          <button class="prog-mine-btn" data-action="editsess" data-sess-id="${s.id}" data-prog-id="${programId}">EDIT</button>
+          <button class="prog-mine-btn danger" data-action="delsess" data-sess-id="${s.id}">✕</button>
+        </div>
+      </div>`).join('') || '<div class="prog-empty" style="margin:8px 0">No sessions yet.</div>';
+    list.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (btn.dataset.action === 'editsess') {
+          const { loadProgramFull: lp } = await getProgMod();
+          const { sessions: ss } = await lp(programId);
+          const sess = ss.find(s => s.id === btn.dataset.sessId);
+          openSessEditor(btn.dataset.sessId, programId, sess);
+        } else if (btn.dataset.action === 'delsess') {
+          if (!confirm('Delete session?')) return;
+          const { deleteSession } = await getProgMod();
+          await deleteSession(btn.dataset.sessId);
+          refreshEditorSessions(programId);
+        }
+      });
+    });
+    renderEditorSchedule(programId, sessions, schedule);
+  }
+
+  async function renderEditorSchedule(programId, sessions, schedule) {
+    const days = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+    const sched = document.getElementById('peSchedule');
+    sched.innerHTML = days.map((d, i) => {
+      const s = schedule.find(x => x.day_of_week === i);
+      const selId = s && s.session_id ? s.session_id : '';
+      const restLabel = s && s.rest_label ? s.rest_label : '';
+      const opts = sessions.map(sess => `<option value="${sess.id}" ${selId===sess.id?'selected':''}>${escHtml(sess.name)}</option>`).join('');
+      return `<div class="pe-sched-row">
+        <span class="pe-sched-day">${d}</span>
+        <select class="pe-sched-sel" data-day="${i}" data-prog="${programId}">
+          <option value="">— REST —</option>${opts}
+        </select>
+        <input class="pe-sched-label" type="text" placeholder="Rest note" value="${escHtml(restLabel)}" data-day="${i}" data-prog="${programId}"${selId?' style="display:none"':''}>
+      </div>`;
+    }).join('');
+    sched.querySelectorAll('.pe-sched-sel').forEach(sel => {
+      sel.addEventListener('change', async () => {
+        const lbl = sched.querySelector(`.pe-sched-label[data-day="${sel.dataset.day}"]`);
+        if (lbl) lbl.style.display = sel.value ? 'none' : '';
+        const { setSchedule } = await getProgMod();
+        await setSchedule(sel.dataset.prog, Number(sel.dataset.day), sel.value||null, lbl?lbl.value:null);
+      });
+    });
+    sched.querySelectorAll('.pe-sched-label').forEach(inp => {
+      inp.addEventListener('change', async () => {
+        const sel = sched.querySelector(`.pe-sched-sel[data-day="${inp.dataset.day}"]`);
+        const { setSchedule } = await getProgMod();
+        await setSchedule(inp.dataset.prog, Number(inp.dataset.day), sel?(sel.value||null):null, inp.value||null);
+      });
+    });
+  }
+
+  // ── Session editor overlay ────────────────────────────────────
+
+  function openSessEditor(sessId, programId, sessData) {
+    const ov = document.getElementById('progSessEditorOverlay');
+    ov.hidden = false;
+    ov.dataset.sessId = sessId || '';
+    ov.dataset.progId = programId || '';
+    const s = sessData || {};
+    document.getElementById('pse-name').value = s.name || '';
+    document.getElementById('pse-warmup').value = s.warmup_note || '';
+    document.getElementById('pse-rest').value = s.rest_between_exercises_sec || 120;
+    document.getElementById('pse-notes').value = s.notes || '';
+    document.getElementById('pse-ex-name').value = '';
+    document.getElementById('pse-ex-sets').value = '4';
+    document.getElementById('pse-ex-reps').value = '10';
+    document.getElementById('pse-ex-rest').value = '90';
+    document.getElementById('pse-ex-tech').value = '';
+    if (sessId) { renderSessExList(sessId, s.exercises || []); }
+    else { document.getElementById('pseExList').innerHTML = '<div class="prog-empty">Save session first to add exercises.</div>'; }
+  }
+
+  function closeSessEditor() {
+    document.getElementById('progSessEditorOverlay').hidden = true;
+    const progId = document.getElementById('progSessEditorOverlay').dataset.progId;
+    if (progId && _progState.editingProg) refreshEditorSessions(progId);
+  }
+
+  async function saveSessEditor() {
+    const ov = document.getElementById('progSessEditorOverlay');
+    const name = document.getElementById('pse-name').value.trim();
+    if (!name) { document.getElementById('pse-name').focus(); return; }
+    const fields = {
+      name,
+      warmup_note: document.getElementById('pse-warmup').value.trim() || null,
+      rest_between_exercises_sec: Number(document.getElementById('pse-rest').value) || 120,
+      notes: document.getElementById('pse-notes').value.trim() || null,
+    };
+    const btn = document.getElementById('progSessSaveBtn');
+    btn.disabled = true; btn.textContent = 'SAVING...';
+    try {
+      const { addSession, updateSession } = await getProgMod();
+      let saved;
+      if (ov.dataset.sessId) { saved = await updateSession(ov.dataset.sessId, fields); }
+      else { saved = await addSession(ov.dataset.progId, fields); ov.dataset.sessId = saved.id; }
+      document.getElementById('pseExList').innerHTML = '<div class="prog-empty">No exercises yet.</div>';
+      btn.textContent = '✓ SAVED';
+      setTimeout(() => { btn.disabled = false; btn.textContent = 'SAVE SESSION'; }, 1500);
+    } catch(e) { btn.disabled = false; btn.textContent = 'SAVE SESSION'; alert('Save failed: ' + e.message); }
+  }
+
+  function renderSessExList(sessId, exercises) {
+    const list = document.getElementById('pseExList');
+    if (!exercises.length) { list.innerHTML = '<div class="prog-empty">No exercises yet.</div>'; return; }
+    list.innerHTML = exercises.map(ex => `
+      <div class="pse-ex-row">
+        <div class="pse-ex-name">${escHtml(ex.name)}${ex.is_superset?'<span class="prog-ex-tag ss" style="margin-left:5px">SS</span>':''}</div>
+        <div class="pse-ex-target">${ex.target_sets}×${ex.target_reps} · ${ex.rest_sec}s</div>
+        <div class="pse-ex-acts">
+          <button class="prog-mine-btn danger" data-action="delex" data-ex-id="${ex.id}" data-sess-id="${sessId}">✕</button>
+        </div>
+      </div>`).join('');
+    list.querySelectorAll('[data-action="delex"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Delete exercise?')) return;
+        const { deleteExercise, loadProgramFull } = await getProgMod();
+        await deleteExercise(btn.dataset.exId);
+        const progId = document.getElementById('progSessEditorOverlay').dataset.progId;
+        const { sessions } = await loadProgramFull(progId);
+        const sess = sessions.find(s => s.id === btn.dataset.sessId);
+        renderSessExList(btn.dataset.sessId, sess ? (sess.exercises||[]) : []);
+      });
+    });
+  }
+
+  async function addExerciseFromForm() {
+    const ov = document.getElementById('progSessEditorOverlay');
+    const sessId = ov.dataset.sessId;
+    if (!sessId) { alert('Save the session first.'); return; }
+    const name = document.getElementById('pse-ex-name').value.trim();
+    if (!name) { document.getElementById('pse-ex-name').focus(); return; }
+    const fields = {
+      name,
+      target_sets: Number(document.getElementById('pse-ex-sets').value) || 4,
+      target_reps: document.getElementById('pse-ex-reps').value.trim() || '10',
+      rest_sec: Number(document.getElementById('pse-ex-rest').value) || 90,
+      technique: document.getElementById('pse-ex-tech').value.trim() || null,
+    };
+    const btn = document.getElementById('pse-add-ex-btn');
+    btn.disabled = true; btn.textContent = 'Adding...';
+    try {
+      const { addExercise, loadProgramFull } = await getProgMod();
+      await addExercise(sessId, fields);
+      document.getElementById('pse-ex-name').value = '';
+      document.getElementById('pse-ex-tech').value = '';
+      const progId = ov.dataset.progId;
+      const { sessions } = await loadProgramFull(progId);
+      const sess = sessions.find(s => s.id === sessId);
+      renderSessExList(sessId, sess ? (sess.exercises||[]) : []);
+    } catch(e) { alert('Add failed: ' + e.message); }
+    btn.disabled = false; btn.textContent = 'ADD EXERCISE';
+  }
+
+  // Hook into strength-tab switch to lazy-init programs panel
+  const _origSwitchStrengthTab = switchStrengthTab;
+  switchStrengthTab = function(name) {
+    _origSwitchStrengthTab(name);
+    if (name === 'programs') initPrograms();
+  };
+
+  // ── Workout Player ────────────────────────────────────────────
+
+  const _wp = {
+    logId: null, programId: null, sessionId: null, sessionName: null,
+    groups: [], groupIdx: 0, ssPos: 0,
+    loggedSets: {}, prevPerf: {}, exerciseTargets: {},
+    startMs: 0, elapsedIv: null,
+    restSecs: 0, restTotal: 0, restIv: null,
+    aaIv: null, aaCount: 0,
+    feeling: null,
+  };
+
+  function _wpBuildGroups(exercises) {
+    const groups = [], used = new Set();
+    for (const ex of exercises) {
+      if (used.has(ex.id)) continue;
+      if (ex.is_superset && ex.superset_with_id) {
+        const partner = exercises.find(e => e.id === ex.superset_with_id);
+        if (partner && !used.has(partner.id)) {
+          groups.push([ex, partner]); used.add(ex.id); used.add(partner.id); continue;
+        }
+      }
+      groups.push([ex]); used.add(ex.id);
+    }
+    return groups;
+  }
+
+  async function openWorkoutPlayer(programId, sessionId, sessionName, exercises) {
+    if (_wp.logId) {
+      if (!confirm('A workout is already in progress. Quit it?')) return;
+      _wpStop(true);
+    }
+    let logId;
+    try {
+      const { startWorkout } = await import('./js/workouts-data.js');
+      const log = await startWorkout(programId, sessionId, sessionName);
+      logId = log.id;
+    } catch(e) { alert('Could not start workout: ' + e.message); return; }
+
+    _wp.logId = logId;
+    _wp.programId = programId; _wp.sessionId = sessionId; _wp.sessionName = sessionName;
+    _wp.groups = _wpBuildGroups(exercises);
+    _wp.groupIdx = 0; _wp.ssPos = 0;
+    _wp.loggedSets = {}; _wp.prevPerf = {}; _wp.exerciseTargets = {};
+    exercises.forEach(ex => { _wp.loggedSets[ex.id] = []; _wp.exerciseTargets[ex.id] = ex.target_sets || 4; });
+    _wp.startMs = Date.now(); _wp.feeling = null;
+
+    document.getElementById('wpOverlay').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('wpSessionLabel').textContent = sessionName || 'WORKOUT';
+    _wpWireStaticButtons();
+    _wpStartElapsed();
+    _wpStopRest();
+    _wpRender();
+    if (_wp.groups[0]) _wpLoadPrevPerf(_wp.groups[0][0]);
+  }
+
+  function _wpStop(silent) {
+    clearInterval(_wp.elapsedIv); clearInterval(_wp.restIv); clearInterval(_wp.aaIv);
+    _wp.logId = null; _wp.elapsedIv = null; _wp.restIv = null; _wp.aaIv = null;
+    document.getElementById('wpOverlay').classList.add('hidden');
+    document.getElementById('wpFinishModal').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function _wpWireStaticButtons() {
+    document.getElementById('wpQuitBtn').onclick = () => {
+      if (confirm('Quit workout? Progress will be lost.')) _wpStop(true);
+    };
+    document.getElementById('wpFinishBtn').onclick = _wpOpenFinish;
+    document.getElementById('wpPrevEx').onclick = () => _wpMove(-1);
+    document.getElementById('wpNextEx').onclick = () => _wpMove(1);
+    document.getElementById('wpRestSkip').onclick = _wpStopRest;
+    document.getElementById('wpRestMinus').onclick = () => { _wp.restSecs = Math.max(0, _wp.restSecs - 30); _wpUpdateRestDisplay(); };
+    document.getElementById('wpRestPlus').onclick = () => { _wp.restSecs += 30; _wp.restTotal = Math.max(_wp.restTotal, _wp.restSecs); _wpUpdateRestDisplay(); };
+    document.getElementById('wpSaveBtn').onclick = _wpSaveWorkout;
+    document.getElementById('wpDiscardBtn').onclick = () => { if (confirm('Discard workout?')) _wpStop(true); };
+    document.querySelectorAll('#wpFinishModal .wp-feel-btn').forEach(btn => {
+      btn.onclick = () => {
+        _wp.feeling = btn.dataset.feeling;
+        document.querySelectorAll('#wpFinishModal .wp-feel-btn').forEach(b => b.classList.toggle('selected', b === btn));
+      };
+    });
+  }
+
+  function _wpStartElapsed() {
+    clearInterval(_wp.elapsedIv);
+    _wp.elapsedIv = setInterval(() => {
+      const s = Math.floor((Date.now() - _wp.startMs) / 1000);
+      document.getElementById('wpElapsed').textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+    }, 1000);
+  }
+
+  async function _wpLoadPrevPerf(ex) {
+    if (!ex || ex.name in _wp.prevPerf) return;
+    _wp.prevPerf[ex.name] = null;
+    try {
+      const { getPreviousPerformance } = await import('./js/workouts-data.js');
+      _wp.prevPerf[ex.name] = await getPreviousPerformance(ex.name);
+      const cur = _wp.groups[_wp.groupIdx]?.[_wp.ssPos];
+      if (cur && cur.id === ex.id) _wpRender();
+    } catch(e) {}
+  }
+
+  function _wpRender() {
+    const group = _wp.groups[_wp.groupIdx];
+    if (!group) return;
+    const ex = group[_wp.ssPos];
+    const isSuperset = group.length === 2;
+    const partner = isSuperset ? group[1 - _wp.ssPos] : null;
+    const total = _wp.groups.length;
+
+    document.getElementById('wpExerciseIdx').textContent =
+      'Exercise ' + (_wp.groupIdx + 1) + '/' + total + (isSuperset ? ' · SUPERSET' : '');
+    document.getElementById('wpPrevEx').disabled = _wp.groupIdx === 0 && _wp.ssPos === 0;
+    document.getElementById('wpNextEx').disabled = _wp.groupIdx === _wp.groups.length - 1;
+
+    const prevData = _wp.prevPerf[ex.name];
+    const prevSets = prevData?.sets || [];
+    const logged = _wp.loggedSets[ex.id] || [];
+    const target = _wp.exerciseTargets[ex.id] || 4;
+    const totalRows = Math.max(target, logged.length + 1);
+
+    let rows = '';
+    for (let i = 0; i < totalRows; i++) {
+      const done = i < logged.length;
+      const ls = done ? logged[i] : null;
+      const prev = prevSets[i] ? prevSets[i].weight_kg + 'kg×' + prevSets[i].reps : '—';
+      const ph_kg = !done && prevSets[i] ? prevSets[i].weight_kg : '';
+      const ph_r  = !done && prevSets[i] ? prevSets[i].reps : '';
+      rows += `<div class="wp-set-row${done?' logged':''}" data-idx="${i}">
+        <div class="wp-set-num">${i+1}</div>
+        <div class="wp-set-prev">${prev}</div>
+        <input class="wp-set-input" type="number" inputmode="decimal" step="0.5" min="0" placeholder="${ph_kg}" value="${done?ls.weight_kg:''}" ${done?'disabled':''} autocomplete="off">
+        <input class="wp-set-input" type="number" inputmode="numeric" step="1" min="0" placeholder="${ph_r}" value="${done?ls.reps:''}" ${done?'disabled':''} autocomplete="off">
+        <button class="wp-check-btn${done?' done':''}" data-idx="${i}">${done?'✓':'○'}</button>
+      </div>`;
+    }
+
+    document.getElementById('wpExCard').innerHTML = `
+      ${isSuperset ? `<div class="wp-superset-tag">🔗 Superset with ${escHtml(partner.name)}</div>` : ''}
+      <div id="wpAutoAdvance" class="wp-auto-advance hidden"><span class="wp-aa-text">Next in <b id="wpAaCount">5</b>s</span><button class="wp-aa-stay" id="wpAaStay">Stay</button></div>
+      <div class="wp-ex-name">${escHtml(ex.name)}</div>
+      ${ex.technique ? `<div class="wp-ex-technique">${escHtml(ex.technique)}</div>` : ''}
+      <div class="wp-ex-target-line">${target} sets × ${ex.target_reps} · ${ex.rest_sec}s rest</div>
+      <div class="wp-sets-head"><span>#</span><span>PREV</span><span>KG</span><span>REPS</span><span></span></div>
+      ${rows}
+      <button class="wp-add-set-btn" id="wpAddSet">+ Add set</button>
+      ${isSuperset ? `<button class="wp-ss-switch" id="wpSsSwitch">Switch to ${escHtml(partner.name)} →</button>` : ''}
+    `;
+
+    document.getElementById('wpAddSet').onclick = () => { _wp.exerciseTargets[ex.id]++; _wpRender(); };
+    document.getElementById('wpSsSwitch')?.addEventListener('click', () => {
+      _wp.ssPos = 1 - _wp.ssPos; _wpRender(); _wpLoadPrevPerf(_wp.groups[_wp.groupIdx][_wp.ssPos]);
+    });
+    document.getElementById('wpAaStay')?.addEventListener('click', () => {
+      clearInterval(_wp.aaIv); document.getElementById('wpAutoAdvance').classList.add('hidden');
+    });
+    document.getElementById('wpExCard').querySelectorAll('.wp-check-btn').forEach(btn => {
+      btn.addEventListener('click', () => _wpLogSet(ex, parseInt(btn.dataset.idx)));
+    });
+    if (isSuperset) _wpLoadPrevPerf(partner);
+  }
+
+  async function _wpLogSet(ex, idx) {
+    const card = document.getElementById('wpExCard');
+    const row = card.querySelector(`[data-idx="${idx}"]`);
+    if (!row || idx < (_wp.loggedSets[ex.id]||[]).length) return;
+    const kgIn = row.querySelector('[inputmode="decimal"]');
+    const rIn  = row.querySelector('[inputmode="numeric"]');
+    const kg   = parseFloat(kgIn.value || kgIn.placeholder) || 0;
+    const reps = parseInt(rIn.value || rIn.placeholder) || 0;
+    if (!reps) { rIn.focus(); return; }
+
+    _wp.loggedSets[ex.id] = [...(_wp.loggedSets[ex.id]||[]), { set_num: idx+1, weight_kg: kg, reps }];
+
+    try {
+      const { logExerciseSet } = await import('./js/workouts-data.js');
+      logExerciseSet(_wp.logId, ex.id, ex.name, idx+1, kg, reps, null, null);
+    } catch(e) { console.error('logExerciseSet', e); }
+
+    const group = _wp.groups[_wp.groupIdx];
+    const isSuperset = group.length === 2;
+    const doneCount = _wp.loggedSets[ex.id].length;
+    const target = _wp.exerciseTargets[ex.id] || 4;
+
+    if (isSuperset && _wp.ssPos === 0) {
+      _wp.ssPos = 1; _wpRender(); _wpLoadPrevPerf(group[1]);
+    } else {
+      if (isSuperset) _wp.ssPos = 0;
+      _wpStartRest(ex.rest_sec || 90);
+      _wpRender();
+      if (doneCount >= target) _wpAutoAdvanceTrigger();
+    }
+  }
+
+  function _wpStartRest(secs) {
+    _wp.restSecs = secs; _wp.restTotal = secs;
+    clearInterval(_wp.restIv);
+    document.getElementById('wpRestBar').classList.remove('hidden');
+    _wpUpdateRestDisplay();
+    _wp.restIv = setInterval(() => {
+      _wp.restSecs--;
+      if (_wp.restSecs <= 0) { _wp.restSecs = 0; _wpUpdateRestDisplay(); _wpStopRest(); if (navigator.vibrate) navigator.vibrate([100,50,100]); }
+      else _wpUpdateRestDisplay();
+    }, 1000);
+  }
+
+  function _wpStopRest() {
+    clearInterval(_wp.restIv); _wp.restIv = null;
+    document.getElementById('wpRestBar')?.classList.add('hidden');
+  }
+
+  function _wpUpdateRestDisplay() {
+    const s = _wp.restSecs;
+    const el = document.getElementById('wpRestTime');
+    if (el) el.textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+    const bar = document.getElementById('wpRestBar');
+    const frac = _wp.restTotal > 0 ? s / _wp.restTotal : 0;
+    if (bar && el) {
+      if (frac > 0.5)      { bar.style.background='rgba(110,231,183,0.08)'; el.style.color='var(--good)'; }
+      else if (frac > 0.2) { bar.style.background='rgba(251,191,36,0.08)'; el.style.color='#fbbf24'; }
+      else                 { bar.style.background='rgba(239,68,68,0.08)'; el.style.color='#f87171'; }
+    }
+  }
+
+  function _wpAutoAdvanceTrigger() {
+    _wp.aaCount = 5;
+    const aa = document.getElementById('wpAutoAdvance');
+    if (!aa) return;
+    aa.classList.remove('hidden');
+    const cnt = document.getElementById('wpAaCount');
+    if (cnt) cnt.textContent = _wp.aaCount;
+    clearInterval(_wp.aaIv);
+    _wp.aaIv = setInterval(() => {
+      _wp.aaCount--;
+      const c = document.getElementById('wpAaCount');
+      if (c) c.textContent = _wp.aaCount;
+      if (_wp.aaCount <= 0) { clearInterval(_wp.aaIv); document.getElementById('wpAutoAdvance')?.classList.add('hidden'); _wpMove(1); }
+    }, 1000);
+  }
+
+  function _wpMove(dir) {
+    clearInterval(_wp.aaIv); document.getElementById('wpAutoAdvance')?.classList.add('hidden');
+    const newIdx = _wp.groupIdx + dir;
+    if (newIdx < 0 || newIdx >= _wp.groups.length) return;
+    _wp.groupIdx = newIdx; _wp.ssPos = 0;
+    _wpStopRest(); _wpRender();
+    const ex = _wp.groups[_wp.groupIdx][0];
+    _wpLoadPrevPerf(ex);
+    document.getElementById('wpBody').scrollTop = 0;
+  }
+
+  function _wpOpenFinish() {
+    const durMin = Math.round((Date.now() - _wp.startMs) / 60000);
+    let vol = 0, sets = 0, exDone = 0;
+    Object.values(_wp.loggedSets).forEach(arr => { if (arr.length) exDone++; arr.forEach(s => { sets++; vol += (s.weight_kg||0)*(s.reps||0); }); });
+    document.getElementById('wpFinishStats').innerHTML = `
+      <div class="wp-stat-box"><div class="wp-stat-val">${durMin}</div><div class="wp-stat-lbl">MINUTES</div></div>
+      <div class="wp-stat-box"><div class="wp-stat-val">${sets}</div><div class="wp-stat-lbl">SETS</div></div>
+      <div class="wp-stat-box"><div class="wp-stat-val">${vol>0?Math.round(vol)+'':'—'}</div><div class="wp-stat-lbl">VOL kg</div></div>`;
+    document.getElementById('wpFinishNotes').value = '';
+    document.querySelectorAll('#wpFinishModal .wp-feel-btn').forEach(b => b.classList.remove('selected'));
+    _wp.feeling = null;
+    document.getElementById('wpFinishModal').classList.remove('hidden');
+  }
+
+  async function _wpSaveWorkout() {
+    const btn = document.getElementById('wpSaveBtn');
+    btn.disabled = true; btn.textContent = 'SAVING...';
+    try {
+      const { finishWorkout } = await import('./js/workouts-data.js');
+      const durMin = Math.round((Date.now() - _wp.startMs) / 60000);
+      let vol = 0;
+      Object.values(_wp.loggedSets).forEach(arr => arr.forEach(s => { vol += (s.weight_kg||0)*(s.reps||0); }));
+      await finishWorkout(_wp.logId, {
+        durationMin: durMin,
+        totalVolumeKg: vol > 0 ? Math.round(vol) : null,
+        feeling: _wp.feeling,
+        notes: document.getElementById('wpFinishNotes').value.trim() || null,
+      });
+      _wpStop(false);
+    } catch(e) { btn.disabled = false; btn.textContent = 'SAVE WORKOUT'; alert('Save failed: ' + e.message); }
+  }
+
+  // ── HISTORY (Step 6) ─────────────────────────────────────────
+
+  let _histInited = false;
+  let _histOffset = 0;
+  const _histLimit = 20;
+  const _feelEmoji = { great:'🤩', good:'😊', ok:'😐', bad:'😞', terrible:'🤢' };
+
+  async function initHistory() {
+    if (_histInited) return;
+    _histInited = true;
+    document.getElementById('histDetailBack').addEventListener('click', () => {
+      document.getElementById('histViewDetail').hidden = true;
+      document.getElementById('histViewList').hidden = false;
+    });
+    document.getElementById('histLoadMore').addEventListener('click', loadMoreHistory);
+    await loadHistoryList(true);
+  }
+
+  async function loadHistoryList(reset) {
+    if (reset) { _histOffset = 0; document.getElementById('histList').innerHTML = '<div class="prog-loading">Loading…</div>'; }
+    try {
+      const { loadWorkoutHistory } = await import('./js/workouts-data.js');
+      const rows = await loadWorkoutHistory(_histLimit, _histOffset);
+      const list = document.getElementById('histList');
+      if (reset) list.innerHTML = '';
+      if (!rows.length && _histOffset === 0) { list.innerHTML = '<div class="prog-empty">No workouts logged yet. Complete a workout to see it here.</div>'; document.getElementById('histLoadMore').classList.add('hidden'); return; }
+      rows.forEach(w => {
+        const card = document.createElement('div');
+        card.className = 'hist-card';
+        const feel = _feelEmoji[w.feeling] || '💪';
+        const dur  = w.duration_min ? w.duration_min + ' min' : '';
+        const vol  = w.total_volume_kg ? Math.round(w.total_volume_kg) + ' kg vol' : '';
+        const meta = [dur, vol].filter(Boolean).join(' · ');
+        card.innerHTML = `
+          <div class="hist-card-feeling">${feel}</div>
+          <div class="hist-card-main">
+            <div class="hist-card-date">${_histFmtDate(w.date)}</div>
+            <div class="hist-card-session">${escHtml(w.session_name || 'Freestyle workout')}</div>
+            ${meta ? `<div class="hist-card-meta"><span>${meta}</span></div>` : ''}
+          </div>
+          <div class="hist-card-arrow">›</div>`;
+        card.addEventListener('click', () => showHistoryDetail(w.id));
+        list.appendChild(card);
+      });
+      _histOffset += rows.length;
+      document.getElementById('histLoadMore').classList.toggle('hidden', rows.length < _histLimit);
+    } catch(e) { document.getElementById('histList').innerHTML = '<div class="prog-empty">Failed to load.</div>'; console.error(e); }
+  }
+
+  async function loadMoreHistory() { await loadHistoryList(false); }
+
+  async function showHistoryDetail(workoutLogId) {
+    document.getElementById('histViewList').hidden = true;
+    document.getElementById('histViewDetail').hidden = false;
+    const content = document.getElementById('histDetailContent');
+    content.innerHTML = '<div class="prog-loading">Loading…</div>';
+    try {
+      const { loadWorkoutDetail } = await import('./js/workouts-data.js');
+      const { workout: w, exercises } = await loadWorkoutDetail(workoutLogId);
+      const feel = _feelEmoji[w.feeling] || '';
+      const dur  = w.duration_min ? w.duration_min + ' min' : '—';
+      const vol  = w.total_volume_kg ? Math.round(w.total_volume_kg) + ' kg' : '—';
+      const exBlocks = exercises.map(ex => {
+        const sets = (ex.sets || []);
+        if (!sets.length) return '';
+        const rows = sets.map((s, i) => {
+          const kg = s.weight_kg ?? s.weight ?? 0;
+          return `<div class="hist-set-row"><div class="hist-set-num">${i+1}</div><div>${kg ? kg + ' kg' : '—'}</div><div>${s.reps || '—'} reps</div></div>`;
+        }).join('');
+        return `<div class="hist-ex-block">
+          <div class="hist-ex-name">${escHtml(ex.name || '?')}</div>
+          <div class="hist-sets-head"><span>#</span><span>WEIGHT</span><span>REPS</span></div>
+          ${rows}
+        </div>`;
+      }).join('');
+      content.innerHTML = `
+        <div class="hist-det-head">
+          <div class="hist-det-date">${feel} ${_histFmtDate(w.date)}</div>
+          <div class="hist-det-session">${escHtml(w.session_name || 'Freestyle workout')}</div>
+          <div class="hist-det-stats"><span>⏱ ${dur}</span><span>📦 ${vol}</span><span>${exercises.length} exercises</span></div>
+          ${w.notes ? `<div style="margin-top:8px;font-size:12px;color:var(--text-2);font-style:italic">${escHtml(w.notes)}</div>` : ''}
+        </div>
+        ${exBlocks || '<div class="prog-empty">No exercise data logged.</div>'}`;
+    } catch(e) { content.innerHTML = '<div class="prog-empty">Failed to load detail.</div>'; console.error(e); }
+  }
+
+  function _histFmtDate(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr + 'T12:00:00');
+    return d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+  }
+
+  // ── PR TRACKER (Step 7) ──────────────────────────────────────
+
+  let _prInited = false;
+  let _prSort = '1rm';
+
+  async function initPRTracker() {
+    if (_prInited) return;
+    _prInited = true;
+    document.querySelectorAll('.pr-sort-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pr-sort-btn').forEach(b => b.classList.toggle('active', b === btn));
+        _prSort = btn.dataset.sort;
+        _renderPRList(_prSort);
+      });
+    });
+    await _loadPRData();
+  }
+
+  let _prData = null;
+
+  async function _loadPRData() {
+    document.getElementById('prList').innerHTML = '<div class="prog-loading">Loading PRs…</div>';
+    try {
+      const allLogs = await GymData.loadAllLogs();
+      const exercises = await GymData.loadExercises();
+      const nameMap = {};
+      exercises.forEach(ex => { nameMap[ex.id] = ex.name; });
+      _prData = [];
+      for (const [exId, entries] of Object.entries(allLogs)) {
+        const name = nameMap[exId] || exId;
+        // entries: [{date, sets}] sorted newest first
+        const sessionBest = entries.map(e => {
+          const sets = (e.sets || []);
+          let best = 0;
+          sets.forEach(s => {
+            const kg = s.weight_kg ?? s.weight ?? 0;
+            const reps = s.reps || 1;
+            if (kg > 0) best = Math.max(best, kg * (1 + reps / 30));
+            else if (reps > 0) best = Math.max(best, reps); // bodyweight: use reps as proxy
+          });
+          return { date: e.date, best1rm: best };
+        }).filter(x => x.best1rm > 0);
+        if (!sessionBest.length) continue;
+        const best1rm = Math.max(...sessionBest.map(x => x.best1rm));
+        const lastDate = sessionBest[0].date; // entries sorted newest first
+        const sparkData = sessionBest.slice(0, 10).reverse(); // oldest→newest for spark
+        _prData.push({ exId, name, best1rm, lastDate, sparkData });
+      }
+      _renderPRList(_prSort);
+    } catch(e) { document.getElementById('prList').innerHTML = '<div class="prog-empty">Failed to load.</div>'; console.error(e); }
+  }
+
+  function _renderPRList(sort) {
+    if (!_prData) return;
+    const sorted = [..._prData].sort((a, b) => {
+      if (sort === 'name') return a.name.localeCompare(b.name);
+      if (sort === 'recent') return b.lastDate.localeCompare(a.lastDate);
+      return b.best1rm - a.best1rm; // '1rm'
+    });
+    if (!sorted.length) { document.getElementById('prList').innerHTML = '<div class="prog-empty">No exercises logged yet.</div>'; return; }
+    document.getElementById('prList').innerHTML = sorted.map(pr => {
+      const label = pr.best1rm >= 1 ? Math.round(pr.best1rm) + ' kg' : pr.best1rm.toFixed(1) + ' kg';
+      const spark = _prSparkline(pr.sparkData);
+      const ago = _prDateAgo(pr.lastDate);
+      return `<div class="pr-row">
+        <div class="pr-name">${escHtml(pr.name)}</div>
+        ${spark}
+        <div class="pr-1rm">${label}</div>
+        <div class="pr-meta">${ago}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function _prSparkline(data) {
+    if (data.length < 2) return '<svg class="pr-spark" width="50" height="18"></svg>';
+    const vals = data.map(d => d.best1rm);
+    const mn = Math.min(...vals), mx = Math.max(...vals);
+    const W = 50, H = 16, pad = 2;
+    const pts = vals.map((v, i) => {
+      const x = pad + (i / (vals.length - 1)) * (W - pad * 2);
+      const y = H - pad - ((v - mn) / (mx - mn + 0.001)) * (H - pad * 2);
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    return `<svg class="pr-spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><polyline class="pr-spark-line" points="${pts}"/></svg>`;
+  }
+
+  function _prDateAgo(dateStr) {
+    if (!dateStr) return '';
+    const diff = Math.floor((Date.now() - new Date(dateStr + 'T12:00:00').getTime()) / 86400000);
+    if (diff === 0) return 'today';
+    if (diff === 1) return '1d ago';
+    if (diff < 30) return diff + 'd ago';
+    if (diff < 365) return Math.floor(diff/30) + 'mo ago';
+    return Math.floor(diff/365) + 'yr ago';
+  }
+
+  // Extend switchStrengthTab to lazy-init history + PR tracker
+  const _origSST2 = switchStrengthTab;
+  switchStrengthTab = function(name) {
+    _origSST2(name);
+    if (name === 'history') initHistory();
+    if (name === 'stats') initPRTracker();
+  };
 
 
 </script>
+
+<!-- ── Workout Player Overlay ─────────────────────────────── -->
+<div id="wpOverlay" class="wp-overlay hidden">
+  <div class="wp-header">
+    <button id="wpQuitBtn" class="wp-quit-btn">✕ QUIT</button>
+    <div class="wp-header-mid">
+      <div id="wpSessionLabel" class="wp-sess-label">WORKOUT</div>
+      <div id="wpExerciseIdx" class="wp-ex-idx">Exercise 1/1</div>
+    </div>
+    <div id="wpElapsed" class="wp-elapsed">0:00</div>
+  </div>
+  <div class="wp-body" id="wpBody">
+    <div class="wp-ex-card" id="wpExCard"></div>
+  </div>
+  <div class="wp-rest-bar hidden" id="wpRestBar">
+    <div class="wp-rest-inner">
+      <span class="wp-rest-label">REST</span>
+      <span class="wp-rest-time" id="wpRestTime">1:30</span>
+      <div class="wp-rest-btns">
+        <button class="wp-rest-adj" id="wpRestMinus">−30s</button>
+        <button class="wp-rest-skip" id="wpRestSkip">SKIP</button>
+        <button class="wp-rest-adj" id="wpRestPlus">+30s</button>
+      </div>
+    </div>
+  </div>
+  <div class="wp-bottom-bar">
+    <button class="wp-nav-btn" id="wpPrevEx">← PREV</button>
+    <button class="wp-finish-btn" id="wpFinishBtn">FINISH</button>
+    <button class="wp-nav-btn" id="wpNextEx">NEXT →</button>
+  </div>
+</div>
+
+<!-- Finish modal -->
+<div id="wpFinishModal" class="wp-finish-modal hidden">
+  <div class="wp-finish-inner">
+    <h2 class="wp-finish-title">WORKOUT COMPLETE 💪</h2>
+    <div class="wp-finish-stats" id="wpFinishStats"></div>
+    <div class="wp-feeling-label">HOW DO YOU FEEL?</div>
+    <div class="wp-feeling-row">
+      <button class="wp-feel-btn" data-feeling="great">🤩</button>
+      <button class="wp-feel-btn" data-feeling="good">😊</button>
+      <button class="wp-feel-btn" data-feeling="ok">😐</button>
+      <button class="wp-feel-btn" data-feeling="bad">😞</button>
+      <button class="wp-feel-btn" data-feeling="terrible">🤢</button>
+    </div>
+    <div class="wp-feeling-labels">
+      <span>Great</span><span>Good</span><span>OK</span><span>Bad</span><span>Terrible</span>
+    </div>
+    <textarea class="wp-finish-notes" id="wpFinishNotes" placeholder="Notes (optional)"></textarea>
+    <button class="wp-save-btn" id="wpSaveBtn">SAVE WORKOUT</button>
+    <button class="wp-discard-btn" id="wpDiscardBtn">Discard without saving</button>
+  </div>
+</div>
+
+<!-- Session editor overlay -->
+<div id="progSessEditorOverlay" class="prog-sess-overlay" hidden>
+  <div class="prog-sess-overlay-inner">
+    <div class="pse-header">
+      <span class="pse-title">SESSION EDITOR</span>
+      <button class="pse-close" id="progSessEditorClose">✕</button>
+    </div>
+    <div class="pe-form-row">
+      <label class="pe-label" for="pse-name">SESSION NAME</label>
+      <input class="pe-input" id="pse-name" type="text" placeholder="e.g. SÉANCE 1 : JAMBES">
+    </div>
+    <div class="pe-form-row">
+      <label class="pe-label" for="pse-warmup">WARM-UP NOTE</label>
+      <input class="pe-input" id="pse-warmup" type="text" placeholder="e.g. 5 min de rameur">
+    </div>
+    <div class="pe-form-inline">
+      <div class="pe-form-row">
+        <label class="pe-label" for="pse-rest">REST BETWEEN EX (s)</label>
+        <input class="pe-input" id="pse-rest" type="number" min="0" step="30" value="120" style="max-width:90px">
+      </div>
+      <div class="pe-form-row">
+        <label class="pe-label" for="pse-notes">NOTES</label>
+        <input class="pe-input" id="pse-notes" type="text" placeholder="Optional notes">
+      </div>
+    </div>
+    <button class="pe-save-btn" id="progSessSaveBtn" style="margin-bottom:16px">SAVE SESSION</button>
+    <div class="prog-section-label">EXERCISES</div>
+    <div id="pseExList"></div>
+    <div class="pse-add-ex-form">
+      <div class="pse-form-label">+ ADD EXERCISE</div>
+      <div class="pe-form-row">
+        <label class="pe-label">NAME</label>
+        <input class="pe-input" id="pse-ex-name" type="text" placeholder="e.g. Hack Squat">
+      </div>
+      <div class="pse-form-inline">
+        <div class="pe-form-row">
+          <label class="pe-label">SETS</label>
+          <input class="pe-input" id="pse-ex-sets" type="number" min="1" max="20" value="4">
+        </div>
+        <div class="pe-form-row">
+          <label class="pe-label">REPS</label>
+          <input class="pe-input" id="pse-ex-reps" type="text" value="10" placeholder="10 or 8-12">
+        </div>
+        <div class="pe-form-row">
+          <label class="pe-label">REST (s)</label>
+          <input class="pe-input" id="pse-ex-rest" type="number" min="0" step="15" value="90">
+        </div>
+      </div>
+      <div class="pe-form-row">
+        <label class="pe-label">TECHNIQUE (optional)</label>
+        <input class="pe-input" id="pse-ex-tech" type="text" placeholder="e.g. Dégressive sur 3 étapes">
+      </div>
+      <button class="pse-add-btn" id="pse-add-ex-btn">ADD EXERCISE</button>
+    </div>
+    <div style="height:24px"></div>
+  </div>
+</div>
 
 </body>
 </html>
