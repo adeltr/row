@@ -1651,6 +1651,613 @@ img, video, canvas, svg { max-width: 100%; }
 .stch-photo-remove-btn { background:transparent; border:1px solid rgba(239,68,68,0.28); border-radius:6px; color:#f87171; font-family:var(--font-mono); font-size:10px; padding:5px 10px; cursor:pointer; }
 .stch-photo-remove-btn.hidden { display:none !important; }
 .stch-photo-preview-img { max-width:100%; max-height:150px; border-radius:8px; display:block; margin-top:8px; }
+
+/* ── RUNNING MODULE ──────────────────────────────────────────── */
+.run-tabs {
+  display:flex; gap:3px; margin-bottom:18px;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+.run-tab {
+  flex:0 0 auto; background:transparent; border:none;
+  border-bottom:2px solid var(--border);
+  color:var(--text-3);
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  letter-spacing:0.10em; text-transform:uppercase;
+  padding:9px 8px 8px; cursor:pointer;
+  transition:color 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color:transparent; white-space:nowrap;
+}
+.run-tab:hover { color:var(--text-2); }
+.run-tab.active { color:var(--text-1); border-bottom-color:var(--text-1); }
+
+/* Form layout */
+.run-section { margin-bottom:20px; }
+.run-section-title {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  letter-spacing:0.14em; color:var(--text-3); text-transform:uppercase;
+  margin-bottom:12px; padding-bottom:6px; border-bottom:1px solid var(--border);
+}
+.run-form-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px;
+}
+.run-form-grid.three { grid-template-columns:1fr 1fr 1fr; }
+.run-field { display:flex; flex-direction:column; gap:5px; }
+.run-field.full { grid-column:1/-1; }
+.run-label {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  letter-spacing:0.12em; color:var(--text-3); text-transform:uppercase;
+}
+.run-input {
+  background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  border-radius:8px; color:var(--text-1); font-family:var(--font-mono);
+  font-size:15px; padding:10px 12px;
+  transition:border-color 0.15s; outline:none; width:100%; box-sizing:border-box;
+}
+.run-input:focus { border-color:rgba(255,255,255,0.25); }
+.run-input.big { font-size:22px; font-weight:700; text-align:center; }
+.run-select {
+  background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  border-radius:8px; color:var(--text-1); font-family:var(--font-mono);
+  font-size:12px; padding:10px 12px; outline:none; width:100%; box-sizing:border-box;
+  cursor:pointer; -webkit-appearance:none; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 10px center;
+  padding-right:28px;
+}
+
+/* Pace display */
+.run-pace-card {
+  background:rgba(110,231,183,0.06); border:1px solid rgba(110,231,183,0.15);
+  border-radius:12px; padding:14px; text-align:center; margin-bottom:10px;
+}
+.run-pace-value {
+  font-family:var(--font-mono); font-size:26px; font-weight:700;
+  color:var(--good); letter-spacing:-0.01em;
+}
+.run-pace-label { font-family:var(--font-mono); font-size:10px; color:var(--text-3); margin-top:2px; }
+
+/* Effort slider */
+.run-effort-row { display:flex; align-items:center; gap:10px; }
+.run-effort-slider {
+  flex:1; -webkit-appearance:none; appearance:none;
+  height:6px; border-radius:3px; outline:none;
+  background:linear-gradient(to right,
+    #22c55e 0%, #84cc16 20%, #eab308 40%,
+    #f97316 60%, #ef4444 80%, #991b1b 100%);
+}
+.run-effort-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; width:18px; height:18px;
+  border-radius:50%; background:#fff;
+  border:2px solid rgba(0,0,0,0.3);
+  box-shadow:0 1px 4px rgba(0,0,0,0.4); cursor:pointer;
+}
+.run-effort-badge {
+  font-family:var(--font-mono); font-size:12px; font-weight:700;
+  min-width:48px; text-align:right; color:var(--text-1);
+}
+
+/* More details toggle */
+.run-more-toggle {
+  width:100%; background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:8px; color:var(--text-3); font-family:var(--font-mono);
+  font-size:10px; font-weight:700; letter-spacing:0.12em;
+  padding:9px 12px; cursor:pointer; text-align:left;
+  transition:background 0.15s; margin-bottom:10px;
+}
+.run-more-toggle:hover { background:rgba(255,255,255,0.06); color:var(--text-2); }
+
+/* Splits */
+.run-splits-list { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+.run-split-row {
+  display:grid; grid-template-columns:40px 1fr 28px;
+  gap:6px; align-items:center;
+}
+.run-split-km { font-family:var(--font-mono); font-size:12px; color:var(--text-3); }
+.run-split-pace { background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  border-radius:6px; color:var(--text-1); font-family:var(--font-mono);
+  font-size:12px; padding:6px 8px; width:100%; box-sizing:border-box; }
+.run-split-rm { background:transparent; border:none; color:var(--text-3);
+  font-size:13px; cursor:pointer; padding:0; line-height:1; }
+.run-split-rm:hover { color:#f87171; }
+.run-add-split { background:rgba(255,255,255,0.03); border:1px dashed var(--border);
+  border-radius:6px; color:var(--text-2); font-family:var(--font-mono);
+  font-size:10px; font-weight:700; padding:6px 10px; cursor:pointer;
+  margin-top:4px; transition:background 0.15s; }
+.run-add-split:hover { background:rgba(255,255,255,0.07); }
+
+/* Save button */
+.run-save-btn {
+  width:100%; padding:14px;
+  background:linear-gradient(180deg,#ffffff 0%,#e8e5dd 100%);
+  border:1px solid rgba(255,255,255,0.85); border-radius:12px;
+  color:#0a0a0b; font-family:inherit; font-size:13px; font-weight:700;
+  letter-spacing:0.06em; cursor:pointer; margin-top:6px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.55),0 3px 10px rgba(0,0,0,0.35);
+  -webkit-tap-highlight-color:transparent; transition:transform 0.12s;
+}
+.run-save-btn:hover { transform:translateY(-1px); }
+.run-save-btn:disabled { opacity:0.45; cursor:default; transform:none; }
+
+/* Quick-same button */
+.run-quick-same {
+  width:100%; background:rgba(110,231,183,0.06); border:1px solid rgba(110,231,183,0.2);
+  border-radius:8px; color:var(--good); font-family:var(--font-mono);
+  font-size:10px; font-weight:700; letter-spacing:0.10em;
+  padding:8px 12px; cursor:pointer; margin-bottom:14px;
+  transition:background 0.15s; -webkit-tap-highlight-color:transparent;
+}
+.run-quick-same:hover { background:rgba(110,231,183,0.10); }
+.run-quick-same.hidden { display:none !important; }
+
+/* Recent runs */
+.run-recent-title {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  letter-spacing:0.14em; color:var(--text-3); text-transform:uppercase;
+  margin:20px 0 10px; padding-top:16px; border-top:1px solid var(--border);
+}
+.run-card {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:10px; padding:12px 14px; margin-bottom:8px;
+  display:grid; grid-template-columns:1fr auto;
+  gap:4px 10px; cursor:pointer;
+  transition:background 0.15s; -webkit-tap-highlight-color:transparent;
+}
+.run-card:hover { background:rgba(255,255,255,0.06); }
+.run-card-date { font-family:var(--font-mono); font-size:10px; color:var(--text-3); grid-column:1; }
+.run-card-main { font-size:15px; font-weight:700; color:var(--text-1); grid-column:1; }
+.run-card-meta { font-family:var(--font-mono); font-size:11px; color:var(--text-2); grid-column:1; }
+.run-card-badge {
+  grid-column:2; grid-row:1/3;
+  align-self:center;
+  background:rgba(255,255,255,0.06); border:1px solid var(--border);
+  border-radius:6px; padding:3px 7px;
+  font-family:var(--font-mono); font-size:9px; font-weight:700;
+  color:var(--text-2); text-transform:uppercase; white-space:nowrap;
+}
+.run-card-effort { grid-column:1; display:flex; gap:3px; margin-top:2px; }
+.run-dot {
+  width:7px; height:7px; border-radius:50%;
+  background:rgba(255,255,255,0.12);
+  display:inline-block;
+}
+.run-dot.filled { background:var(--good); }
+.run-dot.filled.warn { background:#f97316; }
+.run-dot.filled.bad  { background:#ef4444; }
+
+/* Toast (PR celebration + save confirm) */
+.run-toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:rgba(15,15,16,0.95); border:1px solid rgba(110,231,183,0.35);
+  border-radius:12px; padding:12px 18px;
+  font-family:var(--font-mono); font-size:12px; color:var(--good);
+  box-shadow:0 8px 32px rgba(0,0,0,0.6);
+  transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s;
+  opacity:0; z-index:9999; pointer-events:none; text-align:center;
+  max-width:calc(100vw - 40px);
+}
+.run-toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+/* Empty state */
+.run-empty { text-align:center; padding:48px 20px; color:var(--text-3); font-size:13px; }
+
+/* History / detail panels */
+.run-hist-placeholder { text-align:center; padding:56px 20px; color:var(--text-3); }
+
+/* ── HISTORY ── */
+.rh-filters { display:flex; gap:6px; align-items:center; margin-bottom:2px; }
+.rh-filter-clear {
+  background:transparent; border:1px solid var(--border); border-radius:8px;
+  color:var(--text-3); font-family:var(--font-mono); font-size:10px; font-weight:700;
+  letter-spacing:0.10em; padding:8px 10px; cursor:pointer; white-space:nowrap;
+  transition:color 0.15s,border-color 0.15s;
+}
+.rh-filter-clear:hover { color:var(--text-1); border-color:var(--text-2); }
+
+/* Run list rows */
+.rh-row {
+  border-bottom:1px solid var(--border); padding:12px 4px;
+  display:grid; grid-template-columns:1fr auto;
+  gap:2px 10px; cursor:pointer;
+  transition:background 0.12s; -webkit-tap-highlight-color:transparent;
+}
+.rh-row:hover { background:rgba(255,255,255,0.03); border-radius:8px; }
+.rh-row-date { font-family:var(--font-mono); font-size:10px; color:var(--text-3); grid-column:1; }
+.rh-row-main { font-size:14px; font-weight:700; color:var(--text-1); grid-column:1; }
+.rh-row-meta { font-family:var(--font-mono); font-size:11px; color:var(--text-2); grid-column:1; }
+.rh-row-badge {
+  grid-column:2; grid-row:1/4; align-self:center;
+  background:rgba(255,255,255,0.06); border:1px solid var(--border);
+  border-radius:6px; padding:3px 7px; text-align:center;
+  font-family:var(--font-mono); font-size:9px; font-weight:700;
+  color:var(--text-2); text-transform:uppercase; white-space:nowrap;
+}
+.rh-load-more {
+  width:100%; margin-top:12px;
+  background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  border-radius:8px; color:var(--text-2); font-family:var(--font-mono);
+  font-size:11px; font-weight:700; padding:10px; cursor:pointer;
+  transition:background 0.15s;
+}
+.rh-load-more:hover { background:rgba(255,255,255,0.08); }
+.rh-load-more.hidden { display:none !important; }
+
+/* Detail view */
+.rh-detail { margin-top:-4px; }
+.rh-detail.hidden { display:none !important; }
+.rh-detail-back {
+  background:transparent; border:none; color:var(--text-2);
+  font-family:var(--font-mono); font-size:11px; font-weight:700;
+  letter-spacing:0.08em; padding:0 0 14px; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.rh-detail-back:hover { color:var(--text-1); }
+
+/* Detail content */
+.rh-det-hero {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:14px; padding:18px; margin-bottom:16px;
+}
+.rh-det-dist { font-size:36px; font-weight:700; color:var(--text-1); letter-spacing:-0.02em; }
+.rh-det-pace { font-family:var(--font-mono); font-size:16px; color:var(--good); margin-top:2px; }
+.rh-det-stats {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:10px; margin-top:14px;
+}
+.rh-det-stat { text-align:center; }
+.rh-det-stat-val { font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--text-1); }
+.rh-det-stat-lbl { font-family:var(--font-mono); font-size:9px; color:var(--text-3); margin-top:2px; text-transform:uppercase; }
+
+.rh-det-section { margin-bottom:14px; }
+.rh-det-section-title {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  letter-spacing:0.14em; color:var(--text-3); text-transform:uppercase;
+  margin-bottom:8px; padding-bottom:5px; border-bottom:1px solid var(--border);
+}
+.rh-det-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:12px;
+}
+.rh-det-row:last-child { border-bottom:none; }
+.rh-det-row-k { color:var(--text-3); font-family:var(--font-mono); font-size:11px; }
+.rh-det-row-v { color:var(--text-1); font-weight:600; font-family:var(--font-mono); font-size:11px; }
+
+/* Splits table */
+.rh-splits-table { width:100%; border-collapse:collapse; font-family:var(--font-mono); font-size:11px; }
+.rh-splits-table th { color:var(--text-3); text-transform:uppercase; font-size:9px; letter-spacing:0.10em; padding:4px 6px; border-bottom:1px solid var(--border); text-align:left; }
+.rh-splits-table td { padding:6px 6px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text-1); }
+
+/* Comparison to previous run on same route */
+.rh-compare-bar {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:10px; padding:12px 14px;
+}
+.rh-compare-label { font-family:var(--font-mono); font-size:10px; color:var(--text-3); margin-bottom:4px; text-transform:uppercase; }
+.rh-compare-diff { font-family:var(--font-mono); font-size:14px; font-weight:700; }
+.rh-compare-diff.better { color:var(--good); }
+.rh-compare-diff.worse  { color:#f87171; }
+.rh-compare-diff.same   { color:var(--text-2); }
+
+/* Det action buttons */
+.rh-det-actions { display:flex; gap:8px; margin-top:16px; }
+.rh-det-btn {
+  flex:1; padding:10px; border-radius:8px; border:1px solid var(--border);
+  background:rgba(255,255,255,0.04); color:var(--text-2);
+  font-family:var(--font-mono); font-size:11px; font-weight:700;
+  cursor:pointer; transition:background 0.15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.rh-det-btn:hover { background:rgba(255,255,255,0.08); color:var(--text-1); }
+.rh-det-btn.danger:hover { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.3); color:#f87171; }
+
+@media (max-width:480px) {
+  .run-input.big { font-size:28px; }
+  .run-pace-value { font-size:30px; }
+  .run-form-grid { grid-template-columns:1fr 1fr; }
+  .run-form-grid.three { grid-template-columns:1fr 1fr; }
+}
+
+/* ── ANALYTICS ── */
+.ran-stats-row {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:18px;
+}
+.ran-stat-card {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:10px; padding:12px 10px; text-align:center;
+}
+.ran-stat-val { font-family:var(--font-mono); font-size:16px; font-weight:700; color:var(--text-1); }
+.ran-stat-lbl { font-family:var(--font-mono); font-size:9px; color:var(--text-3); margin-top:3px; text-transform:uppercase; }
+
+.ran-section { margin-bottom:22px; }
+.ran-section-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.ran-section-title {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  letter-spacing:0.14em; color:var(--text-3); text-transform:uppercase;
+}
+
+/* ACWR gauge */
+.ran-acwr-badge {
+  font-family:var(--font-mono); font-size:13px; font-weight:700;
+  padding:3px 10px; border-radius:20px;
+  background:rgba(255,255,255,0.06); border:1px solid var(--border); color:var(--text-1);
+}
+.ran-acwr-badge.green  { background:rgba(34,197,94,0.12);  border-color:rgba(34,197,94,0.3);  color:#4ade80; }
+.ran-acwr-badge.orange { background:rgba(249,115,22,0.12); border-color:rgba(249,115,22,0.3); color:#fb923c; }
+.ran-acwr-badge.red    { background:rgba(239,68,68,0.12);  border-color:rgba(239,68,68,0.3);  color:#f87171; }
+.ran-acwr-badge.gray   { background:rgba(100,116,139,0.12);border-color:rgba(100,116,139,0.3);color:#94a3b8; }
+.ran-acwr-bar-wrap { position:relative; height:20px; border-radius:4px; overflow:hidden; margin-bottom:4px; }
+.ran-acwr-zones { display:flex; height:100%; }
+.ran-acwr-zone { height:100%; }
+.ran-acwr-needle {
+  position:absolute; top:0; bottom:0; width:3px;
+  background:#fff; border-radius:2px;
+  box-shadow:0 0 6px rgba(255,255,255,0.6);
+  transform:translateX(-50%);
+  transition:left 0.4s ease;
+}
+.ran-acwr-labels {
+  display:flex; justify-content:space-between;
+  font-family:var(--font-mono); font-size:9px; color:var(--text-3);
+  margin-bottom:6px;
+}
+.ran-acwr-desc { font-family:var(--font-mono); font-size:11px; color:var(--text-2); }
+
+/* Charts */
+.ran-chart-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.ran-chart-svg { width:100%; height:120px; display:block; }
+.ran-chart-legend {
+  display:flex; gap:6px; flex-wrap:wrap;
+  margin-top:6px; font-family:var(--font-mono); font-size:10px; color:var(--text-3);
+}
+.ran-legend-item { display:flex; align-items:center; gap:4px; }
+.ran-legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+/* Donut */
+.ran-donut-wrap { display:flex; gap:16px; align-items:center; }
+.ran-donut-legend { display:flex; flex-direction:column; gap:5px; }
+.ran-donut-item { display:flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:11px; color:var(--text-2); }
+.ran-donut-swatch { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+.ran-donut-tip { font-family:var(--font-mono); font-size:10px; color:var(--text-3); margin-top:8px; }
+
+/* ── RACES ── */
+.race-section-hd {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px;
+}
+.race-add-btn {
+  background:rgba(255,255,255,0.05); border:1px solid var(--border);
+  border-radius:7px; color:var(--text-2); font-family:var(--font-mono);
+  font-size:10px; font-weight:700; letter-spacing:0.08em;
+  padding:6px 12px; cursor:pointer; transition:background 0.15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.race-add-btn:hover { background:rgba(255,255,255,0.10); color:var(--text-1); }
+
+/* Upcoming race card */
+.race-card {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:12px; padding:14px 16px; margin-bottom:10px;
+}
+.race-card-hd { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px; }
+.race-card-name { font-size:15px; font-weight:700; color:var(--text-1); }
+.race-card-countdown {
+  font-family:var(--font-mono); font-size:11px; font-weight:700;
+  padding:3px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0;
+  background:rgba(110,231,183,0.10); border:1px solid rgba(110,231,183,0.25); color:var(--good);
+}
+.race-card-countdown.soon  { background:rgba(249,115,22,0.10); border-color:rgba(249,115,22,0.25); color:#fb923c; }
+.race-card-countdown.past  { background:rgba(100,116,139,0.10); border-color:rgba(100,116,139,0.2); color:var(--text-3); }
+.race-card-meta { font-family:var(--font-mono); font-size:11px; color:var(--text-3); margin-bottom:8px; }
+.race-card-goals { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+.race-goal-chip {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  padding:3px 8px; border-radius:5px; border:1px solid var(--border);
+}
+.race-goal-chip.a { border-color:rgba(110,231,183,0.4); color:var(--good); }
+.race-goal-chip.b { border-color:rgba(234,179,8,0.4);   color:#fbbf24; }
+.race-goal-chip.c { border-color:rgba(239,68,68,0.4);   color:#f87171; }
+
+/* Readiness indicator */
+.race-readiness {
+  display:flex; align-items:center; gap:8px; margin-bottom:8px;
+  font-family:var(--font-mono); font-size:10px; color:var(--text-3);
+}
+.race-ready-dot {
+  width:8px; height:8px; border-radius:50%; flex-shrink:0;
+}
+.race-ready-dot.green  { background:#4ade80; box-shadow:0 0 6px rgba(74,222,128,0.5); }
+.race-ready-dot.yellow { background:#fbbf24; box-shadow:0 0 6px rgba(251,191,36,0.5); }
+.race-ready-dot.red    { background:#f87171; box-shadow:0 0 6px rgba(248,113,113,0.5); }
+
+.race-card-actions { display:flex; gap:6px; }
+.race-card-act {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  padding:5px 10px; border-radius:6px; border:1px solid var(--border);
+  background:rgba(255,255,255,0.04); color:var(--text-2); cursor:pointer;
+  transition:background 0.15s; -webkit-tap-highlight-color:transparent;
+}
+.race-card-act:hover { background:rgba(255,255,255,0.10); color:var(--text-1); }
+.race-card-act.danger:hover { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.3); color:#f87171; }
+
+/* PR board grid */
+.race-pr-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+}
+.race-pr-card {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:10px; padding:12px 10px; text-align:center;
+}
+.race-pr-dist { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.12em; color:var(--text-3); text-transform:uppercase; margin-bottom:4px; }
+.race-pr-time { font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--text-1); }
+.race-pr-pace { font-family:var(--font-mono); font-size:9px; color:var(--text-3); margin-top:2px; }
+.race-pr-date { font-family:var(--font-mono); font-size:9px; color:var(--text-3); margin-top:2px; }
+.race-pr-card.empty .race-pr-time { color:var(--text-3); font-size:11px; }
+
+/* Race predictor */
+.race-pred-form { display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+.race-pred-calc-btn {
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15);
+  border-radius:8px; color:var(--text-1); font-family:var(--font-mono);
+  font-size:11px; font-weight:700; letter-spacing:0.08em;
+  padding:10px; cursor:pointer; transition:background 0.15s;
+}
+.race-pred-calc-btn:hover { background:rgba(255,255,255,0.12); }
+.race-pred-vdot {
+  font-family:var(--font-mono); font-size:13px; color:var(--good);
+  margin-bottom:10px; font-weight:700;
+}
+.race-pred-table {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin-bottom:12px;
+}
+.race-pred-row {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:8px; padding:10px 12px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.race-pred-label { font-family:var(--font-mono); font-size:10px; color:var(--text-3); }
+.race-pred-val   { font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--text-1); }
+.race-pred-zones-title {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  letter-spacing:0.12em; color:var(--text-3); text-transform:uppercase;
+  margin-bottom:6px;
+}
+.race-pred-zone-row {
+  display:flex; justify-content:space-between;
+  padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04);
+  font-family:var(--font-mono); font-size:11px;
+}
+.race-pred-zone-row:last-child { border-bottom:none; }
+.race-pred-zone-name { color:var(--text-3); }
+.race-pred-zone-pace { color:var(--text-1); font-weight:600; }
+
+/* Past race card */
+.race-past-card {
+  border-bottom:1px solid var(--border); padding:12px 4px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.race-past-info { flex:1; min-width:0; }
+.race-past-name { font-size:13px; font-weight:700; color:var(--text-1); margin-bottom:2px; }
+.race-past-meta { font-family:var(--font-mono); font-size:11px; color:var(--text-3); }
+.race-past-badges { display:flex; gap:5px; flex-shrink:0; align-items:center; }
+.race-past-badge {
+  font-family:var(--font-mono); font-size:9px; font-weight:700;
+  padding:3px 7px; border-radius:5px;
+}
+.race-past-badge.a { background:rgba(110,231,183,0.12); border:1px solid rgba(110,231,183,0.3); color:#4ade80; }
+.race-past-badge.b { background:rgba(234,179,8,0.12);   border:1px solid rgba(234,179,8,0.3);   color:#fbbf24; }
+.race-past-badge.c { background:rgba(249,115,22,0.12);  border:1px solid rgba(249,115,22,0.3);  color:#fb923c; }
+.race-past-badge.miss { background:rgba(100,116,139,0.10); border:1px solid var(--border); color:var(--text-3); }
+
+/* Race modal */
+.race-modal-bg {
+  position:fixed; inset:0; background:rgba(0,0,0,0.75);
+  display:flex; align-items:flex-end; z-index:500;
+}
+.race-modal-bg[hidden] { display:none !important; }
+.race-modal {
+  width:100%; max-height:90vh; overflow-y:auto;
+  background:var(--surface,#111113); border-radius:20px 20px 0 0;
+  padding:20px 16px 32px; box-shadow:0 -8px 40px rgba(0,0,0,0.6);
+}
+.race-modal-hd {
+  display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;
+}
+.race-modal-title { font-family:var(--font-mono); font-size:12px; font-weight:700; letter-spacing:0.14em; color:var(--text-1); }
+.race-modal-close {
+  background:transparent; border:none; color:var(--text-3);
+  font-size:16px; cursor:pointer; padding:0; line-height:1;
+}
+
+/* ── SHOES ── */
+.shoe-card {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:12px; padding:14px 16px; margin-bottom:10px;
+  transition:opacity 0.2s;
+}
+.shoe-card.retired { opacity:0.45; }
+.shoe-card-hd { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px; }
+.shoe-card-name { font-size:15px; font-weight:700; color:var(--text-1); }
+.shoe-alert-badge {
+  font-family:var(--font-mono); font-size:9px; font-weight:700;
+  padding:3px 7px; border-radius:5px; white-space:nowrap; flex-shrink:0;
+  background:rgba(249,115,22,0.12); border:1px solid rgba(249,115,22,0.3); color:#fb923c;
+}
+.shoe-card-meta { font-family:var(--font-mono); font-size:11px; color:var(--text-3); margin-bottom:10px; }
+
+/* Wear bar */
+.shoe-wear-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.shoe-wear-label { font-family:var(--font-mono); font-size:10px; color:var(--text-2); flex-shrink:0; }
+.shoe-wear-bar-wrap { flex:1; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden; }
+.shoe-wear-bar { height:100%; border-radius:3px; transition:width 0.4s ease; }
+.shoe-wear-pct { font-family:var(--font-mono); font-size:10px; color:var(--text-3); flex-shrink:0; min-width:32px; text-align:right; }
+
+/* Cost per km */
+.shoe-cost-row { font-family:var(--font-mono); font-size:10px; color:var(--text-3); margin-bottom:10px; }
+
+.shoe-card-actions { display:flex; gap:6px; flex-wrap:wrap; }
+.shoe-card-act {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  padding:5px 10px; border-radius:6px; border:1px solid var(--border);
+  background:rgba(255,255,255,0.04); color:var(--text-2); cursor:pointer;
+  transition:background 0.15s; -webkit-tap-highlight-color:transparent;
+}
+.shoe-card-act:hover { background:rgba(255,255,255,0.10); color:var(--text-1); }
+.shoe-card-act.retire { border-color:rgba(249,115,22,0.3); color:#fb923c; }
+.shoe-card-act.retire:hover { background:rgba(249,115,22,0.10); }
+.shoe-card-act.unretire { border-color:rgba(110,231,183,0.3); color:var(--good); }
+.shoe-card-act.unretire:hover { background:rgba(110,231,183,0.08); }
+.shoe-card-act.danger:hover { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.3); color:#f87171; }
+
+.shoe-retired-toggle {
+  width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--border);
+  border-radius:8px; color:var(--text-3); font-family:var(--font-mono);
+  font-size:10px; font-weight:700; letter-spacing:0.10em;
+  padding:8px 12px; cursor:pointer; text-align:left;
+  transition:background 0.15s; margin:10px 0 6px;
+}
+.shoe-retired-toggle:hover { background:rgba(255,255,255,0.06); }
+
+/* ── ROUTES ── */
+.route-card {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:12px; padding:14px 16px; margin-bottom:10px;
+}
+.route-card-hd { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px; }
+.route-card-name { font-size:15px; font-weight:700; color:var(--text-1); }
+.route-card-times {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  padding:3px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0;
+  background:rgba(255,255,255,0.06); border:1px solid var(--border); color:var(--text-2);
+}
+.route-card-meta { font-family:var(--font-mono); font-size:11px; color:var(--text-3); margin-bottom:10px; }
+.route-card-stats { display:flex; gap:14px; margin-bottom:10px; }
+.route-stat { text-align:center; }
+.route-stat-val { font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--text-1); }
+.route-stat-lbl { font-family:var(--font-mono); font-size:9px; color:var(--text-3); text-transform:uppercase; margin-top:2px; }
+.route-card-actions { display:flex; gap:6px; flex-wrap:wrap; }
+.route-card-act {
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  padding:5px 10px; border-radius:6px; border:1px solid var(--border);
+  background:rgba(255,255,255,0.04); color:var(--text-2); cursor:pointer;
+  transition:background 0.15s; -webkit-tap-highlight-color:transparent;
+}
+.route-card-act:hover { background:rgba(255,255,255,0.10); color:var(--text-1); }
+.route-card-act.primary {
+  background:rgba(110,231,183,0.08); border-color:rgba(110,231,183,0.25); color:var(--good);
+}
+.route-card-act.primary:hover { background:rgba(110,231,183,0.14); }
+.route-card-act.danger:hover { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.3); color:#f87171; }
+
+/* Route detail */
+.route-det-hero {
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:14px; padding:16px; margin-bottom:14px;
+}
+.route-det-name { font-size:18px; font-weight:700; color:var(--text-1); margin-bottom:6px; }
+.route-det-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
+.route-det-stat { text-align:center; }
+.route-det-stat-val { font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--text-1); }
+.route-det-stat-lbl { font-family:var(--font-mono); font-size:9px; color:var(--text-3); margin-top:2px; text-transform:uppercase; }
 </style>
 </head>
 <body>
@@ -2100,12 +2707,484 @@ img, video, canvas, svg { max-width: 100%; }
 
   <!-- ══ RUNNING ══ -->
   <div data-gym-panel="running" hidden>
-    <div class="gym-placeholder">
-      <div class="gym-ph-icon">🏃</div>
-      <div class="gym-ph-title">Running</div>
-      <div class="gym-ph-body">Run tracking, pace analysis, and training plans. Coming in Phase 3B.</div>
+
+    <!-- Running sub-tab bar -->
+    <div class="run-tabs" role="tablist">
+      <button class="run-tab active" data-tab="log"       role="tab">LOG RUN</button>
+      <button class="run-tab"        data-tab="history"   role="tab">HISTORY</button>
+      <button class="run-tab"        data-tab="analytics" role="tab">ANALYTICS</button>
+      <button class="run-tab"        data-tab="races"     role="tab">RACES</button>
+      <button class="run-tab"        data-tab="shoes"     role="tab">SHOES</button>
+      <button class="run-tab"        data-tab="routes"    role="tab">ROUTES</button>
     </div>
-  </div>
+
+    <!-- ── LOG RUN ── -->
+    <div data-run-panel="log">
+
+      <button class="run-quick-same hidden" id="runQuickSame">⚡ QUICK LOG: SAME AS LAST</button>
+
+      <!-- Core fields -->
+      <div class="run-section">
+        <div class="run-section-title">RUN DETAILS</div>
+
+        <div class="run-form-grid" style="margin-bottom:10px">
+          <div class="run-field">
+            <span class="run-label">DATE</span>
+            <input class="run-input" type="date" id="runDate">
+          </div>
+          <div class="run-field">
+            <span class="run-label">TYPE</span>
+            <select class="run-select" id="runType">
+              <option value="easy">Easy</option>
+              <option value="long">Long</option>
+              <option value="tempo">Tempo</option>
+              <option value="threshold">Threshold</option>
+              <option value="intervals">Intervals</option>
+              <option value="recovery">Recovery</option>
+              <option value="race">Race</option>
+              <option value="fartlek">Fartlek</option>
+              <option value="hill_repeats">Hill Repeats</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="run-form-grid" style="margin-bottom:12px">
+          <div class="run-field">
+            <span class="run-label">DISTANCE (km)</span>
+            <input class="run-input big" type="number" id="runDistance"
+              inputmode="decimal" step="0.01" min="0" placeholder="0.00"
+              autocomplete="off">
+          </div>
+          <div class="run-field">
+            <span class="run-label">DURATION</span>
+            <input class="run-input big" type="text" id="runDuration"
+              inputmode="numeric" placeholder="00:00:00"
+              autocomplete="off" maxlength="9">
+          </div>
+        </div>
+
+        <!-- Live pace display -->
+        <div class="run-pace-card" id="runPaceCard">
+          <div class="run-pace-value" id="runPaceVal">—</div>
+          <div class="run-pace-label">AVG PACE · AUTO-CALCULATED</div>
+        </div>
+
+        <!-- Effort slider -->
+        <div class="run-field" style="margin-bottom:10px">
+          <span class="run-label">EFFORT <span id="runEffortNum">—</span></span>
+          <div class="run-effort-row">
+            <input class="run-effort-slider" type="range" id="runEffort" min="1" max="10" value="5">
+            <span class="run-effort-badge" id="runEffortLabel">Moderate</span>
+          </div>
+        </div>
+
+        <div class="run-form-grid">
+          <div class="run-field">
+            <span class="run-label">SHOES</span>
+            <select class="run-select" id="runShoe">
+              <option value="">No shoe selected</option>
+            </select>
+          </div>
+          <div class="run-field">
+            <span class="run-label">ROUTE</span>
+            <select class="run-select" id="runRoute">
+              <option value="">No route</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- More details (expandable) -->
+      <button class="run-more-toggle" id="runMoreToggle" type="button">▸ MORE DETAILS</button>
+      <div id="runMoreDetails" hidden>
+        <div class="run-section">
+          <div class="run-section-title">HEART RATE</div>
+          <div class="run-form-grid">
+            <div class="run-field">
+              <span class="run-label">AVG HR (bpm)</span>
+              <input class="run-input" type="number" id="runAvgHR" inputmode="numeric" min="40" max="220" placeholder="—">
+            </div>
+            <div class="run-field">
+              <span class="run-label">MAX HR (bpm)</span>
+              <input class="run-input" type="number" id="runMaxHR" inputmode="numeric" min="40" max="220" placeholder="—">
+            </div>
+          </div>
+        </div>
+
+        <div class="run-section">
+          <div class="run-section-title">CONDITIONS</div>
+          <div class="run-form-grid three">
+            <div class="run-field">
+              <span class="run-label">ELEVATION (m)</span>
+              <input class="run-input" type="number" id="runElevation" inputmode="decimal" step="1" placeholder="—">
+            </div>
+            <div class="run-field">
+              <span class="run-label">CADENCE (spm)</span>
+              <input class="run-input" type="number" id="runCadence" inputmode="numeric" min="100" max="230" placeholder="—">
+            </div>
+            <div class="run-field">
+              <span class="run-label">TEMP (°C)</span>
+              <input class="run-input" type="number" id="runTemp" inputmode="decimal" step="0.5" placeholder="—">
+            </div>
+          </div>
+          <div class="run-form-grid" style="margin-top:10px">
+            <div class="run-field">
+              <span class="run-label">CONDITIONS</span>
+              <select class="run-select" id="runConditions">
+                <option value="">—</option>
+                <option value="sunny">Sunny</option>
+                <option value="cloudy">Cloudy</option>
+                <option value="rain">Rain</option>
+                <option value="wind">Wind</option>
+                <option value="snow">Snow</option>
+                <option value="indoor">Indoor</option>
+              </select>
+            </div>
+            <div class="run-field">
+              <span class="run-label">WIND (km/h)</span>
+              <input class="run-input" type="number" id="runWind" inputmode="decimal" step="1" min="0" placeholder="—">
+            </div>
+          </div>
+        </div>
+
+        <div class="run-section">
+          <div class="run-section-title">KM SPLITS</div>
+          <div class="run-splits-list" id="runSplitsList"></div>
+          <button class="run-add-split" id="runAddSplitBtn" type="button">+ ADD SPLIT</button>
+        </div>
+
+        <div class="run-section">
+          <div class="run-section-title">NOTES</div>
+          <textarea class="run-input" id="runNotes"
+            style="height:80px;resize:vertical;font-size:13px"
+            placeholder="How did it feel? What went well?"></textarea>
+        </div>
+      </div>
+
+      <button class="run-save-btn" id="runSaveBtn" type="button">SAVE RUN</button>
+
+      <!-- Recent runs -->
+      <div class="run-recent-title">RECENT RUNS</div>
+      <div id="runRecentList">
+        <div class="run-empty">No runs logged yet.</div>
+      </div>
+    </div><!-- /log panel -->
+
+    <!-- ── HISTORY (scaffold — Step 4) ── -->
+    <div data-run-panel="history" hidden>
+
+      <!-- Filter bar -->
+      <div class="rh-filters">
+        <select class="run-select rh-filter" id="rhFilterType" style="flex:1;min-width:0">
+          <option value="">All types</option>
+          <option value="easy">Easy</option>
+          <option value="long">Long</option>
+          <option value="tempo">Tempo</option>
+          <option value="threshold">Threshold</option>
+          <option value="intervals">Intervals</option>
+          <option value="recovery">Recovery</option>
+          <option value="race">Race</option>
+          <option value="fartlek">Fartlek</option>
+          <option value="hill_repeats">Hill Repeats</option>
+        </select>
+        <select class="run-select rh-filter" id="rhFilterShoe" style="flex:1;min-width:0">
+          <option value="">All shoes</option>
+        </select>
+        <select class="run-select rh-filter" id="rhFilterRoute" style="flex:1;min-width:0">
+          <option value="">All routes</option>
+        </select>
+      </div>
+      <div class="rh-filters" style="margin-top:6px">
+        <input class="run-input rh-filter" type="date" id="rhFromDate" style="flex:1;font-size:12px;padding:8px 10px" placeholder="From">
+        <input class="run-input rh-filter" type="date" id="rhToDate"   style="flex:1;font-size:12px;padding:8px 10px" placeholder="To">
+        <button class="rh-filter-clear" id="rhFilterClear">CLEAR</button>
+      </div>
+
+      <!-- List -->
+      <div id="rhList"></div>
+      <button class="rh-load-more hidden" id="rhLoadMore">LOAD MORE</button>
+
+      <!-- Detail view (slide-in) -->
+      <div id="rhDetail" class="rh-detail hidden">
+        <button class="rh-detail-back" id="rhDetailBack">← BACK</button>
+        <div id="rhDetailContent"></div>
+      </div>
+
+    </div>
+
+    <!-- ── ANALYTICS (scaffold — Step 5) ── -->
+    <div data-run-panel="analytics" hidden>
+
+      <!-- Stats cards row -->
+      <div class="ran-stats-row" id="ranStatsRow">
+        <div class="ran-stat-card"><div class="ran-stat-val" id="ranStatWeek">—</div><div class="ran-stat-lbl">km this week</div></div>
+        <div class="ran-stat-card"><div class="ran-stat-val" id="ranStatMonth">—</div><div class="ran-stat-lbl">km this month</div></div>
+        <div class="ran-stat-card"><div class="ran-stat-val" id="ranStatYear">—</div><div class="ran-stat-lbl">km this year</div></div>
+        <div class="ran-stat-card"><div class="ran-stat-val" id="ranStatLongest">—</div><div class="ran-stat-lbl">longest run</div></div>
+        <div class="ran-stat-card"><div class="ran-stat-val" id="ranStatStreak">—</div><div class="ran-stat-lbl">day streak</div></div>
+        <div class="ran-stat-card"><div class="ran-stat-val" id="ranStatBest5k">—</div><div class="ran-stat-lbl">best 5K equiv.</div></div>
+      </div>
+
+      <!-- ACWR gauge + label -->
+      <div class="ran-section">
+        <div class="ran-section-hd">
+          <span class="ran-section-title">ACUTE:CHRONIC WORKLOAD RATIO</span>
+          <span class="ran-acwr-badge" id="ranAcwrBadge">—</span>
+        </div>
+        <div class="ran-acwr-bar-wrap">
+          <div class="ran-acwr-zones">
+            <div class="ran-acwr-zone" style="flex:0.8;background:rgba(100,116,139,0.25)" title="<0.8 Detraining"></div>
+            <div class="ran-acwr-zone" style="flex:0.5;background:rgba(34,197,94,0.25)"   title="0.8–1.3 Optimal"></div>
+            <div class="ran-acwr-zone" style="flex:0.2;background:rgba(249,115,22,0.25)"  title="1.3–1.5 Caution"></div>
+            <div class="ran-acwr-zone" style="flex:0.5;background:rgba(239,68,68,0.20)"   title=">1.5 Danger"></div>
+          </div>
+          <div class="ran-acwr-needle" id="ranAcwrNeedle" style="left:0%"></div>
+        </div>
+        <div class="ran-acwr-labels">
+          <span>0</span><span>0.8</span><span>1.3</span><span>1.5</span><span>2.0+</span>
+        </div>
+        <div class="ran-acwr-desc" id="ranAcwrDesc">Load data from last 4 weeks needed.</div>
+      </div>
+
+      <!-- Weekly mileage bar chart -->
+      <div class="ran-section">
+        <div class="ran-section-hd">
+          <span class="ran-section-title">WEEKLY MILEAGE — LAST 12 WEEKS</span>
+        </div>
+        <div class="ran-chart-wrap">
+          <svg id="ranWeeklyChart" class="ran-chart-svg" viewBox="0 0 520 120" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="ran-chart-legend" id="ranWeeklyLegend"></div>
+      </div>
+
+      <!-- Pace evolution chart -->
+      <div class="ran-section">
+        <div class="ran-section-hd">
+          <span class="ran-section-title">PACE EVOLUTION — LAST 12 WEEKS</span>
+        </div>
+        <div class="ran-chart-wrap">
+          <svg id="ranPaceChart" class="ran-chart-svg" viewBox="0 0 520 120" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="ran-chart-legend" id="ranPaceLegend"></div>
+      </div>
+
+      <!-- Run type distribution donut -->
+      <div class="ran-section">
+        <div class="ran-section-hd">
+          <span class="ran-section-title">RUN TYPE DISTRIBUTION — 90 DAYS</span>
+        </div>
+        <div class="ran-donut-wrap">
+          <svg id="ranDonutChart" viewBox="0 0 120 120" width="120" height="120"></svg>
+          <div class="ran-donut-legend" id="ranDonutLegend"></div>
+        </div>
+        <div class="ran-donut-tip">Ideal: ~80% easy, ~20% hard (polarized training)</div>
+      </div>
+
+    </div>
+
+    <!-- ── RACES (scaffold — Step 6) ── -->
+    <div data-run-panel="races" hidden>
+
+      <!-- ── UPCOMING RACES ── -->
+      <div class="race-section-hd">
+        <span class="ran-section-title">UPCOMING RACES</span>
+        <button class="race-add-btn" id="raceAddBtn">+ ADD RACE</button>
+      </div>
+      <div id="raceUpcomingList"><div class="run-empty">No upcoming races.</div></div>
+
+      <!-- ── PR BOARD ── -->
+      <div class="ran-section" style="margin-top:22px">
+        <div class="ran-section-title" style="margin-bottom:10px">PERSONAL RECORDS</div>
+        <div class="race-pr-grid" id="racePRGrid">
+          <div class="run-empty">Log runs to start tracking PRs.</div>
+        </div>
+      </div>
+
+      <!-- ── RACE PREDICTOR ── -->
+      <div class="ran-section">
+        <div class="ran-section-title" style="margin-bottom:10px">RACE TIME PREDICTOR</div>
+        <div class="race-pred-form">
+          <div class="run-field">
+            <span class="run-label">RECENT EFFORT — DISTANCE (km)</span>
+            <input class="run-input" type="number" id="predDist" inputmode="decimal" step="0.01" placeholder="e.g. 5.00">
+          </div>
+          <div class="run-field">
+            <span class="run-label">TIME (MM:SS or HH:MM:SS)</span>
+            <input class="run-input" type="text" id="predTime" inputmode="numeric" placeholder="e.g. 24:30">
+          </div>
+          <button class="race-pred-calc-btn" id="predCalcBtn">CALCULATE</button>
+        </div>
+        <div id="predResults" hidden>
+          <div class="race-pred-vdot" id="predVDOT"></div>
+          <div class="race-pred-table" id="predTable"></div>
+          <div class="race-pred-zones" id="predZones"></div>
+        </div>
+      </div>
+
+      <!-- ── PAST RACES ── -->
+      <div class="ran-section">
+        <div class="ran-section-title" style="margin-bottom:10px">PAST RACES</div>
+        <div id="racePastList"><div class="run-empty">No completed races yet.</div></div>
+      </div>
+
+    </div>
+
+    <!-- ── Add Race Modal ── -->
+    <div id="raceModalBg" class="race-modal-bg" hidden>
+      <div class="race-modal">
+        <div class="race-modal-hd">
+          <span class="race-modal-title" id="raceModalTitle">ADD RACE</span>
+          <button class="race-modal-close" id="raceModalClose">✕</button>
+        </div>
+        <div class="run-field" style="margin-bottom:10px">
+          <span class="run-label">RACE NAME</span>
+          <input class="run-input" type="text" id="raceNameInput" placeholder="e.g. Paris Marathon">
+        </div>
+        <div class="run-form-grid" style="margin-bottom:10px">
+          <div class="run-field">
+            <span class="run-label">DATE</span>
+            <input class="run-input" type="date" id="raceDateInput">
+          </div>
+          <div class="run-field">
+            <span class="run-label">DISTANCE (km)</span>
+            <input class="run-input" type="number" id="raceDistInput" inputmode="decimal" step="0.001" placeholder="42.195">
+          </div>
+        </div>
+        <div class="run-section-title" style="margin-bottom:8px">GOAL TIMES (optional)</div>
+        <div class="run-form-grid three" style="margin-bottom:10px">
+          <div class="run-field">
+            <span class="run-label">A GOAL</span>
+            <input class="run-input" type="text" id="raceGoalA" inputmode="numeric" placeholder="3:30:00">
+          </div>
+          <div class="run-field">
+            <span class="run-label">B GOAL</span>
+            <input class="run-input" type="text" id="raceGoalB" inputmode="numeric" placeholder="3:45:00">
+          </div>
+          <div class="run-field">
+            <span class="run-label">C GOAL</span>
+            <input class="run-input" type="text" id="raceGoalC" inputmode="numeric" placeholder="4:00:00">
+          </div>
+        </div>
+        <div class="run-field" style="margin-bottom:14px">
+          <span class="run-label">NOTES</span>
+          <textarea class="run-input" id="raceNotesInput" style="height:60px;resize:vertical;font-size:13px" placeholder="Course details, weather, strategy…"></textarea>
+        </div>
+        <button class="run-save-btn" id="raceModalSave">SAVE RACE</button>
+        <input type="hidden" id="raceEditId">
+      </div>
+    </div>
+
+    <!-- ── SHOES (scaffold — Step 7) ── -->
+    <div data-run-panel="shoes" hidden>
+
+      <div class="race-section-hd">
+        <span class="ran-section-title">MY SHOES</span>
+        <button class="race-add-btn" id="shoeAddBtn">+ ADD SHOE</button>
+      </div>
+
+      <!-- Active shoes -->
+      <div id="shoeActiveList"><div class="run-empty">No shoes yet.</div></div>
+
+      <!-- Retired shoes (collapsible) -->
+      <div id="shoeRetiredSection" hidden>
+        <button class="shoe-retired-toggle" id="shoeRetiredToggle">▸ RETIRED SHOES</button>
+        <div id="shoeRetiredList" hidden></div>
+      </div>
+
+    </div>
+
+    <!-- Shoe modal -->
+    <div id="shoeModalBg" class="race-modal-bg" hidden>
+      <div class="race-modal">
+        <div class="race-modal-hd">
+          <span class="race-modal-title" id="shoeModalTitle">ADD SHOE</span>
+          <button class="race-modal-close" id="shoeModalClose">✕</button>
+        </div>
+        <div class="run-form-grid" style="margin-bottom:10px">
+          <div class="run-field">
+            <span class="run-label">NAME</span>
+            <input class="run-input" type="text" id="shoeNameInput" placeholder="e.g. My Alphafly">
+          </div>
+          <div class="run-field">
+            <span class="run-label">BRAND</span>
+            <input class="run-input" type="text" id="shoeBrandInput" placeholder="Nike">
+          </div>
+        </div>
+        <div class="run-field" style="margin-bottom:10px">
+          <span class="run-label">MODEL</span>
+          <input class="run-input" type="text" id="shoeModelInput" placeholder="Alphafly 3">
+        </div>
+        <div class="run-form-grid three" style="margin-bottom:10px">
+          <div class="run-field">
+            <span class="run-label">PURCHASE DATE</span>
+            <input class="run-input" type="date" id="shoePurchaseDate" style="font-size:12px">
+          </div>
+          <div class="run-field">
+            <span class="run-label">PRICE (€/$)</span>
+            <input class="run-input" type="number" id="shoePriceInput" inputmode="decimal" step="0.01" placeholder="0.00">
+          </div>
+          <div class="run-field">
+            <span class="run-label">MAX KM</span>
+            <input class="run-input" type="number" id="shoeMaxKmInput" inputmode="numeric" placeholder="800">
+          </div>
+        </div>
+        <button class="run-save-btn" id="shoeModalSave">SAVE SHOE</button>
+        <input type="hidden" id="shoeEditId">
+      </div>
+    </div>
+
+    <!-- ── ROUTES (scaffold — Step 8) ── -->
+    <div data-run-panel="routes" hidden>
+
+      <div class="race-section-hd">
+        <span class="ran-section-title">MY ROUTES</span>
+        <button class="race-add-btn" id="routeAddBtn">+ ADD ROUTE</button>
+      </div>
+
+      <div id="routeList"><div class="run-empty">No routes saved yet.</div></div>
+
+      <!-- Route detail panel (inline, replaces list) -->
+      <div id="routeDetail" class="rh-detail hidden">
+        <button class="rh-detail-back" id="routeDetailBack">← BACK</button>
+        <div id="routeDetailContent"></div>
+      </div>
+
+    </div>
+
+    <!-- Route modal -->
+    <div id="routeModalBg" class="race-modal-bg" hidden>
+      <div class="race-modal">
+        <div class="race-modal-hd">
+          <span class="race-modal-title" id="routeModalTitle">ADD ROUTE</span>
+          <button class="race-modal-close" id="routeModalClose">✕</button>
+        </div>
+        <div class="run-field" style="margin-bottom:10px">
+          <span class="run-label">ROUTE NAME</span>
+          <input class="run-input" type="text" id="routeNameInput" placeholder="e.g. Bois de Vincennes Loop">
+        </div>
+        <div class="run-form-grid" style="margin-bottom:10px">
+          <div class="run-field">
+            <span class="run-label">DISTANCE (km)</span>
+            <input class="run-input" type="number" id="routeDistInput" inputmode="decimal" step="0.001" placeholder="5.00">
+          </div>
+          <div class="run-field">
+            <span class="run-label">ELEVATION (m)</span>
+            <input class="run-input" type="number" id="routeElevInput" inputmode="decimal" step="1" placeholder="0">
+          </div>
+        </div>
+        <div class="run-field" style="margin-bottom:14px">
+          <span class="run-label">NOTES</span>
+          <textarea class="run-input" id="routeNotesInput" style="height:60px;resize:vertical;font-size:13px" placeholder="Surface, landmarks, parking…"></textarea>
+        </div>
+        <button class="run-save-btn" id="routeModalSave">SAVE ROUTE</button>
+        <input type="hidden" id="routeEditId">
+      </div>
+    </div>
+
+  </div><!-- /running panel -->
+
+  <!-- PR celebration toast -->
+  <div class="run-toast" id="runToast"></div>
 
 </div><!-- /po-shell -->
 
@@ -3959,6 +5038,7 @@ await initUserMenu();
     document.querySelectorAll('.gym-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
     document.querySelectorAll('[data-gym-panel]').forEach(p => { p.hidden = p.dataset.gymPanel !== name; });
     if (name === 'stretching') initStretchingTab();
+    if (name === 'running') initRunningTab();
   }
 
   function switchStrengthTab(name) {
@@ -3966,6 +5046,32 @@ await initUserMenu();
     document.querySelectorAll('.strength-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
     document.querySelectorAll('[data-strength-panel]').forEach(p => { p.hidden = p.dataset.strengthPanel !== name; });
   }
+
+  // Running state — ALL declared before initGymTabs() fires to avoid TDZ errors
+  let _runMod = null;
+  let _runInit = false;
+  let _runShoes = [];
+  let _runRoutes = [];
+  let _runSplits = [];
+  let _runSaving = false;
+  let _runToastTimer = null;
+  // History state
+  let _runHistInitDone = false;
+  let _rhSessions = [];
+  let _rhOffset = 0;
+  const RH_PAGE = 20;
+  // Analytics state
+  let _ranInitDone = false;
+  // Races state
+  let _raceInitDone = false;
+  let _races = [];
+  // Shoes state
+  let _shoeInitDone = false;
+  // Routes state
+  let _routeInitDone = false;
+  // Constants used synchronously — must be before initGymTabs()
+  const EFFORT_LABELS = ['','Recovery','Very easy','Easy','Moderate','Moderate','Comfortably hard','Hard','Very hard','Near max','All-out'];
+  const DONUT_COLORS  = { easy:'#4ade80', long:'#22d3ee', tempo:'#f97316', threshold:'#ef4444', intervals:'#a855f7', recovery:'#64748b', race:'#fbbf24', fartlek:'#ec4899', hill_repeats:'#84cc16' };
 
   (function initGymTabs() {
     document.querySelectorAll('.gym-tab').forEach(btn => {
@@ -5393,6 +6499,1602 @@ await initUserMenu();
       const s = _stchDetailStretches.find(x => x.id === _stchEditStretchId);
       if (s) s.photo_url = null;
     } catch (e) { alert('Error: ' + e.message); }
+  }
+
+
+  // ── RUNNING TAB ──────────────────────────────────────────────
+
+  async function getRunMod() {
+    if (!_runMod) _runMod = await import('./js/running-data.js');
+    return _runMod;
+  }
+
+  async function initRunningTab() {
+    if (_runInit) { await refreshRunData(); return; }
+    _runInit = true;
+
+    // Date default
+    document.getElementById('runDate').value = new Date().toISOString().slice(0, 10);
+
+    // Sub-tab switching
+    document.querySelectorAll('.run-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchRunTab(btn.dataset.tab));
+    });
+
+    // Live pace calculation
+    document.getElementById('runDistance').addEventListener('input', updatePaceDisplay);
+    document.getElementById('runDuration').addEventListener('input', updatePaceDisplay);
+
+    // Duration auto-format
+    document.getElementById('runDuration').addEventListener('keydown', runDurationKeydown);
+
+    // Effort slider
+    const effortSlider = document.getElementById('runEffort');
+    effortSlider.addEventListener('input', () => updateEffortLabel(effortSlider.value));
+    updateEffortLabel(effortSlider.value);
+
+    // More details toggle
+    document.getElementById('runMoreToggle').addEventListener('click', () => {
+      const details = document.getElementById('runMoreDetails');
+      const btn = document.getElementById('runMoreToggle');
+      const open = !details.hidden;
+      details.hidden = open;
+      btn.textContent = (open ? '▸' : '▾') + ' MORE DETAILS';
+    });
+
+    // Splits
+    document.getElementById('runAddSplitBtn').addEventListener('click', addSplitRow);
+
+    // Quick same as last
+    document.getElementById('runQuickSame').addEventListener('click', runQuickSame);
+
+    // Save — attached BEFORE switchRunTab so it's always wired regardless of tab restore
+    document.getElementById('runSaveBtn').addEventListener('click', saveRun);
+
+    // Recent runs click → history tab
+    document.getElementById('runRecentList').addEventListener('click', e => {
+      const card = e.target.closest('.run-card[data-id]');
+      if (card) switchRunTab('history');
+    });
+
+    // Restore saved sub-tab LAST (after all listeners are attached)
+    const savedRunTab = localStorage.getItem('gym:run_tab') || 'log';
+    switchRunTab(savedRunTab);
+
+    await refreshRunData();
+  }
+
+  function switchRunTab(name) {
+    localStorage.setItem('gym:run_tab', name);
+    document.querySelectorAll('.run-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('[data-run-panel]').forEach(p => { p.hidden = p.dataset.runPanel !== name; });
+    if (name === 'history')   { ensureHistoryInited(); rhPopulateFilters(); rhLoad(true); }
+    if (name === 'analytics') initAnalyticsTab();
+    if (name === 'races')     initRacesTab();
+    if (name === 'shoes')     initShoesTab();
+    if (name === 'routes')    initRoutesTab();
+  }
+
+  async function refreshRunData() {
+    const mod = await getRunMod();
+    try {
+      [_runShoes, _runRoutes] = await Promise.all([mod.loadShoes(), mod.loadRoutes()]);
+    } catch (e) { console.error('Running load error:', e); return; }
+    populateRunSelects();
+    renderRecentRuns();
+  }
+
+  function populateRunSelects() {
+    const shoeEl = document.getElementById('runShoe');
+    const routeEl = document.getElementById('runRoute');
+    const prevShoe = shoeEl.value;
+    const prevRoute = routeEl.value;
+
+    shoeEl.innerHTML = '<option value="">No shoe selected</option>' +
+      _runShoes.filter(s => !s.retired).map(s =>
+        `<option value="${escHtml(s.id)}">${escHtml(s.name)}${s.brand ? ' · ' + escHtml(s.brand) : ''}</option>`
+      ).join('');
+    if (prevShoe) shoeEl.value = prevShoe;
+
+    routeEl.innerHTML = '<option value="">No route</option>' +
+      _runRoutes.map(r =>
+        `<option value="${escHtml(r.id)}">${escHtml(r.name)}${r.distance_km ? ' (' + r.distance_km + 'km)' : ''}</option>`
+      ).join('');
+    if (prevRoute) routeEl.value = prevRoute;
+  }
+
+  async function renderRecentRuns() {
+    const mod = await getRunMod();
+    let sessions;
+    try { sessions = await mod.loadRecentSessions(5); }
+    catch (e) { return; }
+
+    const el = document.getElementById('runRecentList');
+    const btn = document.getElementById('runQuickSame');
+
+    if (!sessions.length) {
+      el.innerHTML = '<div class="run-empty">No runs logged yet.</div>';
+      btn.classList.add('hidden');
+      return;
+    }
+
+    btn.classList.remove('hidden');
+    el.innerHTML = sessions.map(s => runCardHtml(s)).join('');
+  }
+
+  function runCardHtml(s) {
+    const mod = _runMod;
+    const dist = s.distance_km ? parseFloat(s.distance_km).toFixed(2) + ' km' : '—';
+    const pace = mod ? mod.formatPace(s.pace_sec_per_km) : '—';
+    const dur  = mod ? mod.formatDuration(s.duration_sec) : '—';
+    const shoe = s.running_shoes ? s.running_shoes.name : '';
+    const route = s.running_routes ? s.running_routes.name : '';
+    const meta = [dur, pace, shoe, route].filter(Boolean).join(' · ');
+    const effort = s.effort || 0;
+    const dots = Array.from({length: 10}, (_, i) => {
+      const cls = i < effort ? (effort >= 8 ? 'filled bad' : effort >= 6 ? 'filled warn' : 'filled') : '';
+      return `<span class="run-dot ${cls}"></span>`;
+    }).join('');
+    const typeLabel = s.run_type ? s.run_type.replace('_', ' ') : '';
+
+    return `<div class="run-card" data-id="${escHtml(s.id)}">
+      <div class="run-card-date">${escHtml(s.started_at)}</div>
+      <div class="run-card-main">${escHtml(dist)}</div>
+      <div class="run-card-meta">${escHtml(meta)}</div>
+      ${effort ? `<div class="run-card-effort">${dots}</div>` : ''}
+      <div class="run-card-badge">${escHtml(typeLabel)}</div>
+    </div>`;
+  }
+
+  function updatePaceDisplay() {
+    const mod = _runMod;
+    if (!mod) return;
+    const dist = parseFloat(document.getElementById('runDistance').value) || 0;
+    const durStr = document.getElementById('runDuration').value;
+    const dur = mod.parseDurationInput(durStr) || 0;
+    const pace = (dist > 0 && dur > 0) ? mod.calcPace(dist, dur) : null;
+    const el = document.getElementById('runPaceVal');
+    el.textContent = pace ? mod.formatPace(pace) : '—';
+    document.getElementById('runPaceCard').style.opacity = pace ? '1' : '0.5';
+  }
+
+  function updateEffortLabel(val) {
+    const n = parseInt(val) || 0;
+    document.getElementById('runEffortNum').textContent = n || '—';
+    document.getElementById('runEffortLabel').textContent = EFFORT_LABELS[n] || '';
+  }
+
+  function runDurationKeydown(e) {
+    // Allow control keys
+    if (['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) return;
+    if (!/^\d$/.test(e.key)) { e.preventDefault(); return; }
+    // After typing, auto-insert colons
+    const input = e.currentTarget;
+    // Let the digit land, then format on next microtask
+    setTimeout(() => {
+      let digits = input.value.replace(/\D/g, '').slice(0, 6);
+      let formatted = '';
+      if (digits.length <= 2) {
+        formatted = digits;
+      } else if (digits.length <= 4) {
+        formatted = digits.slice(0,2) + ':' + digits.slice(2);
+      } else {
+        formatted = digits.slice(0,2) + ':' + digits.slice(2,4) + ':' + digits.slice(4,6);
+      }
+      input.value = formatted;
+      updatePaceDisplay();
+    }, 0);
+  }
+
+  function addSplitRow() {
+    const list = document.getElementById('runSplitsList');
+    const km = list.children.length + 1;
+    _runSplits.push({ km, pace: '' });
+    const idx = _runSplits.length - 1;
+    const row = document.createElement('div');
+    row.className = 'run-split-row';
+    row.dataset.idx = idx;
+    row.innerHTML = `
+      <span class="run-split-km">km ${km}</span>
+      <input class="run-split-pace" type="text" placeholder="5:30" inputmode="numeric" data-idx="${idx}">
+      <button class="run-split-rm" title="Remove" data-idx="${idx}">✕</button>`;
+    list.appendChild(row);
+
+    row.querySelector('.run-split-pace').addEventListener('input', e => {
+      _runSplits[parseInt(e.target.dataset.idx)].pace = e.target.value;
+    });
+    row.querySelector('.run-split-rm').addEventListener('click', e => {
+      const i = parseInt(e.target.dataset.idx);
+      _runSplits.splice(i, 1);
+      renderSplits();
+    });
+  }
+
+  function renderSplits() {
+    const list = document.getElementById('runSplitsList');
+    list.innerHTML = '';
+    _runSplits.forEach((sp, idx) => {
+      const row = document.createElement('div');
+      row.className = 'run-split-row';
+      row.dataset.idx = idx;
+      row.innerHTML = `
+        <span class="run-split-km">km ${sp.km}</span>
+        <input class="run-split-pace" type="text" placeholder="5:30" inputmode="numeric" value="${escHtml(sp.pace)}" data-idx="${idx}">
+        <button class="run-split-rm" title="Remove" data-idx="${idx}">✕</button>`;
+      list.appendChild(row);
+
+      row.querySelector('.run-split-pace').addEventListener('input', e => {
+        _runSplits[parseInt(e.target.dataset.idx)].pace = e.target.value;
+      });
+      row.querySelector('.run-split-rm').addEventListener('click', e => {
+        const i = parseInt(e.target.dataset.idx);
+        _runSplits.splice(i, 1);
+        renderSplits();
+      });
+    });
+  }
+
+  async function runQuickSame() {
+    const mod = await getRunMod();
+    const recent = await mod.loadRecentSessions(1);
+    if (!recent.length) return;
+    const s = recent[0];
+    document.getElementById('runDate').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('runDistance').value = s.distance_km || '';
+    document.getElementById('runDuration').value = s.duration_sec
+      ? mod.formatDuration(s.duration_sec).replace(/^(\d:\d{2}:\d{2})$/, '0$1')
+      : '';
+    document.getElementById('runType').value = s.run_type || 'easy';
+    if (s.effort) document.getElementById('runEffort').value = s.effort;
+    updateEffortLabel(document.getElementById('runEffort').value);
+    if (s.shoe_id) document.getElementById('runShoe').value = s.shoe_id;
+    if (s.route_id) document.getElementById('runRoute').value = s.route_id;
+    updatePaceDisplay();
+    showRunToast('Pre-filled from last run — adjust and save!', false);
+  }
+
+  function showRunToast(msg, isPR = false) {
+    const el = document.getElementById('runToast');
+    el.textContent = msg;
+    el.style.borderColor = isPR ? 'rgba(234,179,8,0.5)' : 'rgba(110,231,183,0.35)';
+    el.style.color = isPR ? '#fbbf24' : 'var(--good)';
+    el.classList.add('show');
+    clearTimeout(_runToastTimer);
+    _runToastTimer = setTimeout(() => el.classList.remove('show'), isPR ? 4000 : 2500);
+  }
+
+  async function saveRun() {
+    if (_runSaving) return;
+    const mod = await getRunMod();
+
+    const dist  = parseFloat(document.getElementById('runDistance').value) || 0;
+    const durStr = document.getElementById('runDuration').value;
+    const dur   = mod.parseDurationInput(durStr) || 0;
+
+    if (!dist || dist <= 0) { showRunToast('Enter a distance to save.', false); return; }
+    if (!dur || dur <= 0)   { showRunToast('Enter a duration to save.', false); return; }
+
+    _runSaving = true;
+    document.getElementById('runSaveBtn').disabled = true;
+    document.getElementById('runSaveBtn').textContent = 'SAVING…';
+
+    try {
+      const pace = mod.calcPace(dist, dur);
+      const shoe_id  = document.getElementById('runShoe').value || null;
+      const route_id = document.getElementById('runRoute').value || null;
+      const effort   = parseInt(document.getElementById('runEffort').value) || null;
+
+      // Calories: use nutrition profile weight if available (best-effort)
+      let calories = null;
+      try {
+        const { loadProfile } = await import('./js/nutrition-data.js');
+        const profile = await loadProfile();
+        if (profile && profile.weight_kg) {
+          calories = mod.calcCalories(profile.weight_kg, dist);
+        }
+      } catch (_) {}
+
+      // Build splits array
+      const splits = _runSplits
+        .filter(sp => sp.pace.trim())
+        .map((sp, i) => ({ km: i + 1, pace_sec: mod.parsePaceInput(sp.pace) }))
+        .filter(sp => sp.pace_sec);
+
+      const session = await mod.addSession({
+        started_at:      document.getElementById('runDate').value,
+        distance_km:     dist,
+        duration_sec:    dur,
+        pace_sec_per_km: pace,
+        run_type:        document.getElementById('runType').value,
+        effort,
+        avg_hr:          parseInt(document.getElementById('runAvgHR').value) || null,
+        max_hr:          parseInt(document.getElementById('runMaxHR').value) || null,
+        elevation_m:     parseFloat(document.getElementById('runElevation').value) || null,
+        cadence:         parseInt(document.getElementById('runCadence').value) || null,
+        temperature:     parseFloat(document.getElementById('runTemp').value) || null,
+        humidity:        null,
+        conditions:      document.getElementById('runConditions').value || null,
+        wind_speed_kmh:  parseFloat(document.getElementById('runWind').value) || null,
+        splits,
+        notes:           document.getElementById('runNotes').value.trim() || null,
+        shoe_id,
+        route_id,
+        calories_burned: calories,
+      });
+
+      // Post-save: shoe mileage + route counter + PR check (parallel)
+      const [newPRs] = await Promise.all([
+        mod.checkAndUpdatePRs(session),
+        shoe_id  ? mod.incrementShoeMileage(shoe_id, dist)    : Promise.resolve(),
+        route_id ? mod.incrementRouteTimesRun(route_id)       : Promise.resolve(),
+      ]);
+
+      // Reload shoe/route data (totals changed)
+      [_runShoes, _runRoutes] = await Promise.all([mod.loadShoes(), mod.loadRoutes()]);
+      populateRunSelects();
+
+      // Reset form
+      resetRunForm();
+      await renderRecentRuns();
+
+      // Toast: show PRs first, then generic success
+      if (newPRs.length) {
+        const labels = { '1K':'1K','1mile':'1 Mile','5K':'5K','10K':'10K','HalfMarathon':'Half Marathon','Marathon':'Marathon' };
+        for (const pr of newPRs) {
+          const t = mod.formatDuration(pr.time_sec);
+          showRunToast(`🏆 New ${labels[pr.label] || pr.label} PR! ${t}`, true);
+          await new Promise(r => setTimeout(r, 1500));
+        }
+      } else {
+        showRunToast('Run saved!');
+      }
+
+    } catch (e) {
+      console.error('Save run error:', e);
+      showRunToast('Error: ' + e.message, false);
+    } finally {
+      _runSaving = false;
+      document.getElementById('runSaveBtn').disabled = false;
+      document.getElementById('runSaveBtn').textContent = 'SAVE RUN';
+    }
+  }
+
+  function resetRunForm() {
+    document.getElementById('runDate').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('runDistance').value = '';
+    document.getElementById('runDuration').value = '';
+    document.getElementById('runAvgHR').value = '';
+    document.getElementById('runMaxHR').value = '';
+    document.getElementById('runElevation').value = '';
+    document.getElementById('runCadence').value = '';
+    document.getElementById('runTemp').value = '';
+    document.getElementById('runConditions').value = '';
+    document.getElementById('runWind').value = '';
+    document.getElementById('runNotes').value = '';
+    document.getElementById('runEffort').value = 5;
+    updateEffortLabel(5);
+    document.getElementById('runPaceVal').textContent = '—';
+    document.getElementById('runPaceCard').style.opacity = '0.5';
+    _runSplits = [];
+    document.getElementById('runSplitsList').innerHTML = '';
+    document.getElementById('runMoreDetails').hidden = true;
+    document.getElementById('runMoreToggle').textContent = '▸ MORE DETAILS';
+  }
+
+  function ensureHistoryInited() {
+    if (_runHistInitDone) return;
+    _runHistInitDone = true;
+
+    document.getElementById('rhFilterType').addEventListener('change',  () => rhLoad(true));
+    document.getElementById('rhFilterShoe').addEventListener('change',  () => rhLoad(true));
+    document.getElementById('rhFilterRoute').addEventListener('change', () => rhLoad(true));
+    document.getElementById('rhFromDate').addEventListener('change',    () => rhLoad(true));
+    document.getElementById('rhToDate').addEventListener('change',      () => rhLoad(true));
+    document.getElementById('rhFilterClear').addEventListener('click',  rhClearFilters);
+    document.getElementById('rhLoadMore').addEventListener('click',     () => rhLoad(false));
+    document.getElementById('rhDetailBack').addEventListener('click',   rhHideDetail);
+    document.getElementById('rhList').addEventListener('click', e => {
+      const row = e.target.closest('.rh-row[data-id]');
+      if (row) rhShowDetail(row.dataset.id);
+    });
+    document.getElementById('rhDetailContent').addEventListener('click', async e => {
+      if (e.target.closest('#rhDetEditBtn')) {
+        showRunToast('Edit not yet implemented in v1.');
+      }
+      if (e.target.closest('#rhDetDeleteBtn')) {
+        const id = e.target.closest('#rhDetDeleteBtn').dataset.id;
+        if (!id) return;
+        if (!confirm('Delete this run?')) return;
+        const mod = await getRunMod();
+        try { await mod.deleteSession(id); } catch (err) { alert(err.message); return; }
+        rhHideDetail();
+        rhLoad(true);
+        renderRecentRuns();
+        showRunToast('Run deleted.');
+      }
+    });
+
+    // Populate filter dropdowns with current shoes/routes
+    rhPopulateFilters();
+  }
+
+  function rhPopulateFilters() {
+    const shoeEl  = document.getElementById('rhFilterShoe');
+    const routeEl = document.getElementById('rhFilterRoute');
+    const prevS = shoeEl.value, prevR = routeEl.value;
+    shoeEl.innerHTML = '<option value="">All shoes</option>' +
+      _runShoes.map(s => `<option value="${escHtml(s.id)}">${escHtml(s.name)}</option>`).join('');
+    routeEl.innerHTML = '<option value="">All routes</option>' +
+      _runRoutes.map(r => `<option value="${escHtml(r.id)}">${escHtml(r.name)}</option>`).join('');
+    if (prevS) shoeEl.value = prevS;
+    if (prevR) routeEl.value = prevR;
+  }
+
+  async function rhLoad(reset = true) {
+    if (reset) { _rhOffset = 0; _rhSessions = []; }
+    const mod = await getRunMod();
+    const params = {
+      limit: RH_PAGE, offset: _rhOffset,
+      run_type:  document.getElementById('rhFilterType').value  || undefined,
+      shoe_id:   document.getElementById('rhFilterShoe').value  || undefined,
+      route_id:  document.getElementById('rhFilterRoute').value || undefined,
+      from_date: document.getElementById('rhFromDate').value    || undefined,
+      to_date:   document.getElementById('rhToDate').value      || undefined,
+    };
+    let page;
+    try { page = await mod.loadSessions(params); } catch (e) { console.error(e); return; }
+
+    if (reset) {
+      _rhSessions = page;
+      document.getElementById('rhList').innerHTML = '';
+    } else {
+      _rhSessions = _rhSessions.concat(page);
+    }
+    _rhOffset += page.length;
+
+    rhRenderList(reset);
+    document.getElementById('rhLoadMore').classList.toggle('hidden', page.length < RH_PAGE);
+  }
+
+  function rhRenderList(reset) {
+    const el = document.getElementById('rhList');
+    if (!_rhSessions.length) {
+      el.innerHTML = '<div class="run-empty">No runs match these filters.</div>';
+      return;
+    }
+    const rows = _rhSessions.map(s => {
+      const mod = _runMod;
+      const dist = parseFloat(s.distance_km).toFixed(2) + ' km';
+      const dur  = mod ? mod.formatDuration(s.duration_sec) : '';
+      const pace = mod ? mod.formatPace(s.pace_sec_per_km)  : '';
+      const shoe = s.running_shoes  ? ' · ' + s.running_shoes.name  : '';
+      const route= s.running_routes ? ' · ' + s.running_routes.name : '';
+      const meta = [dur, pace].filter(Boolean).join(' · ') + shoe + route;
+      const type = (s.run_type || '').replace('_',' ');
+      return `<div class="rh-row" data-id="${escHtml(s.id)}">
+        <div class="rh-row-date">${escHtml(s.started_at)}</div>
+        <div class="rh-row-main">${escHtml(dist)}</div>
+        <div class="rh-row-meta">${escHtml(meta)}</div>
+        <div class="rh-row-badge">${escHtml(type)}</div>
+      </div>`;
+    });
+
+    if (reset) el.innerHTML = rows.join('');
+    else el.insertAdjacentHTML('beforeend', rows.join(''));
+  }
+
+  async function rhShowDetail(id) {
+    const mod = await getRunMod();
+    let s;
+    try { s = await mod.loadSession(id); } catch (e) { return; }
+
+    const dist = parseFloat(s.distance_km).toFixed(2);
+    const dur  = mod.formatDuration(s.duration_sec);
+    const pace = mod.formatPace(s.pace_sec_per_km);
+    const shoe = s.running_shoes  ? s.running_shoes.name  + (s.running_shoes.brand ? ' · ' + s.running_shoes.brand : '') : '—';
+    const route= s.running_routes ? s.running_routes.name : '—';
+    const effort = s.effort || 0;
+    const effortDots = Array.from({length:10},(_,i)=>`<span class="run-dot ${i<effort?(effort>=8?'filled bad':effort>=6?'filled warn':'filled'):''}"></span>`).join('');
+
+    // Splits table
+    let splitsHtml = '';
+    const splits = Array.isArray(s.splits) ? s.splits : [];
+    if (splits.length) {
+      let cum = 0;
+      splitsHtml = `<div class="rh-det-section">
+        <div class="rh-det-section-title">SPLITS</div>
+        <table class="rh-splits-table">
+          <thead><tr><th>KM</th><th>PACE</th><th>CUMULATIVE</th></tr></thead>
+          <tbody>${splits.map((sp, i) => {
+            cum += sp.pace_sec || 0;
+            return `<tr><td>${i+1}</td><td>${escHtml(mod.formatPace(sp.pace_sec))}</td><td>${escHtml(mod.formatDuration(cum))}</td></tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>`;
+    }
+
+    // Comparison to previous run on same route
+    let compareHtml = '';
+    if (s.route_id) {
+      try {
+        const prev = await mod.loadSessions({ route_id: s.route_id, limit: 2 });
+        const other = prev.find(p => p.id !== s.id);
+        if (other && other.pace_sec_per_km && s.pace_sec_per_km) {
+          const diff = s.pace_sec_per_km - other.pace_sec_per_km;
+          const cls = diff < 0 ? 'better' : diff > 0 ? 'worse' : 'same';
+          const sign = diff < 0 ? '▲ ' : diff > 0 ? '▼ ' : '';
+          const absDiff = mod.formatPace(Math.abs(diff));
+          compareHtml = `<div class="rh-det-section"><div class="rh-compare-bar">
+            <div class="rh-compare-label">vs prev run on ${escHtml(route)}</div>
+            <div class="rh-compare-diff ${cls}">${sign}${absDiff}/km ${cls === 'better' ? 'faster' : cls === 'worse' ? 'slower' : 'same pace'}</div>
+          </div></div>`;
+        }
+      } catch (_) {}
+    }
+
+    const conditions = [
+      s.conditions, s.temperature != null ? s.temperature + '°C' : null,
+      s.wind_speed_kmh != null ? s.wind_speed_kmh + ' km/h wind' : null,
+    ].filter(Boolean).join(' · ');
+
+    document.getElementById('rhDetailContent').innerHTML = `
+      <div class="rh-det-hero">
+        <div class="rh-det-dist">${escHtml(dist)} km</div>
+        <div class="rh-det-pace">${escHtml(pace)}</div>
+        <div class="rh-det-stats">
+          <div class="rh-det-stat"><div class="rh-det-stat-val">${escHtml(dur)}</div><div class="rh-det-stat-lbl">Duration</div></div>
+          <div class="rh-det-stat"><div class="rh-det-stat-val">${s.avg_hr||'—'}</div><div class="rh-det-stat-lbl">Avg HR</div></div>
+          <div class="rh-det-stat"><div class="rh-det-stat-val">${s.elevation_m||'—'}</div><div class="rh-det-stat-lbl">Elevation</div></div>
+        </div>
+      </div>
+
+      ${compareHtml}
+
+      <div class="rh-det-section">
+        <div class="rh-det-section-title">DETAILS</div>
+        <div class="rh-det-row"><span class="rh-det-row-k">DATE</span><span class="rh-det-row-v">${escHtml(s.started_at)}</span></div>
+        <div class="rh-det-row"><span class="rh-det-row-k">TYPE</span><span class="rh-det-row-v">${escHtml((s.run_type||'').replace('_',' '))}</span></div>
+        <div class="rh-det-row"><span class="rh-det-row-k">EFFORT</span><span class="rh-det-row-v">${effort ? effortDots : '—'}</span></div>
+        <div class="rh-det-row"><span class="rh-det-row-k">SHOES</span><span class="rh-det-row-v">${escHtml(shoe)}</span></div>
+        <div class="rh-det-row"><span class="rh-det-row-k">ROUTE</span><span class="rh-det-row-v">${escHtml(route)}</span></div>
+        ${s.cadence ? `<div class="rh-det-row"><span class="rh-det-row-k">CADENCE</span><span class="rh-det-row-v">${s.cadence} spm</span></div>` : ''}
+        ${s.max_hr  ? `<div class="rh-det-row"><span class="rh-det-row-k">MAX HR</span><span class="rh-det-row-v">${s.max_hr} bpm</span></div>` : ''}
+        ${conditions ? `<div class="rh-det-row"><span class="rh-det-row-k">CONDITIONS</span><span class="rh-det-row-v">${escHtml(conditions)}</span></div>` : ''}
+        ${s.calories_burned ? `<div class="rh-det-row"><span class="rh-det-row-k">CALORIES</span><span class="rh-det-row-v">${s.calories_burned} kcal</span></div>` : ''}
+      </div>
+
+      ${splitsHtml}
+
+      ${s.notes ? `<div class="rh-det-section"><div class="rh-det-section-title">NOTES</div><div style="font-size:13px;color:var(--text-2);line-height:1.55">${escHtml(s.notes)}</div></div>` : ''}
+
+      <div class="rh-det-actions">
+        <button class="rh-det-btn" id="rhDetEditBtn">EDIT</button>
+        <button class="rh-det-btn danger" id="rhDetDeleteBtn" data-id="${escHtml(s.id)}">DELETE</button>
+      </div>`;
+
+    document.getElementById('rhDetail').classList.remove('hidden');
+    document.getElementById('rhList').style.display = 'none';
+    document.querySelector('.rh-filters')?.closest('[data-run-panel="history"]')
+      ?.querySelectorAll('.rh-filters, #rhLoadMore').forEach(el => el.style.display = 'none');
+  }
+
+  function rhHideDetail() {
+    document.getElementById('rhDetail').classList.add('hidden');
+    document.getElementById('rhList').style.display = '';
+    document.querySelectorAll('.rh-filters').forEach(el => el.style.display = '');
+    document.getElementById('rhLoadMore').style.display = '';
+  }
+
+  function rhClearFilters() {
+    document.getElementById('rhFilterType').value  = '';
+    document.getElementById('rhFilterShoe').value  = '';
+    document.getElementById('rhFilterRoute').value = '';
+    document.getElementById('rhFromDate').value    = '';
+    document.getElementById('rhToDate').value      = '';
+    rhLoad(true);
+  }
+
+  // ── ANALYTICS TAB ──────────────────────────────────────────
+
+  async function initAnalyticsTab() {
+    if (_ranInitDone) { await refreshAnalytics(); return; }
+    _ranInitDone = true;
+    await refreshAnalytics();
+  }
+
+  async function refreshAnalytics() {
+    const mod = await getRunMod();
+    let chartSessions, acwrSessions, allSessions;
+    try {
+      [chartSessions, acwrSessions] = await Promise.all([
+        mod.loadSessionsForCharts(),
+        mod.loadSessionsForACWR(),
+      ]);
+      // For stats cards we also need total year km (load all year)
+      const yearStart = new Date().getFullYear() + '-01-01';
+      const { data } = await (await import('./js/supabase.js')).supabase
+        .from('running_sessions')
+        .select('started_at, distance_km')
+        .gte('started_at', yearStart);
+      allSessions = data || [];
+    } catch (e) { console.error('Analytics load error:', e); return; }
+
+    renderStatsCards(acwrSessions, chartSessions, allSessions, mod);
+    renderACWR(acwrSessions, mod);
+    renderWeeklyChart(chartSessions, mod);
+    renderPaceChart(chartSessions, mod);
+    renderDonut(chartSessions);
+  }
+
+  function renderStatsCards(acwrSessions, chartSessions, allSessions, mod) {
+    // This week (Mon–Sun)
+    const today = new Date();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+    monday.setHours(0,0,0,0);
+
+    let weekKm = 0, monthKm = 0, yearKm = 0, longest = 0;
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    acwrSessions.forEach(s => {
+      const d = new Date(s.started_at);
+      const km = parseFloat(s.distance_km) || 0;
+      if (d >= monday) weekKm += km;
+      if (d >= monthStart) monthKm += km;
+    });
+    allSessions.forEach(s => {
+      yearKm += parseFloat(s.distance_km) || 0;
+    });
+    chartSessions.forEach(s => {
+      longest = Math.max(longest, parseFloat(s.distance_km) || 0);
+    });
+
+    // Streak: consecutive days with at least one run
+    const runDates = new Set([...acwrSessions, ...chartSessions].map(s => s.started_at));
+    let streak = 0;
+    const d = new Date(today);
+    d.setHours(0,0,0,0);
+    // Check today or yesterday first
+    const todayStr = d.toISOString().slice(0,10);
+    const yestStr = new Date(d.getTime() - 86400000).toISOString().slice(0,10);
+    if (runDates.has(todayStr) || runDates.has(yestStr)) {
+      if (!runDates.has(todayStr)) d.setDate(d.getDate() - 1);
+      while (runDates.has(d.toISOString().slice(0,10))) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+      }
+    }
+
+    // Best 5K equivalent from PRs
+    const best5kEl = document.getElementById('ranStatBest5k');
+    mod.loadPRs().then(prs => {
+      const pr5k = prs.find(p => p.distance_label === '5K');
+      best5kEl.textContent = pr5k ? mod.formatDuration(pr5k.time_sec) : '—';
+    }).catch(() => {});
+
+    document.getElementById('ranStatWeek').textContent    = weekKm.toFixed(1);
+    document.getElementById('ranStatMonth').textContent   = monthKm.toFixed(1);
+    document.getElementById('ranStatYear').textContent    = yearKm.toFixed(1);
+    document.getElementById('ranStatLongest').textContent = longest.toFixed(1) + ' km';
+    document.getElementById('ranStatStreak').textContent  = streak + (streak === 1 ? ' day' : ' days');
+  }
+
+  function renderACWR(sessions, mod) {
+    const { acute, chronic, ratio, zone } = mod.computeACWR(sessions);
+    const badge  = document.getElementById('ranAcwrBadge');
+    const needle = document.getElementById('ranAcwrNeedle');
+    const desc   = document.getElementById('ranAcwrDesc');
+
+    if (zone === 'insufficient') {
+      badge.textContent = '—';
+      badge.className = 'ran-acwr-badge';
+      desc.textContent = 'Need 14+ days of runs for ACWR calculation.';
+      needle.style.left = '0%';
+      return;
+    }
+
+    badge.textContent = ratio.toFixed(2);
+    badge.className = 'ran-acwr-badge ' + ({ detraining:'gray', optimal:'green', caution:'orange', danger:'red' }[zone] || '');
+
+    // Map ratio 0–2.0 → 0–100% on the bar
+    const pct = Math.min(100, Math.max(0, (ratio / 2.0) * 100));
+    needle.style.left = pct + '%';
+
+    const zoneLabels = {
+      detraining: `Detraining — Acute: ${acute.toFixed(1)} km / Chronic avg: ${chronic.toFixed(1)} km/wk`,
+      optimal:    `Optimal zone — Acute: ${acute.toFixed(1)} km / Chronic avg: ${chronic.toFixed(1)} km/wk`,
+      caution:    `Caution — training load rising quickly (${acute.toFixed(1)} km this week vs ${chronic.toFixed(1)} km/wk avg)`,
+      danger:     `High injury risk — reduce volume this week (${acute.toFixed(1)} km vs ${chronic.toFixed(1)} km/wk avg)`,
+    };
+    desc.textContent = zoneLabels[zone] || '';
+  }
+
+  function renderWeeklyChart(sessions, mod) {
+    const weeks = mod.computeWeeklyKm(sessions);
+    const svg = document.getElementById('ranWeeklyChart');
+    const W = 520, H = 120, padT = 12, padB = 28, padL = 8, padR = 8;
+    const chartH = H - padT - padB;
+    const chartW = W - padL - padR;
+    const maxKm = Math.max(...weeks.map(w => w.km), 1);
+    const colW = chartW / weeks.length;
+
+    let bars = '', labels = '', avgLine = '';
+    const avg7 = [];
+
+    weeks.forEach((w, i) => {
+      const barH = (w.km / maxKm) * chartH;
+      const x = padL + i * colW;
+      const y = padT + chartH - barH;
+      const isLast = i === weeks.length - 1;
+      bars += `<rect x="${x + 3}" y="${y}" width="${colW - 6}" height="${barH}"
+        fill="${isLast ? 'rgba(110,231,183,0.55)' : 'rgba(255,255,255,0.10)'}"
+        rx="2"/>`;
+      if (w.km > 0) bars += `<text x="${x + colW/2}" y="${y - 3}" text-anchor="middle"
+        font-family="monospace" font-size="8" fill="rgba(255,255,255,0.5)">${w.km}</text>`;
+      // 7-week rolling average
+      const window7 = weeks.slice(Math.max(0, i - 6), i + 1).map(v => v.km);
+      avg7.push(window7.reduce((a, b) => a + b, 0) / window7.length);
+
+      if (i % 3 === 0 || isLast) {
+        labels += `<text x="${x + colW/2}" y="${H - 4}" text-anchor="middle"
+          font-family="monospace" font-size="8" fill="rgba(255,255,255,0.35)">${w.label}</text>`;
+      }
+    });
+
+    // Rolling avg line
+    const avgPts = avg7.map((v, i) => {
+      const x = padL + i * colW + colW / 2;
+      const y = padT + chartH - (v / maxKm) * chartH;
+      return `${x},${y}`;
+    }).join(' ');
+    avgLine = `<polyline points="${avgPts}" fill="none" stroke="rgba(110,231,183,0.6)" stroke-width="1.5" stroke-dasharray="4,2"/>`;
+
+    svg.innerHTML = bars + avgLine + labels;
+    document.getElementById('ranWeeklyLegend').innerHTML =
+      `<span class="ran-legend-item"><span class="ran-legend-dot" style="background:rgba(255,255,255,0.20)"></span>Weekly km</span>` +
+      `<span class="ran-legend-item"><span class="ran-legend-dot" style="background:rgba(110,231,183,0.6);width:12px;height:2px;border-radius:0"></span>7-wk rolling avg</span>`;
+  }
+
+  function renderPaceChart(sessions, mod) {
+    const weeks = mod.computePaceByWeek(sessions);
+    const svg = document.getElementById('ranPaceChart');
+    const W = 520, H = 120, padT = 12, padB = 28, padL = 8, padR = 8;
+    const chartH = H - padT - padB;
+    const chartW = W - padL - padR;
+    const colW = chartW / weeks.length;
+
+    // Find pace bounds (note: higher pace_sec = slower, so we invert the Y axis)
+    const allPaces = weeks.flatMap(w => [w.easyPace, w.tempoPace, w.pace_sec].filter(Boolean));
+    if (!allPaces.length) {
+      svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="monospace" font-size="11" fill="rgba(255,255,255,0.3)">No pace data yet</text>`;
+      return;
+    }
+    const minPace = Math.min(...allPaces) - 30;
+    const maxPace = Math.max(...allPaces) + 30;
+    const range = maxPace - minPace || 1;
+
+    const toY = pace => padT + ((pace - minPace) / range) * chartH; // slower = higher Y
+
+    const makeLine = (data, color) => {
+      const pts = data.map((w, i) => {
+        if (!w) return null;
+        const x = padL + i * colW + colW / 2;
+        const y = toY(w);
+        return `${x},${y}`;
+      }).filter(Boolean);
+      if (pts.length < 2) return '';
+      return `<polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+    };
+
+    let labels = '';
+    weeks.forEach((w, i) => {
+      if (i % 3 === 0 || i === weeks.length - 1) {
+        labels += `<text x="${padL + i*colW + colW/2}" y="${H - 4}" text-anchor="middle"
+          font-family="monospace" font-size="8" fill="rgba(255,255,255,0.35)">${w.label}</text>`;
+      }
+    });
+
+    // Value labels on last data point
+    let valueLabels = '';
+    const lastEasy  = [...weeks].reverse().find(w => w.easyPace);
+    const lastTempo = [...weeks].reverse().find(w => w.tempoPace);
+    if (lastEasy) {
+      const i = weeks.lastIndexOf(lastEasy);
+      valueLabels += `<text x="${padL + i*colW + colW/2}" y="${toY(lastEasy.easyPace) - 4}"
+        text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(110,231,183,0.8)">${mod.formatPace(lastEasy.easyPace)}</text>`;
+    }
+    if (lastTempo) {
+      const i = weeks.lastIndexOf(lastTempo);
+      valueLabels += `<text x="${padL + i*colW + colW/2}" y="${toY(lastTempo.tempoPace) - 4}"
+        text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(249,115,22,0.8)">${mod.formatPace(lastTempo.tempoPace)}</text>`;
+    }
+
+    svg.innerHTML =
+      makeLine(weeks.map(w => w.easyPace), 'rgba(110,231,183,0.7)') +
+      makeLine(weeks.map(w => w.tempoPace), 'rgba(249,115,22,0.7)') +
+      makeLine(weeks.map(w => w.pace_sec),  'rgba(255,255,255,0.2)') +
+      valueLabels + labels;
+
+    document.getElementById('ranPaceLegend').innerHTML =
+      `<span class="ran-legend-item"><span class="ran-legend-dot" style="background:rgba(110,231,183,0.7)"></span>Easy</span>` +
+      `<span class="ran-legend-item"><span class="ran-legend-dot" style="background:rgba(249,115,22,0.7)"></span>Tempo/Threshold</span>` +
+      `<span class="ran-legend-item"><span class="ran-legend-dot" style="background:rgba(255,255,255,0.3)"></span>All runs avg</span>`;
+  }
+
+
+  function renderDonut(sessions) {
+    const dist = _runMod ? _runMod.computeRunTypeDistribution(sessions) : [];
+    const svg  = document.getElementById('ranDonutChart');
+    const legend = document.getElementById('ranDonutLegend');
+    if (!dist.length) {
+      svg.innerHTML = `<text x="60" y="65" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(255,255,255,0.3)">No data</text>`;
+      legend.innerHTML = '';
+      return;
+    }
+
+    const r = 45, cx = 60, cy = 60, thickness = 16;
+    const inner = r - thickness;
+    let startAngle = -Math.PI / 2;
+    let paths = '';
+
+    dist.forEach(d => {
+      const angle = (d.pct / 100) * 2 * Math.PI;
+      const endAngle = startAngle + angle;
+      const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
+      const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
+      const ix1 = cx + inner * Math.cos(endAngle),   iy1 = cy + inner * Math.sin(endAngle);
+      const ix2 = cx + inner * Math.cos(startAngle), iy2 = cy + inner * Math.sin(startAngle);
+      const large = angle > Math.PI ? 1 : 0;
+      const color = DONUT_COLORS[d.type] || '#888';
+      paths += `<path d="M${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${ix1},${iy1} A${inner},${inner} 0 ${large},0 ${ix2},${iy2} Z"
+        fill="${color}" opacity="0.85"/>`;
+      startAngle = endAngle;
+    });
+
+    svg.innerHTML = paths;
+    legend.innerHTML = dist.map(d => {
+      const color = DONUT_COLORS[d.type] || '#888';
+      const label = d.type.replace('_', ' ');
+      return `<div class="ran-donut-item">
+        <span class="ran-donut-swatch" style="background:${color}"></span>
+        <span>${label} ${d.pct}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  // ── RACES TAB ───────────────────────────────────────────────
+
+  async function initRacesTab() {
+    if (_raceInitDone) { await refreshRaces(); return; }
+    _raceInitDone = true;
+
+    document.getElementById('raceAddBtn').addEventListener('click', () => openRaceModal(null));
+    document.getElementById('raceModalClose').addEventListener('click', closeRaceModal);
+    document.getElementById('raceModalBg').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeRaceModal();
+    });
+    document.getElementById('raceModalSave').addEventListener('click', saveRace);
+    document.getElementById('predCalcBtn').addEventListener('click', runPredictor);
+
+    document.getElementById('raceUpcomingList').addEventListener('click', e => {
+      const btn = e.target.closest('[data-race-action]');
+      if (!btn) return;
+      const id = btn.dataset.raceId;
+      if (btn.dataset.raceAction === 'edit')   openRaceModal(id);
+      if (btn.dataset.raceAction === 'delete') deleteRace(id);
+    });
+    document.getElementById('racePastList').addEventListener('click', e => {
+      const btn = e.target.closest('[data-race-action]');
+      if (!btn) return;
+      const id = btn.dataset.raceId;
+      if (btn.dataset.raceAction === 'edit')   openRaceModal(id);
+      if (btn.dataset.raceAction === 'delete') deleteRace(id);
+    });
+
+    await refreshRaces();
+  }
+
+  async function refreshRaces() {
+    const mod = await getRunMod();
+    try {
+      _races = await mod.loadRaces();
+    } catch (e) { console.error('Races load error:', e); return; }
+    renderUpcomingRaces();
+    renderPastRaces();
+    renderPRBoard();
+  }
+
+  function raceCountdown(dateStr) {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const race  = new Date(dateStr + 'T00:00:00');
+    const days  = Math.round((race - today) / 86400000);
+    if (days < 0)  return { label: Math.abs(days) + ' days ago', cls: 'past' };
+    if (days === 0) return { label: 'TODAY!', cls: 'soon' };
+    if (days <= 30) return { label: days + ' days away', cls: 'soon' };
+    return { label: days + ' days away', cls: '' };
+  }
+
+  function raceReadiness(race, acwrData) {
+    // Simple heuristic: green if ACWR optimal + upcoming within 90 days,
+    // yellow if caution/detraining, red if danger or no training data
+    if (!acwrData || acwrData.zone === 'insufficient')
+      return { cls: 'yellow', label: 'Insufficient training data' };
+    if (acwrData.zone === 'danger')
+      return { cls: 'red',    label: 'Reduce load before race' };
+    if (acwrData.zone === 'caution')
+      return { cls: 'yellow', label: 'Load rising — monitor carefully' };
+    if (acwrData.zone === 'detraining')
+      return { cls: 'yellow', label: 'Increase training volume' };
+    return { cls: 'green', label: 'Training load looks good' };
+  }
+
+  async function renderUpcomingRaces() {
+    const mod = await getRunMod();
+    const today = new Date().toISOString().slice(0, 10);
+    const upcoming = _races.filter(r => r.race_date >= today);
+    const el = document.getElementById('raceUpcomingList');
+
+    if (!upcoming.length) {
+      el.innerHTML = '<div class="run-empty">No upcoming races — add one to start planning!</div>';
+      return;
+    }
+
+    // Get ACWR for readiness
+    let acwrData = null;
+    try {
+      const sessions = await mod.loadSessionsForACWR();
+      acwrData = mod.computeACWR(sessions);
+    } catch (_) {}
+
+    el.innerHTML = upcoming.map(r => {
+      const cd = raceCountdown(r.race_date);
+      const readiness = raceReadiness(r, acwrData);
+      const dist = parseFloat(r.distance_km);
+      const distLabel = dist === 42.195 ? 'Marathon' : dist === 21.0975 ? 'Half Marathon'
+        : dist === 10 ? '10K' : dist === 5 ? '5K' : dist + ' km';
+
+      const goals = [
+        r.goal_a_sec ? `<span class="race-goal-chip a">A: ${mod.formatDuration(r.goal_a_sec)}</span>` : '',
+        r.goal_b_sec ? `<span class="race-goal-chip b">B: ${mod.formatDuration(r.goal_b_sec)}</span>` : '',
+        r.goal_c_sec ? `<span class="race-goal-chip c">C: ${mod.formatDuration(r.goal_c_sec)}</span>` : '',
+      ].filter(Boolean).join('');
+
+      return `<div class="race-card">
+        <div class="race-card-hd">
+          <div class="race-card-name">${escHtml(r.name)}</div>
+          <span class="race-card-countdown ${cd.cls}">${escHtml(cd.label)}</span>
+        </div>
+        <div class="race-card-meta">${escHtml(r.race_date)} · ${escHtml(distLabel)}</div>
+        ${goals ? `<div class="race-card-goals">${goals}</div>` : ''}
+        <div class="race-readiness">
+          <span class="race-ready-dot ${readiness.cls}"></span>
+          <span>${escHtml(readiness.label)}</span>
+        </div>
+        ${r.notes ? `<div style="font-size:12px;color:var(--text-3);margin-bottom:8px">${escHtml(r.notes)}</div>` : ''}
+        <div class="race-card-actions">
+          <button class="race-card-act" data-race-action="edit"   data-race-id="${escHtml(r.id)}">EDIT</button>
+          <button class="race-card-act danger" data-race-action="delete" data-race-id="${escHtml(r.id)}">DELETE</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderPastRaces() {
+    const today = new Date().toISOString().slice(0, 10);
+    const past  = _races.filter(r => r.race_date < today).sort((a,b) => b.race_date.localeCompare(a.race_date));
+    const el = document.getElementById('racePastList');
+
+    if (!past.length) {
+      el.innerHTML = '<div class="run-empty">No completed races yet.</div>';
+      return;
+    }
+
+    el.innerHTML = past.map(r => {
+      const dist = parseFloat(r.distance_km);
+      const distLabel = dist === 42.195 ? 'Marathon' : dist === 21.0975 ? 'Half Marathon'
+        : dist === 10 ? '10K' : dist === 5 ? '5K' : dist + ' km';
+
+      let badge = '';
+      if (r.actual_time_sec) {
+        const t = r.actual_time_sec;
+        if      (r.goal_a_sec && t <= r.goal_a_sec) badge = '<span class="race-past-badge a">GOAL A ✓</span>';
+        else if (r.goal_b_sec && t <= r.goal_b_sec) badge = '<span class="race-past-badge b">GOAL B ✓</span>';
+        else if (r.goal_c_sec && t <= r.goal_c_sec) badge = '<span class="race-past-badge c">GOAL C ✓</span>';
+        else                                          badge = '<span class="race-past-badge miss">MISSED GOALS</span>';
+      }
+
+      const actualStr = r.actual_time_sec ? (_runMod ? _runMod.formatDuration(r.actual_time_sec) : '') : '—';
+
+      return `<div class="race-past-card">
+        <div class="race-past-info">
+          <div class="race-past-name">${escHtml(r.name)}</div>
+          <div class="race-past-meta">${escHtml(r.race_date)} · ${escHtml(distLabel)} · ${escHtml(actualStr)}</div>
+        </div>
+        <div class="race-past-badges">
+          ${badge}
+          <button class="race-card-act" data-race-action="edit"   data-race-id="${escHtml(r.id)}" style="font-size:9px;padding:3px 8px">EDIT</button>
+          <button class="race-card-act danger" data-race-action="delete" data-race-id="${escHtml(r.id)}" style="font-size:9px;padding:3px 8px">DEL</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function renderPRBoard() {
+    const mod = await getRunMod();
+    let prs;
+    try { prs = await mod.loadPRs(); } catch { prs = []; }
+    const prMap = Object.fromEntries(prs.map(p => [p.distance_label, p]));
+
+    const LABELS = { '1K':'1K', '1mile':'1 Mile', '5K':'5K', '10K':'10K', 'HalfMarathon':'Half M', 'Marathon':'Marathon' };
+    const el = document.getElementById('racePRGrid');
+
+    el.innerHTML = mod.PR_DISTANCES.map(({ label }) => {
+      const pr = prMap[label];
+      const dispLabel = LABELS[label] || label;
+      if (!pr) return `<div class="race-pr-card empty">
+        <div class="race-pr-dist">${escHtml(dispLabel)}</div>
+        <div class="race-pr-time">No data</div>
+      </div>`;
+      const pace = pr.time_sec && mod.PR_DISTANCES.find(d=>d.label===label)
+        ? mod.formatPace(Math.round(pr.time_sec / mod.PR_DISTANCES.find(d=>d.label===label).km))
+        : '';
+      return `<div class="race-pr-card">
+        <div class="race-pr-dist">${escHtml(dispLabel)}</div>
+        <div class="race-pr-time">${escHtml(mod.formatDuration(pr.time_sec))}</div>
+        <div class="race-pr-pace">${escHtml(pace)}</div>
+        <div class="race-pr-date">${escHtml(pr.set_at || '')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function openRaceModal(id) {
+    const modal = document.getElementById('raceModalBg');
+    const editId = document.getElementById('raceEditId');
+    editId.value = id || '';
+
+    if (id) {
+      const r = _races.find(x => x.id === id);
+      if (!r) return;
+      document.getElementById('raceModalTitle').textContent = 'EDIT RACE';
+      document.getElementById('raceNameInput').value  = r.name || '';
+      document.getElementById('raceDateInput').value  = r.race_date || '';
+      document.getElementById('raceDistInput').value  = r.distance_km || '';
+      document.getElementById('raceGoalA').value = r.goal_a_sec ? _runMod.formatDuration(r.goal_a_sec) : '';
+      document.getElementById('raceGoalB').value = r.goal_b_sec ? _runMod.formatDuration(r.goal_b_sec) : '';
+      document.getElementById('raceGoalC').value = r.goal_c_sec ? _runMod.formatDuration(r.goal_c_sec) : '';
+      document.getElementById('raceNotesInput').value = r.notes || '';
+    } else {
+      document.getElementById('raceModalTitle').textContent = 'ADD RACE';
+      document.getElementById('raceNameInput').value  = '';
+      document.getElementById('raceDateInput').value  = '';
+      document.getElementById('raceDistInput').value  = '';
+      document.getElementById('raceGoalA').value = '';
+      document.getElementById('raceGoalB').value = '';
+      document.getElementById('raceGoalC').value = '';
+      document.getElementById('raceNotesInput').value = '';
+    }
+    modal.hidden = false;
+  }
+
+  function closeRaceModal() {
+    document.getElementById('raceModalBg').hidden = true;
+  }
+
+  async function saveRace() {
+    const mod  = await getRunMod();
+    const name = document.getElementById('raceNameInput').value.trim();
+    const date = document.getElementById('raceDateInput').value;
+    const dist = parseFloat(document.getElementById('raceDistInput').value);
+    if (!name || !date || !dist) { showRunToast('Name, date, and distance required.'); return; }
+
+    const parseGoal = v => {
+      const s = (v || '').trim();
+      return s ? mod.parseDurationInput(s) : null;
+    };
+
+    const fields = {
+      name, race_date: date, distance_km: dist,
+      goal_a_sec: parseGoal(document.getElementById('raceGoalA').value),
+      goal_b_sec: parseGoal(document.getElementById('raceGoalB').value),
+      goal_c_sec: parseGoal(document.getElementById('raceGoalC').value),
+      notes: document.getElementById('raceNotesInput').value.trim() || null,
+    };
+
+    const editId = document.getElementById('raceEditId').value;
+    try {
+      if (editId) await mod.updateRace(editId, fields);
+      else        await mod.addRace(fields);
+    } catch (e) { showRunToast('Error: ' + e.message); return; }
+
+    closeRaceModal();
+    await refreshRaces();
+    showRunToast(editId ? 'Race updated.' : 'Race added!');
+  }
+
+  async function deleteRace(id) {
+    if (!confirm('Delete this race?')) return;
+    const mod = await getRunMod();
+    try { await mod.deleteRace(id); } catch (e) { showRunToast('Error: ' + e.message); return; }
+    await refreshRaces();
+    showRunToast('Race deleted.');
+  }
+
+  async function runPredictor() {
+    const mod  = await getRunMod();
+    const d1   = parseFloat(document.getElementById('predDist').value);
+    const t1   = mod.parseDurationInput(document.getElementById('predTime').value);
+    if (!d1 || !t1 || d1 <= 0 || t1 <= 0) {
+      showRunToast('Enter a valid distance and time.');
+      return;
+    }
+
+    const vdot = mod.computeVDOT(d1, t1);
+    const zones = vdot ? mod.vdotToZonePaces(vdot) : null;
+
+    const targets = [
+      { label: '5K',           km: 5.0 },
+      { label: '10K',          km: 10.0 },
+      { label: 'Half Marathon',km: 21.0975 },
+      { label: 'Marathon',     km: 42.195 },
+      { label: '1K',           km: 1.0 },
+      { label: '1 Mile',       km: 1.60934 },
+    ];
+
+    document.getElementById('predResults').hidden = false;
+    document.getElementById('predVDOT').textContent = vdot ? `VDOT: ${vdot}` : '';
+
+    document.getElementById('predTable').innerHTML = targets.map(t => {
+      const predicted = mod.riegelPredict(d1, t1, t.km);
+      const pace = mod.formatPace(Math.round(predicted / t.km));
+      return `<div class="race-pred-row">
+        <span class="race-pred-label">${escHtml(t.label)}</span>
+        <span class="race-pred-val">${escHtml(mod.formatDuration(predicted))} <span style="font-size:9px;color:var(--text-3)">${escHtml(pace)}</span></span>
+      </div>`;
+    }).join('');
+
+    if (zones) {
+      const zoneRows = [
+        { name: 'Easy',       pace: zones.easy },
+        { name: 'Marathon',   pace: zones.marathon },
+        { name: 'Threshold',  pace: zones.threshold },
+        { name: 'Interval',   pace: zones.interval },
+        { name: 'Repetition', pace: zones.rep },
+      ];
+      document.getElementById('predZones').innerHTML =
+        `<div class="race-pred-zones-title">TRAINING ZONES</div>` +
+        zoneRows.map(z => `<div class="race-pred-zone-row">
+          <span class="race-pred-zone-name">${escHtml(z.name)}</span>
+          <span class="race-pred-zone-pace">${escHtml(mod.formatPace(z.pace))}/km</span>
+        </div>`).join('');
+    } else {
+      document.getElementById('predZones').innerHTML = '';
+    }
+  }
+
+  // ── SHOES TAB ────────────────────────────────────────────────
+
+  async function initShoesTab() {
+    if (_shoeInitDone) { await refreshShoes(); return; }
+    _shoeInitDone = true;
+
+    document.getElementById('shoeAddBtn').addEventListener('click', () => openShoeModal(null));
+    document.getElementById('shoeModalClose').addEventListener('click', closeShoeModal);
+    document.getElementById('shoeModalBg').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeShoeModal();
+    });
+    document.getElementById('shoeModalSave').addEventListener('click', saveShoe);
+    document.getElementById('shoeRetiredToggle').addEventListener('click', () => {
+      const list = document.getElementById('shoeRetiredList');
+      const btn  = document.getElementById('shoeRetiredToggle');
+      list.hidden = !list.hidden;
+      btn.textContent = (list.hidden ? '▸' : '▾') + ' RETIRED SHOES';
+    });
+
+    document.getElementById('shoeActiveList').addEventListener('click',  e => shoeCardClick(e));
+    document.getElementById('shoeRetiredList').addEventListener('click', e => shoeCardClick(e));
+
+    await refreshShoes();
+  }
+
+  async function shoeCardClick(e) {
+    const btn = e.target.closest('[data-shoe-action]');
+    if (!btn) return;
+    const id = btn.dataset.shoeId;
+    const action = btn.dataset.shoeAction;
+    const mod = await getRunMod();
+
+    if (action === 'edit') { openShoeModal(id); return; }
+    if (action === 'delete') {
+      if (!confirm('Delete this shoe? Run history will not be affected.')) return;
+      try { await mod.deleteShoe(id); } catch (err) { showRunToast('Error: ' + err.message); return; }
+      _runShoes = await mod.loadShoes();
+      populateRunSelects();
+      renderShoeList();
+      showRunToast('Shoe deleted.');
+      return;
+    }
+    if (action === 'retire' || action === 'unretire') {
+      try { await mod.updateShoe(id, { retired: action === 'retire' }); }
+      catch (err) { showRunToast('Error: ' + err.message); return; }
+      _runShoes = await mod.loadShoes();
+      populateRunSelects();
+      renderShoeList();
+      showRunToast(action === 'retire' ? 'Shoe retired.' : 'Shoe un-retired.');
+      return;
+    }
+    if (action === 'filter') {
+      // Switch to history tab filtered by this shoe
+      document.getElementById('rhFilterShoe').value = id;
+      switchRunTab('history');
+    }
+  }
+
+  async function refreshShoes() {
+    const mod = await getRunMod();
+    try { _runShoes = await mod.loadShoes(); } catch (e) { console.error(e); return; }
+    populateRunSelects();
+    renderShoeList();
+  }
+
+  function shoeWearColor(pct) {
+    if (pct >= 90) return '#ef4444';
+    if (pct >= 70) return '#f97316';
+    return '#4ade80';
+  }
+
+  function renderShoeList() {
+    const active  = _runShoes.filter(s => !s.retired);
+    const retired = _runShoes.filter(s => s.retired);
+
+    const shoeCardHtml = (s) => {
+      const total  = parseFloat(s.total_km) || 0;
+      const maxKm  = parseFloat(s.max_km)   || 800;
+      const pct    = Math.min(100, Math.round((total / maxKm) * 100));
+      const color  = shoeWearColor(pct);
+      const alertBadge = pct >= 80
+        ? `<span class="shoe-alert-badge">⚠ ${Math.round(total)}/${Math.round(maxKm)} km</span>`
+        : '';
+      const brand = [s.brand, s.model].filter(Boolean).join(' ');
+      const meta  = [
+        brand,
+        s.purchase_date ? 'Bought ' + s.purchase_date : '',
+      ].filter(Boolean).join(' · ');
+      const costPerKm = (s.price && total > 0)
+        ? (parseFloat(s.price) / total).toFixed(2) + ' /km'
+        : '';
+
+      return `<div class="shoe-card${s.retired ? ' retired' : ''}">
+        <div class="shoe-card-hd">
+          <div class="shoe-card-name">${escHtml(s.name)}</div>
+          ${alertBadge}
+        </div>
+        ${meta ? `<div class="shoe-card-meta">${escHtml(meta)}</div>` : ''}
+        <div class="shoe-wear-row">
+          <span class="shoe-wear-label">${total.toFixed(0)} km</span>
+          <div class="shoe-wear-bar-wrap">
+            <div class="shoe-wear-bar" style="width:${pct}%;background:${color}"></div>
+          </div>
+          <span class="shoe-wear-pct">${pct}%</span>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-3);margin-bottom:8px">
+          of ${maxKm} km max${costPerKm ? ' · ' + costPerKm : ''}
+        </div>
+        <div class="shoe-card-actions">
+          <button class="shoe-card-act" data-shoe-action="filter" data-shoe-id="${escHtml(s.id)}">VIEW RUNS</button>
+          <button class="shoe-card-act" data-shoe-action="edit"   data-shoe-id="${escHtml(s.id)}">EDIT</button>
+          ${s.retired
+            ? `<button class="shoe-card-act unretire" data-shoe-action="unretire" data-shoe-id="${escHtml(s.id)}">UN-RETIRE</button>`
+            : `<button class="shoe-card-act retire"   data-shoe-action="retire"   data-shoe-id="${escHtml(s.id)}">RETIRE</button>`
+          }
+          <button class="shoe-card-act danger" data-shoe-action="delete" data-shoe-id="${escHtml(s.id)}">DELETE</button>
+        </div>
+      </div>`;
+    };
+
+    const activeEl  = document.getElementById('shoeActiveList');
+    const retiredEl = document.getElementById('shoeRetiredList');
+    const retiredSec = document.getElementById('shoeRetiredSection');
+
+    activeEl.innerHTML = active.length
+      ? active.map(shoeCardHtml).join('')
+      : '<div class="run-empty">No active shoes. Add your first pair!</div>';
+
+    if (retired.length) {
+      retiredEl.innerHTML = retired.map(shoeCardHtml).join('');
+      retiredSec.hidden = false;
+    } else {
+      retiredSec.hidden = true;
+    }
+  }
+
+  function openShoeModal(id) {
+    document.getElementById('shoeEditId').value = id || '';
+    if (id) {
+      const s = _runShoes.find(x => x.id === id);
+      if (!s) return;
+      document.getElementById('shoeModalTitle').textContent = 'EDIT SHOE';
+      document.getElementById('shoeNameInput').value     = s.name || '';
+      document.getElementById('shoeBrandInput').value    = s.brand || '';
+      document.getElementById('shoeModelInput').value    = s.model || '';
+      document.getElementById('shoePurchaseDate').value  = s.purchase_date || '';
+      document.getElementById('shoePriceInput').value    = s.price || '';
+      document.getElementById('shoeMaxKmInput').value    = s.max_km || 800;
+    } else {
+      document.getElementById('shoeModalTitle').textContent = 'ADD SHOE';
+      document.getElementById('shoeNameInput').value     = '';
+      document.getElementById('shoeBrandInput').value    = '';
+      document.getElementById('shoeModelInput').value    = '';
+      document.getElementById('shoePurchaseDate').value  = '';
+      document.getElementById('shoePriceInput').value    = '';
+      document.getElementById('shoeMaxKmInput').value    = 800;
+    }
+    document.getElementById('shoeModalBg').hidden = false;
+  }
+
+  function closeShoeModal() {
+    document.getElementById('shoeModalBg').hidden = true;
+  }
+
+  async function saveShoe() {
+    const mod  = await getRunMod();
+    const name = document.getElementById('shoeNameInput').value.trim();
+    if (!name) { showRunToast('Shoe name required.'); return; }
+
+    const fields = {
+      name,
+      brand:         document.getElementById('shoeBrandInput').value.trim()  || null,
+      model:         document.getElementById('shoeModelInput').value.trim()  || null,
+      purchase_date: document.getElementById('shoePurchaseDate').value        || null,
+      price:         parseFloat(document.getElementById('shoePriceInput').value) || null,
+      max_km:        parseFloat(document.getElementById('shoeMaxKmInput').value) || 800,
+    };
+
+    const editId = document.getElementById('shoeEditId').value;
+    try {
+      if (editId) await mod.updateShoe(editId, fields);
+      else        await mod.addShoe(fields);
+    } catch (e) { showRunToast('Error: ' + e.message); return; }
+
+    closeShoeModal();
+    _runShoes = await mod.loadShoes();
+    populateRunSelects();
+    renderShoeList();
+    showRunToast(editId ? 'Shoe updated.' : 'Shoe added!');
+  }
+
+  // ── ROUTES TAB ───────────────────────────────────────────────
+
+  async function initRoutesTab() {
+    if (_routeInitDone) { await refreshRoutes(); return; }
+    _routeInitDone = true;
+
+    document.getElementById('routeAddBtn').addEventListener('click', () => openRouteModal(null));
+    document.getElementById('routeModalClose').addEventListener('click', closeRouteModal);
+    document.getElementById('routeModalBg').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeRouteModal();
+    });
+    document.getElementById('routeModalSave').addEventListener('click', saveRoute);
+    document.getElementById('routeDetailBack').addEventListener('click', hideRouteDetail);
+
+    document.getElementById('routeList').addEventListener('click', e => routeCardClick(e));
+    document.getElementById('routeDetailContent').addEventListener('click', e => routeDetailClick(e));
+
+    await refreshRoutes();
+  }
+
+  async function refreshRoutes() {
+    const mod = await getRunMod();
+    try { _runRoutes = await mod.loadRoutes(); } catch (e) { console.error(e); return; }
+    populateRunSelects();
+    renderRouteList();
+  }
+
+  function renderRouteList() {
+    const el = document.getElementById('routeList');
+    if (!_runRoutes.length) {
+      el.innerHTML = '<div class="run-empty">No routes saved yet. Add your regular loops!</div>';
+      return;
+    }
+    el.innerHTML = _runRoutes.map(r => routeCardHtml(r)).join('');
+  }
+
+  function routeCardHtml(r) {
+    const dist = r.distance_km ? parseFloat(r.distance_km).toFixed(2) + ' km' : '—';
+    const elev = r.elevation_m ? '+' + r.elevation_m + ' m' : '';
+    const meta = [dist, elev].filter(Boolean).join(' · ');
+    const timesLabel = r.times_run === 1 ? '1 run' : (r.times_run || 0) + ' runs';
+
+    return `<div class="route-card">
+      <div class="route-card-hd">
+        <div class="route-card-name">${escHtml(r.name)}</div>
+        <span class="route-card-times">${escHtml(timesLabel)}</span>
+      </div>
+      ${meta ? `<div class="route-card-meta">${escHtml(meta)}</div>` : ''}
+      ${r.notes ? `<div style="font-size:12px;color:var(--text-3);margin-bottom:8px">${escHtml(r.notes)}</div>` : ''}
+      <div class="route-card-actions">
+        <button class="route-card-act primary" data-route-action="run"    data-route-id="${escHtml(r.id)}">▶ RUN THIS ROUTE</button>
+        <button class="route-card-act"         data-route-action="detail" data-route-id="${escHtml(r.id)}">STATS</button>
+        <button class="route-card-act"         data-route-action="edit"   data-route-id="${escHtml(r.id)}">EDIT</button>
+        <button class="route-card-act danger"  data-route-action="delete" data-route-id="${escHtml(r.id)}">DELETE</button>
+      </div>
+    </div>`;
+  }
+
+  async function routeCardClick(e) {
+    const btn = e.target.closest('[data-route-action]');
+    if (!btn) return;
+    const id = btn.dataset.routeId;
+    const action = btn.dataset.routeAction;
+    const mod = await getRunMod();
+
+    if (action === 'run') {
+      const r = _runRoutes.find(x => x.id === id);
+      if (!r) return;
+      // Pre-fill LOG RUN with route distance + elevation and switch there
+      if (r.distance_km) document.getElementById('runDistance').value = parseFloat(r.distance_km).toFixed(2);
+      if (r.elevation_m) document.getElementById('runElevation').value = r.elevation_m;
+      document.getElementById('runRoute').value = id;
+      // Make sure more-details is open so elevation is visible
+      if (r.elevation_m) {
+        document.getElementById('runMoreDetails').hidden = false;
+        document.getElementById('runMoreToggle').textContent = '▾ MORE DETAILS';
+      }
+      updatePaceDisplay();
+      switchRunTab('log');
+      showRunToast('Route pre-filled — add your time and save!');
+      return;
+    }
+
+    if (action === 'detail') { await showRouteDetail(id); return; }
+
+    if (action === 'edit') { openRouteModal(id); return; }
+
+    if (action === 'delete') {
+      if (!confirm('Delete this route? Run history will not be affected.')) return;
+      try { await mod.deleteRoute(id); } catch (err) { showRunToast('Error: ' + err.message); return; }
+      _runRoutes = await mod.loadRoutes();
+      populateRunSelects();
+      renderRouteList();
+      showRunToast('Route deleted.');
+    }
+  }
+
+  async function showRouteDetail(id) {
+    const mod = await getRunMod();
+    const r = _runRoutes.find(x => x.id === id);
+    if (!r) return;
+
+    // Load all runs on this route
+    let sessions = [];
+    try { sessions = await mod.loadSessions({ route_id: id, limit: 100 }); }
+    catch (_) {}
+
+    const dist = r.distance_km ? parseFloat(r.distance_km).toFixed(2) + ' km' : '—';
+    const elev = r.elevation_m ? '+' + r.elevation_m + ' m' : '—';
+    const timesLabel = r.times_run === 1 ? '1 run' : (r.times_run || 0) + ' runs';
+
+    // Best and average pace
+    const paces = sessions.map(s => s.pace_sec_per_km).filter(Boolean);
+    const bestPace = paces.length ? mod.formatPace(Math.min(...paces)) : '—';
+    const avgPace  = paces.length ? mod.formatPace(Math.round(paces.reduce((a,b)=>a+b,0)/paces.length)) : '—';
+
+    // Best time (duration for sessions near the route distance)
+    const durations = sessions.map(s => s.duration_sec).filter(Boolean);
+    const bestTime = durations.length ? mod.formatDuration(Math.min(...durations)) : '—';
+
+    const lastRun = sessions.length ? sessions[0].started_at : '—';
+
+    // Recent runs on this route (up to 5)
+    const recentHtml = sessions.slice(0, 5).map(s => {
+      const d = parseFloat(s.distance_km).toFixed(2) + ' km';
+      const p = mod.formatPace(s.pace_sec_per_km);
+      const t = mod.formatDuration(s.duration_sec);
+      return `<div class="rh-det-row">
+        <span class="rh-det-row-k">${escHtml(s.started_at)}</span>
+        <span class="rh-det-row-v">${escHtml(d)} · ${escHtml(t)} · ${escHtml(p)}</span>
+      </div>`;
+    }).join('');
+
+    document.getElementById('routeDetailContent').innerHTML = `
+      <div class="route-det-hero">
+        <div class="route-det-name">${escHtml(r.name)}</div>
+        ${r.notes ? `<div style="font-size:12px;color:var(--text-3);margin-bottom:6px">${escHtml(r.notes)}</div>` : ''}
+        <div class="route-det-grid">
+          <div class="route-det-stat"><div class="route-det-stat-val">${escHtml(dist)}</div><div class="route-det-stat-lbl">Distance</div></div>
+          <div class="route-det-stat"><div class="route-det-stat-val">${escHtml(elev)}</div><div class="route-det-stat-lbl">Elevation</div></div>
+          <div class="route-det-stat"><div class="route-det-stat-val">${escHtml(timesLabel)}</div><div class="route-det-stat-lbl">Runs</div></div>
+        </div>
+      </div>
+
+      <div class="rh-det-section">
+        <div class="rh-det-section-title">PERFORMANCE</div>
+        <div class="rh-det-row"><span class="rh-det-row-k">BEST PACE</span><span class="rh-det-row-v">${escHtml(bestPace)}</span></div>
+        <div class="rh-det-row"><span class="rh-det-row-k">AVG PACE</span><span class="rh-det-row-v">${escHtml(avgPace)}</span></div>
+        <div class="rh-det-row"><span class="rh-det-row-k">BEST TIME</span><span class="rh-det-row-v">${escHtml(bestTime)}</span></div>
+        <div class="rh-det-row"><span class="rh-det-row-k">LAST RUN</span><span class="rh-det-row-v">${escHtml(lastRun)}</span></div>
+      </div>
+
+      ${recentHtml ? `<div class="rh-det-section">
+        <div class="rh-det-section-title">RECENT RUNS ON THIS ROUTE</div>
+        ${recentHtml}
+      </div>` : ''}
+
+      <div class="rh-det-actions">
+        <button class="rh-det-btn" data-route-action="run"    data-route-id="${escHtml(r.id)}">▶ RUN THIS ROUTE</button>
+        <button class="rh-det-btn" data-route-action="filter" data-route-id="${escHtml(r.id)}">VIEW ALL RUNS</button>
+      </div>`;
+
+    document.getElementById('routeList').style.display = 'none';
+    document.getElementById('routeDetail').classList.remove('hidden');
+  }
+
+  function routeDetailClick(e) {
+    const btn = e.target.closest('[data-route-action]');
+    if (!btn) return;
+    const id = btn.dataset.routeId;
+    const action = btn.dataset.routeAction;
+    if (action === 'run') {
+      hideRouteDetail();
+      routeCardClick({ target: btn }); // reuse card click handler
+    }
+    if (action === 'filter') {
+      document.getElementById('rhFilterRoute').value = id;
+      switchRunTab('history');
+    }
+  }
+
+  function hideRouteDetail() {
+    document.getElementById('routeDetail').classList.add('hidden');
+    document.getElementById('routeList').style.display = '';
+  }
+
+  function openRouteModal(id) {
+    document.getElementById('routeEditId').value = id || '';
+    if (id) {
+      const r = _runRoutes.find(x => x.id === id);
+      if (!r) return;
+      document.getElementById('routeModalTitle').textContent = 'EDIT ROUTE';
+      document.getElementById('routeNameInput').value = r.name || '';
+      document.getElementById('routeDistInput').value = r.distance_km || '';
+      document.getElementById('routeElevInput').value = r.elevation_m || '';
+      document.getElementById('routeNotesInput').value = r.notes || '';
+    } else {
+      document.getElementById('routeModalTitle').textContent = 'ADD ROUTE';
+      document.getElementById('routeNameInput').value  = '';
+      document.getElementById('routeDistInput').value  = '';
+      document.getElementById('routeElevInput').value  = '';
+      document.getElementById('routeNotesInput').value = '';
+    }
+    document.getElementById('routeModalBg').hidden = false;
+  }
+
+  function closeRouteModal() {
+    document.getElementById('routeModalBg').hidden = true;
+  }
+
+  async function saveRoute() {
+    const mod  = await getRunMod();
+    const name = document.getElementById('routeNameInput').value.trim();
+    if (!name) { showRunToast('Route name required.'); return; }
+
+    const fields = {
+      name,
+      distance_km: parseFloat(document.getElementById('routeDistInput').value) || null,
+      elevation_m: parseFloat(document.getElementById('routeElevInput').value) || null,
+      notes:       document.getElementById('routeNotesInput').value.trim() || null,
+    };
+
+    const editId = document.getElementById('routeEditId').value;
+    try {
+      if (editId) await mod.updateRoute(editId, fields);
+      else        await mod.addRoute(fields);
+    } catch (e) { showRunToast('Error: ' + e.message); return; }
+
+    closeRouteModal();
+    _runRoutes = await mod.loadRoutes();
+    populateRunSelects();
+    renderRouteList();
+    showRunToast(editId ? 'Route updated.' : 'Route added!');
   }
 
 
