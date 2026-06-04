@@ -12,30 +12,59 @@
 
   // -------- CSS --------
   const css = `
+/* ── Topbar theme vars ── */
+:root {
+  --tb-bg: #0a0a0b;
+  --tb-border: rgba(255,255,255,0.06);
+  --tb-pill-bg: rgba(255,255,255,0.04);
+  --tb-pill-border: rgba(255,255,255,0.06);
+  --tb-pill-hover: rgba(255,255,255,0.07);
+  --tb-pill-hover-border: rgba(255,255,255,0.10);
+  --tb-text: #FAFAFA;
+  --tb-label: rgba(255,255,255,0.5);
+}
+[data-theme="light"] {
+  --tb-bg: #ffffff;
+  --tb-border: rgba(0,0,0,0.10);
+  --tb-pill-bg: rgba(0,0,0,0.04);
+  --tb-pill-border: rgba(0,0,0,0.08);
+  --tb-pill-hover: rgba(0,0,0,0.07);
+  --tb-pill-hover-border: rgba(0,0,0,0.14);
+  --tb-text: #1a1a1a;
+  --tb-label: rgba(0,0,0,0.45);
+}
 .topbar {
   position: sticky; top: 0; z-index: 40;
-  display: flex; gap: 6px;
+  display: flex; align-items: center; gap: 6px;
   padding: max(10px, env(safe-area-inset-top)) 14px 10px;
-  /* Fully opaque so each page's body background can't bleed through
-     and tint the bar a different color. Matches the dashboard's base
-     dark background so the bar feels continuous with the page chrome. */
-  background: #0a0a0b;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  background: var(--tb-bg);
+  border-bottom: 1px solid var(--tb-border);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: background 0.2s, border-color 0.2s;
 }
+.topbar-logo {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; flex-shrink: 0;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+.topbar-logo:hover { opacity: 1; }
+.topbar-logo svg { display: block; width: 20px; height: 20px; }
 .topbar-pill {
   flex: 1 1 0; min-width: 0;
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--tb-pill-bg);
+  border: 1px solid var(--tb-pill-border);
   border-radius: 11px;
   text-decoration: none;
-  color: #FAFAFA;
+  color: var(--tb-text);
   -webkit-tap-highlight-color: transparent;
   transition: background 0.15s, border-color 0.15s;
 }
-.topbar-pill:hover { background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.10); }
+.topbar-pill:hover { background: var(--tb-pill-hover); border-color: var(--tb-pill-hover-border); }
 .topbar-pill-dot {
   width: 7px; height: 7px; border-radius: 50%;
   background: #6ee7b7; flex-shrink: 0;
@@ -52,17 +81,32 @@
 .topbar-pill-label {
   font-size: 10px; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--tb-label);
   flex-shrink: 0;
 }
 .topbar-pill-count {
   margin-left: auto;
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   font-size: 12px; font-weight: 700;
-  color: #FAFAFA;
+  color: var(--tb-text);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+/* ── Theme toggle button ── */
+.topbar-theme-btn {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--tb-pill-bg);
+  border: 1px solid var(--tb-pill-border);
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 15px; line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.topbar-theme-btn:hover { background: var(--tb-pill-hover); border-color: var(--tb-pill-hover-border); }
 @media (max-width: 480px) {
   .topbar { padding-left: 10px; padding-right: 10px; gap: 4px; }
   .topbar-pill { padding: 7px 9px; gap: 5px; }
@@ -122,6 +166,11 @@ body.topbar-modal-open {
   // -------- HTML --------
   const html = `
 <header class="topbar" id="topbar" role="navigation" aria-label="Quick stats">
+  <a href="index.html" class="topbar-logo" aria-label="All In">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="12" cy="12" r="8.5" fill="none" stroke="#d4a853" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </a>
   <a href="index.html" class="topbar-pill" id="topbarGoals">
     <span class="topbar-pill-dot"></span>
     <span class="topbar-pill-label">GOALS</span>
@@ -140,6 +189,7 @@ body.topbar-modal-open {
     <span class="topbar-pill-dot"></span>
     <span class="topbar-pill-label">FINANCE</span>
   </a>
+  <button class="topbar-theme-btn" id="topbarThemeBtn" aria-label="Toggle theme" title="Toggle dark/light mode">🌙</button>
 </header>
 `;
 
@@ -251,9 +301,37 @@ body.topbar-modal-open {
     sync();
   }
 
+  // -------- Theme toggle --------
+  function getTheme() {
+    var stored = localStorage.getItem('theme:preference');
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme:preference', theme);
+    var btn = document.getElementById('topbarThemeBtn');
+    if (btn) btn.textContent = theme === 'dark' ? '🌙' : '☀️';
+    // Update theme-color meta for PWA status bar
+    var metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) metaTheme.content = theme === 'dark' ? '#0a0a0b' : '#f5f5f5';
+  }
+
+  function setupThemeToggle() {
+    applyTheme(getTheme());
+    document.addEventListener('click', function(e) {
+      if (e.target.id === 'topbarThemeBtn' || e.target.closest('#topbarThemeBtn')) {
+        var current = document.documentElement.getAttribute('data-theme') || 'dark';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      }
+    });
+  }
+
   // -------- Boot --------
   function boot() {
     injectStyleAndHTML();
+    setupThemeToggle();
     render();
     lockGestures();
     startModalLock();

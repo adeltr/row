@@ -185,6 +185,17 @@ export async function logWeight(dateStr, weight, unit) {
       { onConflict: 'user_id,date' }
     );
   if (error) throw error;
+
+  // Keep nutrition_profile.weight_kg in sync so calorie targets stay accurate.
+  const weight_kg = unit === 'lbs'
+    ? Math.round(weight * 0.453592 * 10) / 10
+    : weight;
+  try {
+    await supabase
+      .from('nutrition_profile')
+      .update({ weight_kg })
+      .eq('user_id', user.id);
+  } catch {}
 }
 
 // ── Split rotation ─────────────────────────────────────────────

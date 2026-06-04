@@ -632,7 +632,7 @@
     days.forEach(function(ds) {
       var isToday = (ds === today);
       var col = document.createElement('div');
-      col.style.cssText = 'flex:1;min-width:0;position:relative;height:' + minToY(TOTAL_MINS) + 'px;border-left:1px solid rgba(255,255,255,0.05);';
+      col.style.cssText = 'flex:1;min-width:0;position:relative;height:' + minToY(TOTAL_MINS) + 'px;border-left:1px solid var(--border,rgba(255,255,255,0.05));';
       if (isToday) col.style.background = 'rgba(107,227,164,0.03)';
 
       // Grid lines
@@ -838,9 +838,10 @@
     // update button styles
     document.querySelectorAll('[data-view]').forEach(function(b) {
       var active = b.dataset.view === view;
-      b.style.background = active ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)';
-      b.style.color      = active ? '#FAFAFA' : 'rgba(255,255,255,0.5)';
-      b.style.borderColor = active ? 'rgba(255,255,255,0.20)' : 'rgba(255,255,255,0.08)';
+      var cs = getComputedStyle(document.documentElement);
+      b.style.background = active ? cs.getPropertyValue('--overlay-active').trim() : cs.getPropertyValue('--overlay-soft').trim();
+      b.style.color      = active ? cs.getPropertyValue('--text-primary').trim() : cs.getPropertyValue('--text-secondary').trim();
+      b.style.borderColor = active ? cs.getPropertyValue('--border-strong').trim() : cs.getPropertyValue('--border').trim();
     });
 
     if (view === 'day') {

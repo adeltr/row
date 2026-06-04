@@ -58,6 +58,7 @@ export async function startWorkout(programId, sessionId, sessionName) {
 }
 
 export async function finishWorkout(workoutLogId, { durationMin, totalVolumeKg, feeling, notes } = {}) {
+  const calories_burned = durationMin ? Math.round(durationMin * 6) : null;
   const { data, error } = await supabase
     .from('workout_logs')
     .update({
@@ -65,6 +66,7 @@ export async function finishWorkout(workoutLogId, { durationMin, totalVolumeKg, 
       total_volume_kg: totalVolumeKg ?? null,
       feeling: feeling || null,
       notes: notes || null,
+      calories_burned,
     })
     .eq('id', workoutLogId)
     .select()

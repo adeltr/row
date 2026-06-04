@@ -105,9 +105,26 @@ export async function loadSession(id) {
 
 export async function addSession(fields) {
   const user_id = await getUserId();
+
+  // Auto-calculate calories burned if distance is known and not already provided.
+  // Formula: weight_kg × distance_km × 1.036 (Cameron-Hibbert net calorie cost).
+  const enriched = { ...fields };
+  if (enriched.calories_burned == null && enriched.distance_km) {
+    try {
+      const { data: profile } = await supabase
+        .from('nutrition_profile')
+        .select('weight_kg')
+        .eq('user_id', user_id)
+        .maybeSingle();
+      if (profile?.weight_kg) {
+        enriched.calories_burned = Math.round(profile.weight_kg * enriched.distance_km * 1.036);
+      }
+    } catch {}
+  }
+
   const { data, error } = await supabase
     .from('running_sessions')
-    .insert({ user_id, ...fields })
+    .insert({ user_id, ...enriched })
     .select()
     .single();
   if (error) throw error;
