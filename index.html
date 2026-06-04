@@ -1183,6 +1183,93 @@ body.tb-no-scroll { overflow: hidden; }
 .rt-chal-habit-opt.selected { background: var(--overlay-active); border-color: var(--border-strong); color: var(--success); }
 .rt-note-btn { background: transparent; border: 0; font-size: 12px; cursor: pointer; color: var(--text-tertiary); opacity: 0.5; padding: 0 2px; transition: opacity 0.15s; }
 .rt-note-btn:hover, .rt-note-btn.has-note { opacity: 1; color: var(--warning); }
+
+/* ===== Onboarding Wizard ===== */
+.ob-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.82); display: flex;
+  align-items: flex-start; justify-content: center;
+  padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  overflow-y: auto;
+}
+[data-theme="light"] .ob-overlay { background: rgba(0,0,0,0.5); }
+.ob-overlay.ob-hidden { display: none; }
+.ob-card {
+  width: 100%; max-width: 440px; margin: auto;
+  background: var(--bg-modal, #131316);
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 32px 28px 28px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+}
+[data-theme="light"] .ob-card { background: #ffffff; }
+.ob-ring-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+.ob-ring { width: 48px; height: 48px; animation: ob-ring-pulse 3s ease-in-out infinite; }
+@keyframes ob-ring-pulse {
+  0%,100% { filter: drop-shadow(0 0 5px rgba(212,168,83,0.55)); }
+  50%      { filter: drop-shadow(0 0 12px rgba(212,168,83,0.9)); }
+}
+.ob-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 22px; }
+.ob-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); transition: background 0.2s, transform 0.2s; }
+.ob-dot.active { background: var(--accent-gold); transform: scale(1.45); }
+.ob-screen { display: none; }
+.ob-screen.active { display: block; }
+.ob-title { font-size: 21px; font-weight: 800; color: var(--text-primary); text-align: center; margin-bottom: 6px; letter-spacing: -0.02em; }
+.ob-subtitle { font-size: 13px; color: var(--text-secondary); text-align: center; margin-bottom: 22px; line-height: 1.5; }
+.ob-field { margin-bottom: 14px; }
+.ob-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+.ob-input {
+  width: 100%; background: var(--bg-secondary);
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 13px; font-size: 14px; color: var(--text-primary);
+  font-family: var(--font); outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.ob-input:focus { border-color: var(--accent-gold); box-shadow: 0 0 0 3px var(--accent-gold-glow); }
+.ob-input::placeholder { color: var(--text-tertiary); }
+.ob-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ob-seg { display: flex; gap: 2px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
+.ob-seg-btn { flex: 1; padding: 8px; text-align: center; font-size: 12px; font-weight: 700; border-radius: 7px; cursor: pointer; color: var(--text-secondary); transition: background 0.15s, color 0.15s; user-select: none; -webkit-tap-highlight-color: transparent; }
+.ob-seg-btn.active { background: rgba(212,168,83,0.18); color: var(--accent-gold); }
+.ob-select-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.ob-opt { flex: 1; min-width: 70px; text-align: center; padding: 10px 6px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-secondary); cursor: pointer; font-size: 11px; font-weight: 600; color: var(--text-secondary); transition: border-color 0.15s, background 0.15s, color 0.15s; user-select: none; -webkit-tap-highlight-color: transparent; }
+.ob-opt:hover { border-color: var(--border-strong); }
+.ob-opt.selected { border-color: var(--accent-gold); color: var(--accent-gold); background: var(--accent-gold-glow); }
+.ob-opt-icon { font-size: 18px; display: block; margin-bottom: 3px; }
+.ob-opt-desc { font-size: 9px; font-weight: 400; color: var(--text-tertiary); margin-top: 2px; display: block; }
+.ob-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.ob-toggle-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.ob-toggle { width: 42px; height: 24px; border-radius: 12px; background: var(--border-strong); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+.ob-toggle.on { background: var(--accent-gold); }
+.ob-toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.25); }
+.ob-toggle.on::after { transform: translateX(18px); }
+.ob-prog-list { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
+.ob-prog-card { padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-secondary); cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; align-items: center; gap: 12px; }
+.ob-prog-card:hover { border-color: var(--border-strong); }
+.ob-prog-card.selected { border-color: var(--accent-gold); background: var(--accent-gold-glow); }
+.ob-prog-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-strong); flex-shrink: 0; transition: border-color 0.15s, background 0.15s; }
+.ob-prog-card.selected .ob-prog-radio { border-color: var(--accent-gold); background: var(--accent-gold); }
+.ob-prog-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.ob-prog-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.ob-habit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ob-habit-chip { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-secondary); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; transition: border-color 0.15s, background 0.15s, color 0.15s; user-select: none; -webkit-tap-highlight-color: transparent; }
+.ob-habit-chip:hover { border-color: var(--border-strong); }
+.ob-habit-chip.selected { border-color: var(--accent-gold); color: var(--accent-gold); background: var(--accent-gold-glow); }
+.ob-habit-chip-icon { font-size: 16px; flex-shrink: 0; }
+.ob-btn-row { display: flex; gap: 10px; margin-top: 22px; }
+.ob-btn-skip { flex: 0 0 auto; padding: 12px 16px; background: transparent; border: 1px solid var(--border); border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--text-secondary); cursor: pointer; font-family: var(--font); transition: border-color 0.15s, color 0.15s; }
+.ob-btn-skip:hover { border-color: var(--border-strong); color: var(--text-primary); }
+.ob-btn-next { flex: 1; padding: 13px; background: var(--btn-primary); border: none; border-radius: 10px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--btn-primary-color, #0a0a0b); cursor: pointer; font-family: var(--font); transition: opacity 0.15s; box-shadow: var(--btn-primary-shadow); }
+.ob-btn-next:hover { opacity: 0.9; }
+.ob-btn-next:active { opacity: 0.8; }
+.ob-btn-next:disabled { opacity: 0.4; cursor: not-allowed; }
+.ob-welcome-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 8000; background: var(--accent-gold); color: #0a0a0b; padding: max(12px, env(safe-area-inset-top)) 20px 12px; text-align: center; font-size: 13px; font-weight: 700; display: none; cursor: pointer; animation: ob-banner-in 0.4s ease; }
+.ob-welcome-banner.show { display: block; }
+@keyframes ob-banner-in { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@media (max-width: 480px) {
+  .ob-card { padding: 24px 18px 20px; border-radius: 16px; }
+  .ob-title { font-size: 18px; }
+  .ob-row2 { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
 <body>
@@ -2490,6 +2577,403 @@ const ANTHROPIC_API_KEY = '';
     await loadRoutineTracker();
   });
 </script>
+<!-- ── Onboarding Wizard ─────────────────────────────────────────────── -->
+<div id="obOverlay" class="ob-overlay ob-hidden" role="dialog" aria-modal="true" aria-label="Setup wizard">
+  <div class="ob-card">
+
+    <div class="ob-ring-wrap">
+      <svg class="ob-ring" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="ob-ring-grad" x1="20%" y1="0%" x2="80%" y2="100%">
+            <stop offset="0%" stop-color="#f0d48a"/>
+            <stop offset="50%" stop-color="#d4a853"/>
+            <stop offset="100%" stop-color="#b8943f"/>
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="37" fill="none" stroke="url(#ob-ring-grad)" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="ob-dots" id="obDots"></div>
+
+    <!-- Screen 1: Welcome -->
+    <div class="ob-screen active" id="obScreen1">
+      <div class="ob-title">Welcome to All In 👋</div>
+      <div class="ob-subtitle">Let's set up your dashboard in 2 minutes.</div>
+      <div class="ob-field">
+        <label class="ob-label" for="obName">Your name (optional)</label>
+        <input class="ob-input" id="obName" type="text" placeholder="e.g. Alex" autocomplete="given-name">
+      </div>
+      <div class="ob-btn-row">
+        <button class="ob-btn-next" id="obNext1">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 2: Body & Nutrition -->
+    <div class="ob-screen" id="obScreen2">
+      <div class="ob-title">Body &amp; Nutrition</div>
+      <div class="ob-subtitle">We'll calculate your daily calorie target from this.</div>
+      <div class="ob-row2">
+        <div class="ob-field">
+          <label class="ob-label" for="obWeight">Weight (kg)</label>
+          <input class="ob-input" id="obWeight" type="number" min="30" max="250" step="0.1" placeholder="70" inputmode="decimal">
+        </div>
+        <div class="ob-field">
+          <label class="ob-label" for="obHeight">Height (cm)</label>
+          <input class="ob-input" id="obHeight" type="number" min="100" max="250" placeholder="175" inputmode="numeric">
+        </div>
+      </div>
+      <div class="ob-row2">
+        <div class="ob-field">
+          <label class="ob-label" for="obAge">Age</label>
+          <input class="ob-input" id="obAge" type="number" min="10" max="100" placeholder="28" inputmode="numeric">
+        </div>
+        <div class="ob-field">
+          <label class="ob-label">Sex</label>
+          <div class="ob-seg" id="obSexSeg">
+            <div class="ob-seg-btn active" data-val="male">Male</div>
+            <div class="ob-seg-btn" data-val="female">Female</div>
+          </div>
+        </div>
+      </div>
+      <div class="ob-field">
+        <label class="ob-label">Activity level</label>
+        <div class="ob-select-row" id="obActivityRow">
+          <div class="ob-opt" data-val="sedentary"><span class="ob-opt-icon">🪑</span>Sedentary<span class="ob-opt-desc">Desk job</span></div>
+          <div class="ob-opt" data-val="light"><span class="ob-opt-icon">🚶</span>Light<span class="ob-opt-desc">1–3×/wk</span></div>
+          <div class="ob-opt selected" data-val="moderate"><span class="ob-opt-icon">🏃</span>Moderate<span class="ob-opt-desc">3–5×/wk</span></div>
+          <div class="ob-opt" data-val="active"><span class="ob-opt-icon">💪</span>Active<span class="ob-opt-desc">6–7×/wk</span></div>
+          <div class="ob-opt" data-val="very_active"><span class="ob-opt-icon">🔥</span>Very active<span class="ob-opt-desc">2×/day</span></div>
+        </div>
+      </div>
+      <div class="ob-field">
+        <label class="ob-label">Goal</label>
+        <div class="ob-select-row" id="obGoalRow">
+          <div class="ob-opt" data-val="lose"><span class="ob-opt-icon">📉</span>Lose<span class="ob-opt-desc">Cut weight</span></div>
+          <div class="ob-opt selected" data-val="maintain"><span class="ob-opt-icon">⚖️</span>Maintain<span class="ob-opt-desc">Stay lean</span></div>
+          <div class="ob-opt" data-val="gain"><span class="ob-opt-icon">📈</span>Gain<span class="ob-opt-desc">Build mass</span></div>
+        </div>
+      </div>
+      <div class="ob-btn-row">
+        <button class="ob-btn-skip" id="obSkip2">Skip</button>
+        <button class="ob-btn-next" id="obNext2">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 3: Gym Setup -->
+    <div class="ob-screen" id="obScreen3">
+      <div class="ob-title">Gym Setup</div>
+      <div class="ob-subtitle">Configure your training preferences.</div>
+      <div class="ob-field">
+        <label class="ob-label">Weight unit</label>
+        <div class="ob-seg" id="obUnitSeg">
+          <div class="ob-seg-btn active" data-val="kg">kg</div>
+          <div class="ob-seg-btn" data-val="lbs">lbs</div>
+        </div>
+      </div>
+      <div class="ob-toggle-row">
+        <span class="ob-toggle-label">Follow a workout program?</span>
+        <div class="ob-toggle" id="obProgToggle"></div>
+      </div>
+      <div id="obProgWrap" style="display:none">
+        <div id="obProgList" class="ob-prog-list">
+          <div style="font-size:12px;color:var(--text-tertiary);text-align:center;padding:12px">Loading…</div>
+        </div>
+      </div>
+      <div class="ob-btn-row">
+        <button class="ob-btn-skip" id="obSkip3">Skip</button>
+        <button class="ob-btn-next" id="obNext3">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 4: Running -->
+    <div class="ob-screen" id="obScreen4">
+      <div class="ob-title">Running</div>
+      <div class="ob-subtitle">Track runs, ACWR, VDOT &amp; race predictions.</div>
+      <div class="ob-toggle-row">
+        <span class="ob-toggle-label">Do you run?</span>
+        <div class="ob-toggle" id="obRunToggle"></div>
+      </div>
+      <div id="obRunWrap" style="display:none">
+        <div class="ob-row2">
+          <div class="ob-field">
+            <label class="ob-label" for="obShoeName">Shoe name</label>
+            <input class="ob-input" id="obShoeName" type="text" placeholder="Nike Pegasus 41" autocomplete="off">
+          </div>
+          <div class="ob-field">
+            <label class="ob-label" for="obShoeBrand">Brand</label>
+            <input class="ob-input" id="obShoeBrand" type="text" placeholder="Nike" autocomplete="off">
+          </div>
+        </div>
+      </div>
+      <div class="ob-btn-row">
+        <button class="ob-btn-skip" id="obSkip4">Skip</button>
+        <button class="ob-btn-next" id="obNext4">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Screen 5: Habits & Goals -->
+    <div class="ob-screen" id="obScreen5">
+      <div class="ob-title">Daily Habits</div>
+      <div class="ob-subtitle">Pick habits to track every day.</div>
+      <div class="ob-habit-grid" id="obHabitGrid"></div>
+      <div class="ob-field" style="margin-top:16px">
+        <label class="ob-label" for="obObjTitle">First monthly objective (optional)</label>
+        <input class="ob-input" id="obObjTitle" type="text" placeholder="e.g. Run 100 km this month" autocomplete="off">
+      </div>
+      <div class="ob-btn-row">
+        <button class="ob-btn-skip" id="obSkip5">Skip</button>
+        <button class="ob-btn-next" id="obNext5">Finish setup →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Welcome banner (shown after wizard completes) -->
+<div id="obWelcomeBanner" class="ob-welcome-banner" role="status">
+  You're all set! Welcome to All In. 💍
+  <span style="opacity:0.55;font-size:11px;margin-left:8px">(tap to dismiss)</span>
+</div>
+
+<script type="module">
+// ── Onboarding Wizard ──────────────────────────────────────────────────────
+import { supabase } from './js/supabase.js';
+
+(async () => {
+  function obEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // Check if onboarding needed
+  const [profileRes, nutRes] = await Promise.all([
+    supabase.from('user_profiles').select('onboarding_completed').maybeSingle(),
+    supabase.from('nutrition_profile').select('user_id').maybeSingle()
+  ]);
+  // Existing users have a nutrition_profile — skip wizard
+  if (nutRes.data || (profileRes.data && profileRes.data.onboarding_completed)) return;
+
+  const overlay = document.getElementById('obOverlay');
+  overlay.classList.remove('ob-hidden');
+  document.body.style.overflow = 'hidden';
+
+  let currentScreen = 1;
+  const TOTAL = 5;
+
+  const dotsEl = document.getElementById('obDots');
+  function renderDots() {
+    dotsEl.innerHTML = '';
+    for (let i = 1; i <= TOTAL; i++) {
+      const d = document.createElement('div');
+      d.className = 'ob-dot' + (i === currentScreen ? ' active' : '');
+      dotsEl.appendChild(d);
+    }
+  }
+  renderDots();
+
+  function goTo(n) {
+    document.getElementById('obScreen' + currentScreen).classList.remove('active');
+    currentScreen = n;
+    document.getElementById('obScreen' + n).classList.add('active');
+    renderDots();
+    overlay.scrollTop = 0;
+  }
+
+  // ── Segment helpers ──
+  function setupSeg(el) {
+    el.querySelectorAll('.ob-seg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        el.querySelectorAll('.ob-seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  }
+  function segVal(el) { const b = el.querySelector('.ob-seg-btn.active'); return b ? b.dataset.val : null; }
+
+  function setupOptRow(el) {
+    el.querySelectorAll('.ob-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        el.querySelectorAll('.ob-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+      });
+    });
+  }
+  function optVal(el) { const o = el.querySelector('.ob-opt.selected'); return o ? o.dataset.val : null; }
+
+  setupSeg(document.getElementById('obSexSeg'));
+  setupOptRow(document.getElementById('obActivityRow'));
+  setupOptRow(document.getElementById('obGoalRow'));
+  setupSeg(document.getElementById('obUnitSeg'));
+
+  // ── Toggle helper ──
+  function setupToggle(toggleEl, cb) {
+    toggleEl.addEventListener('click', () => {
+      toggleEl.classList.toggle('on');
+      cb(toggleEl.classList.contains('on'));
+    });
+  }
+
+  // ── Screen 1 ──
+  document.getElementById('obNext1').addEventListener('click', () => goTo(2));
+
+  // ── Screen 2 ──
+  document.getElementById('obSkip2').addEventListener('click', () => goTo(3));
+  document.getElementById('obNext2').addEventListener('click', () => goTo(3));
+
+  // ── Screen 3 ──
+  let selectedProgramId = null;
+  let programsLoaded = false;
+
+  setupToggle(document.getElementById('obProgToggle'), async (on) => {
+    document.getElementById('obProgWrap').style.display = on ? 'block' : 'none';
+    if (!on || programsLoaded) return;
+    programsLoaded = true;
+    const { loadPublicPrograms } = await import('./js/programs-data.js');
+    const programs = await loadPublicPrograms().catch(() => []);
+    const list = document.getElementById('obProgList');
+    if (!programs.length) {
+      list.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);text-align:center;padding:12px">No programs available yet.</div>';
+      return;
+    }
+    list.innerHTML = programs.slice(0, 8).map(p => `
+      <div class="ob-prog-card" data-id="${obEsc(p.id)}">
+        <div class="ob-prog-radio"></div>
+        <div>
+          <div class="ob-prog-name">${obEsc(p.name)}</div>
+          <div class="ob-prog-meta">${[p.duration_weeks ? p.duration_weeks + ' wks' : '', p.goal, p.level].filter(Boolean).join(' · ')}</div>
+        </div>
+      </div>`).join('');
+    list.querySelectorAll('.ob-prog-card').forEach(card => {
+      card.addEventListener('click', () => {
+        list.querySelectorAll('.ob-prog-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedProgramId = card.dataset.id;
+      });
+    });
+  });
+
+  document.getElementById('obSkip3').addEventListener('click', () => goTo(4));
+  document.getElementById('obNext3').addEventListener('click', () => goTo(4));
+
+  // ── Screen 4 ──
+  setupToggle(document.getElementById('obRunToggle'), (on) => {
+    document.getElementById('obRunWrap').style.display = on ? 'block' : 'none';
+  });
+
+  document.getElementById('obSkip4').addEventListener('click', () => goTo(5));
+  document.getElementById('obNext4').addEventListener('click', () => goTo(5));
+
+  // ── Screen 5 ──
+  const PRESET_HABITS = [
+    { icon: '💧', name: 'Drink water' },
+    { icon: '🏋️', name: 'Work out' },
+    { icon: '📚', name: 'Read 30 min' },
+    { icon: '🧘', name: 'Stretch' },
+    { icon: '😴', name: 'Sleep 8h' },
+    { icon: '🥗', name: 'Hit calories' },
+  ];
+
+  const habitGrid = document.getElementById('obHabitGrid');
+  habitGrid.innerHTML = PRESET_HABITS.map((h, i) => `
+    <div class="ob-habit-chip" data-idx="${i}">
+      <span class="ob-habit-chip-icon">${h.icon}</span>
+      <span>${obEsc(h.name)}</span>
+    </div>`).join('');
+  habitGrid.querySelectorAll('.ob-habit-chip').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('selected'));
+  });
+
+  document.getElementById('obSkip5').addEventListener('click', () => finish(true));
+  document.getElementById('obNext5').addEventListener('click', () => finish(false));
+
+  async function finish(skip) {
+    const btn = document.getElementById('obNext5');
+    btn.disabled = true; btn.textContent = 'Saving…';
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Always save user_profiles with onboarding_completed = true
+      const displayName = document.getElementById('obName').value.trim() || null;
+      await supabase.from('user_profiles').upsert(
+        { user_id: user.id, display_name: displayName, onboarding_completed: true },
+        { onConflict: 'user_id' }
+      );
+
+      if (!skip) {
+        // Screen 2: nutrition profile
+        const weight = parseFloat(document.getElementById('obWeight').value);
+        const height = parseFloat(document.getElementById('obHeight').value);
+        const age    = parseInt(document.getElementById('obAge').value, 10);
+        if (weight && height && age) {
+          const { upsertProfile } = await import('./js/nutrition-data.js');
+          await upsertProfile({
+            weight_kg: weight, height_cm: height, age,
+            sex: segVal(document.getElementById('obSexSeg')) || 'male',
+            activity_level: optVal(document.getElementById('obActivityRow')) || 'moderate',
+            goal: optVal(document.getElementById('obGoalRow')) || 'maintain',
+          });
+        }
+
+        // Screen 3: gym profile + optional program
+        const { saveGymProfile } = await import('./js/gym-data.js');
+        await saveGymProfile({ units: segVal(document.getElementById('obUnitSeg')) || 'kg' });
+
+        if (selectedProgramId) {
+          const { copyProgramToMine, setActiveProgram } = await import('./js/programs-data.js');
+          const newProg = await copyProgramToMine(selectedProgramId);
+          if (newProg && newProg.id) await setActiveProgram(newProg.id);
+        }
+
+        // Screen 4: running shoe
+        if (document.getElementById('obRunToggle').classList.contains('on')) {
+          const shoeName  = document.getElementById('obShoeName').value.trim();
+          const shoeBrand = document.getElementById('obShoeBrand').value.trim();
+          if (shoeName) {
+            const { addShoe } = await import('./js/running-data.js');
+            await addShoe({ name: shoeName, brand: shoeBrand || null, is_active: true });
+          }
+        }
+
+        // Screen 5: habits
+        const selected = habitGrid.querySelectorAll('.ob-habit-chip.selected');
+        if (selected.length) {
+          const { addHabit } = await import('./js/habits-data.js');
+          let idx = 0;
+          for (const chip of selected) {
+            const h = PRESET_HABITS[parseInt(chip.dataset.idx, 10)];
+            await addHabit({ name: h.name, icon: h.icon, active: true, order_index: idx++ });
+          }
+        }
+
+        // Optional monthly objective
+        const objTitle = document.getElementById('obObjTitle').value.trim();
+        if (objTitle) {
+          const { addMonthlyObjective } = await import('./js/objectives-data.js');
+          const now = new Date();
+          await addMonthlyObjective({ title: objTitle, year: now.getFullYear(), month: now.getMonth() + 1 });
+        }
+      }
+
+      // Close wizard + show banner
+      overlay.classList.add('ob-hidden');
+      document.body.style.overflow = '';
+
+      const banner = document.getElementById('obWelcomeBanner');
+      banner.classList.add('show');
+      const dismiss = () => banner.classList.remove('show');
+      banner.addEventListener('click', dismiss, { once: true });
+      setTimeout(dismiss, 5000);
+
+      // Refresh dashboard data
+      window.dispatchEvent(new CustomEvent('rowprogress'));
+
+    } catch (err) {
+      console.error('Onboarding error:', err);
+      btn.disabled = false; btn.textContent = 'Finish setup →';
+    }
+  }
+})();
+</script>
+
 <script>if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>
