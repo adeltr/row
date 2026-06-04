@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
 <title>All In | Intake</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<script>(function(){var t=localStorage.getItem('theme:preference');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+<script>(function(){document.documentElement.setAttribute('data-theme',localStorage.getItem('theme:preference')||'dark');})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">

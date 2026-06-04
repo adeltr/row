@@ -303,9 +303,7 @@ body.topbar-modal-open {
 
   // -------- Theme toggle --------
   function getTheme() {
-    var stored = localStorage.getItem('theme:preference');
-    if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return localStorage.getItem('theme:preference') || 'dark';
   }
 
   function applyTheme(theme) {
