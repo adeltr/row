@@ -92,29 +92,30 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+/* ── Mobile icon (hidden on desktop) ── */
+.topbar-pill-icon { display: none; font-size: 18px; line-height: 1; }
 /* ── Theme toggle button ── */
 .topbar-theme-btn {
   flex-shrink: 0;
-  width: 32px; height: 32px;
+  width: 44px; height: 44px;
   display: flex; align-items: center; justify-content: center;
   background: var(--tb-pill-bg);
   border: 1px solid var(--tb-pill-border);
   border-radius: 9px;
   cursor: pointer;
-  font-size: 15px; line-height: 1;
+  font-size: 16px; line-height: 1;
   transition: background 0.15s, border-color 0.15s;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 .topbar-theme-btn:hover { background: var(--tb-pill-hover); border-color: var(--tb-pill-hover-border); }
-@media (max-width: 480px) {
-  .topbar { padding-left: 10px; padding-right: 10px; gap: 4px; }
-  .topbar-pill { padding: 7px 9px; gap: 5px; }
-  .topbar-pill-label { font-size: 9px; letter-spacing: 0.10em; }
-  .topbar-pill-count { font-size: 11px; }
-}
-@media (max-width: 380px) {
-  .topbar-pill-label { display: none; }
+@media (max-width: 600px) {
+  .topbar { padding: max(8px, env(safe-area-inset-top)) 8px 8px; gap: 4px; }
+  .topbar-logo { width: 36px; min-height: 44px; }
+  .topbar-pill { min-height: 44px; padding: 0 6px; gap: 4px; justify-content: center; }
+  .topbar-pill-label, .topbar-pill-count { display: none; }
+  .topbar-pill-icon { display: block; }
+  .topbar-theme-btn { width: 44px; height: 44px; }
 }
 
 /* === Global mobile lockdown ===
@@ -174,20 +175,24 @@ body.topbar-modal-open {
   <a href="index.html" class="topbar-pill" id="topbarGoals">
     <span class="topbar-pill-dot"></span>
     <span class="topbar-pill-label">GOALS</span>
+    <span class="topbar-pill-icon" aria-hidden="true">🎯</span>
     <span class="topbar-pill-count" id="topbarGoalsCount">—/—</span>
   </a>
   <a href="health.html" class="topbar-pill" id="topbarStack">
     <span class="topbar-pill-dot"></span>
     <span class="topbar-pill-label">INTAKE</span>
+    <span class="topbar-pill-icon" aria-hidden="true">🥗</span>
     <span class="topbar-pill-count" id="topbarStackCount">—/—</span>
   </a>
   <a href="gym.html" class="topbar-pill" id="topbarGym">
     <span class="topbar-pill-dot"></span>
     <span class="topbar-pill-label">GYM</span>
+    <span class="topbar-pill-icon" aria-hidden="true">🏋️</span>
   </a>
   <a href="finance.html" class="topbar-pill" id="topbarFinance">
     <span class="topbar-pill-dot"></span>
     <span class="topbar-pill-label">FINANCE</span>
+    <span class="topbar-pill-icon" aria-hidden="true">💰</span>
   </a>
   <button class="topbar-theme-btn" id="topbarThemeBtn" aria-label="Toggle theme" title="Toggle dark/light mode">🌙</button>
 </header>

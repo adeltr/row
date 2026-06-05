@@ -2313,6 +2313,62 @@ img, video, canvas, svg { max-width: 100%; }
 .route-det-stat { text-align:center; }
 .route-det-stat-val { font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--text-1); }
 .route-det-stat-lbl { font-family:var(--font-mono); font-size:9px; color:var(--text-3); margin-top:2px; text-transform:uppercase; }
+
+/* ── Mobile responsiveness (≤600px) ── */
+@media (max-width: 600px) {
+  /* Gym outer tabs (STRENGTH / STRETCHING / RUNNING) — 44px tap target */
+  .gym-tab { min-height: 44px; padding: 10px 8px; font-size: 10px; }
+
+  /* Strength sub-tabs (PROGRAMS / FREESTYLE / HISTORY / STATS) — scrollable */
+  .strength-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; padding-bottom: 2px; }
+  .strength-tab  { flex: 0 0 auto; white-space: nowrap; min-height: 44px; padding: 10px 10px 9px; }
+
+  /* Running tabs — already overflow-x:auto, just ensure tap target */
+  .run-tab { min-height: 44px; padding: 10px 10px 9px; }
+
+  /* Bottom tab bar (GYM / STRETCH / RUN) — 44px height */
+  .tab { min-height: 44px; padding: 10px 8px; font-size: 12px; letter-spacing: 0.01em; }
+  .tabbar { padding-left: 10px; padding-right: 10px; gap: 3px; }
+
+  /* Workout player set inputs — bigger touch targets */
+  .po-set-row input { min-height: 44px; font-size: 15px; padding: 8px 4px; }
+  .po-set-row .po-mini-btn { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+
+  /* Rest timer buttons */
+  .wp-rest-adj, .wp-rest-skip { min-height: 44px; padding: 10px 14px; font-size: 11px; }
+  .wp-rest-time { font-size: 40px; }
+
+  /* Workout nav buttons */
+  .wp-nav-btn, .wp-finish-btn { min-height: 44px; padding: 12px; }
+
+  /* Workout finish modal stats — 2 columns on mobile */
+  .wp-finish-stats { grid-template-columns: 1fr 1fr; }
+
+  /* Run form grid — single column on very small screens */
+  .run-form-grid.three { grid-template-columns: 1fr 1fr; }
+
+  /* Running analytics stats */
+  .ran-stats-row { grid-template-columns: 1fr 1fr; gap: 6px; }
+
+  /* Program grid — single column */
+  .prog-grid { grid-template-columns: 1fr; }
+
+  /* Route grid — single column */
+  .route-det-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Stretching checkin row — stack on mobile */
+  .stch-checkin-row { flex-wrap: wrap; }
+  .stch-select { min-height: 44px; font-size: 14px; }
+  .stch-dur-input, .stch-notes-input { min-height: 44px; font-size: 14px; }
+  .stch-log-btn { min-height: 44px; font-size: 14px; }
+
+  /* Weight tracker overlay */
+  .wt-grid { font-size: 11px; }
+}
+@media (max-width: 360px) {
+  .gym-tab { font-size: 9px; padding: 10px 5px; }
+  .ran-stats-row { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
