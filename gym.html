@@ -1342,6 +1342,12 @@ img, video, canvas, svg { max-width: 100%; }
 .strength-tabs {
   display: flex; gap: 3px; margin-bottom: 18px;
 }
+.gym-unit-row { display: flex; align-items: center; gap: 10px; margin-top: -10px; margin-bottom: 14px; }
+.gym-unit-label { font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--text-3); }
+.gym-unit-toggle { display: flex; gap: 2px; background: var(--overlay-soft); border-radius: 8px; padding: 2px; }
+.gym-unit-btn { border: none; background: transparent; color: var(--text-3); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s, color 0.15s; -webkit-tap-highlight-color: transparent; }
+.gym-unit-btn:hover { color: var(--text-2); }
+.gym-unit-btn.active { background: var(--overlay-hover); color: var(--text-1); }
 .strength-tab {
   flex: 1; background: transparent; border: none;
   border-bottom: 2px solid var(--border);
@@ -2412,6 +2418,15 @@ img, video, canvas, svg { max-width: 100%; }
       <button class="strength-tab active" data-tab="freestyle" role="tab">FREESTYLE</button>
       <button class="strength-tab" data-tab="history" role="tab">HISTORY</button>
       <button class="strength-tab" data-tab="stats" role="tab">STATS</button>
+    </div>
+
+    <!-- Unit toggle -->
+    <div class="gym-unit-row" id="gymUnitRow">
+      <span class="gym-unit-label">Weight unit:</span>
+      <div class="gym-unit-toggle">
+        <button class="gym-unit-btn active" data-u="kg">kg</button>
+        <button class="gym-unit-btn" data-u="lb">lbs</button>
+      </div>
     </div>
 
     <!-- PROGRAMS sub-tab -->
@@ -4370,12 +4385,30 @@ await initUserMenu();
     $('setModalBg').classList.remove('show');
     renderAll();
   });
+  function syncGymUnitToggle() {
+    document.querySelectorAll('#gymUnitRow .gym-unit-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.u === state.units);
+    });
+  }
+
+  document.querySelectorAll('#gymUnitRow .gym-unit-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      state.units = b.dataset.u; saveState();
+      syncGymUnitToggle();
+      $('setUnitsSeg').querySelectorAll('button').forEach(x => x.classList.toggle('active', x.dataset.u === state.units));
+      if (typeof wtRender === 'function') wtRender();
+      if (typeof _renderPRList === 'function' && _prData) _renderPRList(_prSort);
+    });
+  });
+
   $('setUnitsSeg').querySelectorAll('button').forEach(b => {
     b.addEventListener('click', () => {
       state.units = b.dataset.u; saveState();
       $('setUnitsSeg').querySelectorAll('button').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
+      syncGymUnitToggle();
       if (typeof wtRender === 'function') wtRender();
+      if (typeof _renderPRList === 'function' && _prData) _renderPRList(_prSort);
     });
   });
   $('setAddGym').addEventListener('click', () => {
@@ -5122,6 +5155,7 @@ await initUserMenu();
   // BOOT
   // ============================================================
   await initState();
+  syncGymUnitToggle();
   renderAll();
   wtRender();
   photosRender();
@@ -5864,18 +5898,23 @@ await initUserMenu();
     const logged = _wp.loggedSets[ex.id] || [];
     const target = _wp.exerciseTargets[ex.id] || 4;
     const totalRows = Math.max(target, logged.length + 1);
+    const isLb = state.units === 'lb';
+    const toDisp = w => isLb ? +(w * 2.20462).toFixed(1) : w;
+    const unitLbl = isLb ? 'LBS' : 'KG';
 
     let rows = '';
     for (let i = 0; i < totalRows; i++) {
       const done = i < logged.length;
       const ls = done ? logged[i] : null;
-      const prev = prevSets[i] ? prevSets[i].weight_kg + 'kg×' + prevSets[i].reps : '—';
-      const ph_kg = !done && prevSets[i] ? prevSets[i].weight_kg : '';
+      const prevW = prevSets[i] ? toDisp(prevSets[i].weight_kg) : null;
+      const prev = prevW !== null ? prevW + unitLbl.toLowerCase() + '×' + prevSets[i].reps : '—';
+      const ph_kg = !done && prevSets[i] ? toDisp(prevSets[i].weight_kg) : '';
       const ph_r  = !done && prevSets[i] ? prevSets[i].reps : '';
+      const dispVal = done ? toDisp(ls.weight_kg) : '';
       rows += `<div class="wp-set-row${done?' logged':''}" data-idx="${i}">
         <div class="wp-set-num">${i+1}</div>
         <div class="wp-set-prev">${prev}</div>
-        <input class="wp-set-input" type="number" inputmode="decimal" step="0.5" min="0" placeholder="${ph_kg}" value="${done?ls.weight_kg:''}" ${done?'disabled':''} autocomplete="off">
+        <input class="wp-set-input" type="number" inputmode="decimal" step="${isLb?'1':'0.5'}" min="0" placeholder="${ph_kg}" value="${dispVal}" ${done?'disabled':''} autocomplete="off">
         <input class="wp-set-input" type="number" inputmode="numeric" step="1" min="0" placeholder="${ph_r}" value="${done?ls.reps:''}" ${done?'disabled':''} autocomplete="off">
         <button class="wp-check-btn${done?' done':''}" data-idx="${i}">${done?'✓':'○'}</button>
       </div>`;
@@ -5887,7 +5926,7 @@ await initUserMenu();
       <div class="wp-ex-name">${escHtml(ex.name)}</div>
       ${ex.technique ? `<div class="wp-ex-technique">${escHtml(ex.technique)}</div>` : ''}
       <div class="wp-ex-target-line">${target} sets × ${ex.target_reps} · ${ex.rest_sec}s rest</div>
-      <div class="wp-sets-head"><span>#</span><span>PREV</span><span>KG</span><span>REPS</span><span></span></div>
+      <div class="wp-sets-head"><span>#</span><span>PREV</span><span>${unitLbl}</span><span>REPS</span><span></span></div>
       ${rows}
       <button class="wp-add-set-btn" id="wpAddSet">+ Add set</button>
       ${isSuperset ? `<button class="wp-ss-switch" id="wpSsSwitch">Switch to ${escHtml(partner.name)} →</button>` : ''}
@@ -5912,7 +5951,8 @@ await initUserMenu();
     if (!row || idx < (_wp.loggedSets[ex.id]||[]).length) return;
     const kgIn = row.querySelector('[inputmode="decimal"]');
     const rIn  = row.querySelector('[inputmode="numeric"]');
-    const kg   = parseFloat(kgIn.value || kgIn.placeholder) || 0;
+    const dispW = parseFloat(kgIn.value || kgIn.placeholder) || 0;
+    const kg    = state.units === 'lb' ? +(dispW / 2.20462).toFixed(3) : dispW;
     const reps = parseInt(rIn.value || rIn.placeholder) || 0;
     if (!reps) { rIn.focus(); return; }
 
@@ -6179,8 +6219,12 @@ await initUserMenu();
       return b.best1rm - a.best1rm; // '1rm'
     });
     if (!sorted.length) { document.getElementById('prList').innerHTML = '<div class="prog-empty">No exercises logged yet.</div>'; return; }
+    const prIsLb = state.units === 'lb';
+    const prConv = v => prIsLb ? v * 2.20462 : v;
+    const prUnit = prIsLb ? ' lbs' : ' kg';
     document.getElementById('prList').innerHTML = sorted.map(pr => {
-      const label = pr.best1rm >= 1 ? Math.round(pr.best1rm) + ' kg' : pr.best1rm.toFixed(1) + ' kg';
+      const v = prConv(pr.best1rm);
+      const label = v >= 1 ? Math.round(v) + prUnit : v.toFixed(1) + prUnit;
       const spark = _prSparkline(pr.sparkData);
       const ago = _prDateAgo(pr.lastDate);
       return `<div class="pr-row">

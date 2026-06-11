@@ -1116,14 +1116,17 @@ body.tb-no-scroll { overflow: hidden; }
   cursor: pointer; transition: color 0.2s, border-color 0.2s;
 }
 .rt-load-less:hover { color: var(--accent-gold); border-color: var(--accent-gold); }
-.rt-grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.rt-grid { display: grid; min-width: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+.rt-grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; position: relative; box-shadow: inset -10px 0 14px rgba(0,0,0,0.18); border-radius: 12px; }
+[data-theme="light"] .rt-grid-wrap { box-shadow: inset -10px 0 14px rgba(0,0,0,0.07); }
+.rt-grid { display: grid; min-width: 100%; width: max-content; border-radius: 12px; border: 1px solid var(--border); }
 .rt-hd-date, .rt-hd-habit, .rt-hd-day-pct {
   background: var(--bg-input); padding: 8px 10px;
   font-family: var(--font-mono); font-size: 9px; font-weight: 700;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary);
   border-bottom: 1px solid var(--border); user-select: none;
 }
+.rt-hd-date { position: sticky; left: 0; z-index: 3; background: var(--bg-input); }
+.rt-hd-day-pct { position: sticky; right: 0; z-index: 3; background: var(--bg-input); }
 .rt-hd-habit { text-align: center; cursor: pointer; }
 .rt-hd-habit:hover { color: var(--text-secondary); }
 .rt-hd-habit-inner { display: flex; flex-direction: column; align-items: center; gap: 3px; }
@@ -1136,11 +1139,20 @@ body.tb-no-scroll { overflow: hidden; }
 }
 .rt-row-last .rt-cell-date, .rt-row-last .rt-cell, .rt-row-last .rt-cell-pct { border-bottom: none; }
 .rt-row-today .rt-cell-date, .rt-row-today .rt-cell, .rt-row-today .rt-cell-pct { background: var(--overlay-hover); }
-.rt-cell-date { font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--text-tertiary); white-space: nowrap; cursor: pointer; }
+.rt-cell-date {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  color: var(--text-tertiary); white-space: nowrap; cursor: pointer;
+  position: sticky; left: 0; z-index: 2; background: var(--bg-secondary);
+}
+.rt-row-today .rt-cell-date { background: var(--overlay-hover); }
 .rt-cell-date:hover { color: var(--text-secondary); }
 .rt-cell-date.today-lbl { color: var(--success); }
 .rt-cell { display: flex; align-items: center; justify-content: center; position: relative; }
-.rt-cell-pct { display: flex; align-items: center; gap: 6px; min-width: 64px; }
+.rt-cell-pct {
+  display: flex; align-items: center; gap: 6px; min-width: 64px;
+  position: sticky; right: 0; z-index: 2; background: var(--bg-secondary);
+}
+.rt-row-today .rt-cell-pct { background: var(--overlay-hover); }
 .rt-pct-bar { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
 .rt-pct-bar-fill { height: 100%; background: var(--accent-gold); border-radius: 2px; transition: width 0.3s; }
 .rt-pct-num { font-family: var(--font-mono); font-size: 9px; font-weight: 700; color: var(--text-tertiary); min-width: 22px; text-align: right; }
@@ -1428,7 +1440,7 @@ body.tb-no-scroll { overflow: hidden; }
         </div>
         <div class="rt-pager" id="rtPager">
           <button type="button" class="rt-load-more" id="rtLoadMore">Load more ▾</button>
-          <button type="button" class="rt-load-less" id="rtLoadLess" style="display:none">↑ Last 30 days</button>
+          <button type="button" class="rt-load-less" id="rtLoadLess" style="display:none">↑ Last 10 days</button>
         </div>
       </div>
     </div>
@@ -2318,7 +2330,7 @@ const ANTHROPIC_API_KEY = '';
   let _habitLogs     = {}; // 'habitId:date' → log
   let _dayNotes      = {}; // date → note
   let _activeChallenges = [];
-  let _rtLoadedDays  = 30;
+  let _rtLoadedDays  = 10;
   let _rtDays        = [];
 
   function getRtDays(n) {
@@ -2660,13 +2672,13 @@ const ANTHROPIC_API_KEY = '';
     openChallengeModal();
   });
   document.getElementById('rtLoadMore').addEventListener('click', async () => {
-    _rtLoadedDays += 30;
+    _rtLoadedDays += 10;
     document.getElementById('rtLoadLess').style.display = 'block';
     await loadRoutineTracker();
   });
 
   document.getElementById('rtLoadLess').addEventListener('click', async () => {
-    _rtLoadedDays = 30;
+    _rtLoadedDays = 10;
     document.getElementById('rtLoadLess').style.display = 'none';
     await loadRoutineTracker();
     // Scroll today's row into view

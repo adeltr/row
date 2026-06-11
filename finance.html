@@ -1804,6 +1804,8 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
           <option value="GBP">GBP</option>
+          <option value="CAD">CA$</option>
+          <option value="DZD">DZD</option>
         </select>
       </div>
     </div>
@@ -1951,6 +1953,8 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
         <option value="GBP">GBP</option>
+        <option value="CAD">CA$</option>
+        <option value="DZD">DZD</option>
       </select>
       <select id="subPeriod" style="padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);max-width:100px">
         <option value="monthly">Monthly</option>
@@ -1988,6 +1992,8 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
         <option value="GBP">GBP</option>
+        <option value="CAD">CA$</option>
+        <option value="DZD">DZD</option>
       </select>
       <select id="ordFromCat" class="ord-input ord-input-from" title="Which net worth account this comes out of">
         <option value="">No accounts yet</option>
@@ -2045,6 +2051,8 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
         <option value="GBP">GBP</option>
+        <option value="CAD">CA$</option>
+        <option value="DZD">DZD</option>
       </select>
       <button class="wish-add-btn" id="wishAddBtn" onclick="window.__addWish && window.__addWish()">+ Add</button>
     </div>
@@ -2266,7 +2274,7 @@ await initUserMenu();
   const netWorthTotal = document.getElementById('netWorthTotal');
   const netWorthBreakdown = document.getElementById('netWorthBreakdown');
 
-  let exchangeRates = { CHF: 1, USD: 1, EUR: 1, GBP: 1 };
+  let exchangeRates = { CHF: 1, USD: 1, EUR: 1, GBP: 1, CAD: 1, DZD: 1 };
   async function loadExchangeRates() {
     try {
       const res = await fetch('https://open.er-api.com/v6/latest/CHF');
@@ -2276,7 +2284,9 @@ await initUserMenu();
           CHF: 1,
           USD: data.rates.USD || 1,
           EUR: data.rates.EUR || 1,
-          GBP: data.rates.GBP || 1
+          GBP: data.rates.GBP || 1,
+          CAD: data.rates.CAD || 1,
+          DZD: data.rates.DZD || 1
         };
         renderAllNetWorth();
         if (typeof renderSubs === 'function') renderSubs();

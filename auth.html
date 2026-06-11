@@ -80,7 +80,7 @@ body {
   padding: 24px 20px;
   min-height: 100dvh;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 /* Radial bg glow — dark center, subtle warmth */
@@ -140,6 +140,20 @@ body::before {
 @media (max-width: 480px) {
   .ring-logo { width: 64px; height: 64px; }
   .card { padding: 32px 24px 28px; }
+}
+@media (max-width: 390px) {
+  body { align-items: flex-start; padding: 16px 12px; }
+  .ring-logo { width: 56px; height: 56px; }
+  .logo-wrap { margin-bottom: 14px; }
+  .card { padding: 28px 20px 24px; }
+  .brand { margin-bottom: 20px; }
+}
+@media (max-width: 375px) {
+  .ring-logo { width: 48px; height: 48px; }
+  .logo-wrap { margin-bottom: 10px; }
+  .card { padding: 22px 16px 20px; }
+  .brand { margin-bottom: 16px; }
+  .field { margin-bottom: 10px; }
 }
 
 /* ── Brand text ── */
