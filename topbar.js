@@ -194,6 +194,11 @@ body.topbar-modal-open {
     <span class="topbar-pill-label">FINANCE</span>
     <span class="topbar-pill-icon" aria-hidden="true">💰</span>
   </a>
+  <a href="library.html" class="topbar-pill" id="topbarLibrary">
+    <span class="topbar-pill-dot"></span>
+    <span class="topbar-pill-label">LIBRARY</span>
+    <span class="topbar-pill-icon" aria-hidden="true">📚</span>
+  </a>
   <button class="topbar-theme-btn" id="topbarThemeBtn" aria-label="Toggle theme" title="Toggle dark/light mode">🌙</button>
 </header>
 `;

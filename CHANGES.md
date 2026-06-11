@@ -1,3 +1,65 @@
+# Improvements Phase — Cash Flow, Advisor, Library, Integrations (2026-06-11)
+
+## SQL migration
+File: `supabase/migrations/20260611_improvements_finance_goals_library.sql`
+Run once in Supabase SQL Editor.
+
+Creates: `cash_flow_entries`, `cash_flow_monthly_snapshots`, `financial_advice_logs`, `books`, `book_notes`.  
+Alters: `goals` table adds `linked_book_id` column.  
+All tables have RLS (owner-only policies). Indexes on user+month, user+status, book_id.
+
+## New JS modules
+
+- `js/cashflow-data.js` — CRUD for cash flow entries + snapshots, savings rate, category breakdown, realtime subscription
+- `js/financial-advisor.js` — rule-based health score (0–100), 6 rules, French messages, advice cache
+- `js/library-data.js` — books CRUD + reading progress + book notes + stats + `loadBooksForObjective`
+
+## index.html — Goals sub-tabs + Library integration
+
+- 3 sub-tabs: **ROUTINE** (to-do + routine tracker) | **MONTHLY** (objectives) | **TIME BLOCKS** (time blocking)
+- Tab state persisted to `localStorage('goals:active_tab')`
+- Objective cards now show linked books count + titles (gold badge, e.g. `📚 2 books — Atomic Habits, Deep Work`)
+- `time-blocking.js`: appends to `#tbContainer` inside the TIME BLOCKS panel (fallback to `.page` if absent)
+
+## finance.html — Cash Flow + Advisor sub-tabs
+
+Top-level tab bar: **OVERVIEW | CASH FLOW | ADVISOR**  
+Tab state: `localStorage('finance_fin_tab')`. CASH FLOW and ADVISOR lazy-init on first click.
+
+### OVERVIEW tab
+- Net worth header now shows current month's cash flow net savings (green if positive, red if negative)
+
+### CASH FLOW tab
+- Month navigator (prev/next), 4 KPI cards (income, expenses, net savings, savings rate)
+- Income list + expenses list with collapsible category groups
+- SVG donut (category split) + SVG bar (6-month history) + top 5 categories
+- Entry modal: direction, category, subcategory, name, amount, recurring toggle, notes
+- Subscriptions auto-imported from the Subscriptions section (deduped by name)
+
+### ADVISOR tab
+- Health score gauge (0–100), animated SVG arc
+- Run Analysis button → calls `analyzeMonth()` → 6 rules → insights + actions list in French
+- Potential monthly savings estimate
+- Advice history (last 6 months)
+
+## library.html — New page
+
+3 sub-tabs: **READING QUEUE | CURRENTLY READING | COMPLETED**
+
+- **Queue**: book grid with category/sort/search filters, add/edit/delete, priority stars, difficulty badge, linked objective badge
+- **Reading**: progress bar per book, page input, reading pace estimate, complete/notes actions
+- **Completed**: 6 stat cards, SVG bar (books per month), category donut, rated list with takeaways
+- **Book modal**: title, author, category, difficulty, pages, est. hours, priority, tags, link to objective
+- **Mark complete modal**: star rating, key takeaways, personal notes
+- **Book detail modal**: INFO tab + NOTES tab (add/edit/delete/export notes by type)
+- Realtime subscription; objectives pre-loaded for linking dropdowns
+
+## topbar.js
+
+- Added LIBRARY pill (`📚`) linking to `library.html`
+
+---
+
 # Phase 3A-2 — Stretching tab (2026-06-03)
 
 ## SQL migration

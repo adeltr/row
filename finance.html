@@ -1638,7 +1638,121 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
   /* Touch targets */
   .bot-tab { min-height: 44px; padding: 11px 14px 10px; }
   .fin-back-btn { min-height: 44px; padding: 10px 16px; }
+  .fin-tab { min-height: 44px; padding: 10px 8px; }
 }
+
+/* ── Finance top-level tab bar ──────────────────────────────── */
+.fin-tabs { display: flex; gap: 4px; background: rgba(0,0,0,0.30); border: 1px solid var(--border-strong); border-radius: 12px; padding: 4px; margin-bottom: 22px; }
+[data-theme="light"] .fin-tabs { background: rgba(0,0,0,0.06); }
+.fin-tab { flex: 1; background: transparent; border: none; border-radius: 9px; color: var(--text-tertiary); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 10px; cursor: pointer; transition: background 0.15s, color 0.15s; -webkit-tap-highlight-color: transparent; }
+.fin-tab:hover { color: var(--text-secondary); }
+.fin-tab.active { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+[data-theme="light"] .fin-tab.active { background: rgba(0,0,0,0.06); }
+[data-fin-panel][hidden] { display: none !important; }
+.shell.no-bot-tabs { padding-bottom: 32px; }
+
+/* ── Cash Flow ──────────────────────────────────────────────── */
+.cf-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.cf-nav-btn { background: var(--overlay-hover); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text-secondary); font-size: 18px; line-height: 1; padding: 6px 14px; cursor: pointer; transition: background 0.15s; }
+.cf-nav-btn:hover { background: var(--overlay-active); }
+.cf-nav-label { font-family: var(--font-mono); font-size: 14px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-primary); }
+.cf-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.cf-kpi { background: var(--bg-card); border-radius: 12px; padding: 14px 16px; }
+.cf-kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+.cf-kpi-val { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--text-primary); }
+.cf-kpi-delta { font-size: 11px; margin-top: 3px; }
+.cf-kpi-delta.pos { color: var(--success); }
+.cf-kpi-delta.neg { color: var(--danger); }
+.cf-dir-card { background: var(--bg-card); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+.cf-dir-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.cf-dir-title { font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); }
+.cf-dir-total { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.cf-entry-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border-strong); }
+.cf-entry-row:last-child { border-bottom: none; }
+.cf-entry-icon { font-size: 16px; width: 26px; text-align: center; flex-shrink: 0; }
+.cf-entry-name { flex: 1; font-size: 13px; color: var(--text-primary); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cf-entry-recur { font-size: 9px; color: var(--text-tertiary); border: 1px solid var(--border-strong); border-radius: 4px; padding: 1px 5px; flex-shrink: 0; }
+.cf-entry-amt { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--text-primary); flex-shrink: 0; }
+.cf-entry-btns { display: flex; gap: 4px; flex-shrink: 0; }
+.cf-entry-btn { background: none; border: none; color: var(--text-tertiary); cursor: pointer; font-size: 12px; padding: 4px 6px; border-radius: 6px; transition: background 0.12s, color 0.12s; }
+.cf-entry-btn:hover { background: var(--overlay-hover); color: var(--text-primary); }
+.cf-cat-group { margin-bottom: 4px; }
+.cf-cat-head { display: flex; align-items: center; gap: 8px; padding: 8px 0; cursor: pointer; user-select: none; }
+.cf-cat-icon { font-size: 15px; width: 22px; text-align: center; }
+.cf-cat-name { flex: 1; font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+.cf-cat-total { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--text-primary); }
+.cf-cat-chevron { font-size: 11px; color: var(--text-tertiary); transition: transform 0.15s; }
+.cf-cat-group.open .cf-cat-chevron { transform: rotate(90deg); }
+.cf-cat-entries { display: none; padding-left: 30px; }
+.cf-cat-group.open .cf-cat-entries { display: block; }
+.cf-add-btn { display: flex; align-items: center; gap: 6px; background: none; border: 1px dashed var(--border-strong); border-radius: 9px; color: var(--text-tertiary); font-size: 12px; font-weight: 600; padding: 8px 14px; cursor: pointer; width: 100%; margin-top: 10px; transition: background 0.12s, color 0.12s; }
+.cf-add-btn:hover { background: var(--overlay-hover); color: var(--text-primary); }
+.cf-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+@media (max-width: 600px) { .cf-charts-grid { grid-template-columns: 1fr; } }
+.cf-chart-card { background: var(--bg-card); border-radius: 14px; padding: 16px; }
+.cf-chart-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 12px; }
+.cf-topcat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.cf-topcat-name { font-size: 12px; color: var(--text-secondary); width: 110px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cf-topcat-bar-wrap { flex: 1; background: var(--overlay-hover); border-radius: 4px; height: 8px; overflow: hidden; }
+.cf-topcat-bar { height: 8px; border-radius: 4px; background: var(--accent-gold); }
+.cf-topcat-amt { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); flex-shrink: 0; min-width: 60px; text-align: right; }
+.cf-auto-import { font-size: 11px; color: var(--text-tertiary); padding: 6px 0 0; display: flex; align-items: center; gap: 6px; }
+
+/* ── Entry modal ────────────────────────────────────────────── */
+.cf-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
+@media (min-width: 600px) { .cf-modal-overlay { align-items: center; } }
+.cf-modal { background: var(--bg-modal); border-radius: 18px 18px 0 0; padding: 24px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+@media (min-width: 600px) { .cf-modal { border-radius: 18px; } }
+.cf-modal-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 18px; }
+.cf-modal-field { margin-bottom: 14px; }
+.cf-modal-label { font-size: 11px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+.cf-modal-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border-strong); border-radius: 10px; color: var(--text-primary); font-family: var(--font); font-size: 14px; padding: 10px 14px; outline: none; transition: border-color 0.15s; }
+.cf-modal-input:focus { border-color: var(--accent-gold); }
+.cf-modal-row { display: flex; gap: 10px; }
+.cf-modal-row .cf-modal-field { flex: 1; }
+.cf-modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.cf-modal-cancel { flex: 1; background: var(--overlay-hover); border: 1px solid var(--border-strong); border-radius: 10px; color: var(--text-secondary); font-size: 14px; font-weight: 600; padding: 12px; cursor: pointer; }
+.cf-modal-save { flex: 1; background: var(--accent-gold); border: none; border-radius: 10px; color: #000; font-size: 14px; font-weight: 700; padding: 12px; cursor: pointer; }
+.cf-modal-delete { background: none; border: 1px solid var(--danger); border-radius: 10px; color: var(--danger); font-size: 14px; font-weight: 600; padding: 12px 18px; cursor: pointer; }
+.cf-recur-toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.cf-recur-toggle input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-gold); }
+
+/* ── Financial Advisor ──────────────────────────────────────── */
+.adv-gauge-card { background: var(--bg-card); border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 14px; }
+.adv-gauge-wrap { position: relative; width: 160px; height: 100px; margin: 0 auto 16px; }
+.adv-gauge-svg { width: 160px; height: 100px; }
+.adv-score-num { font-family: var(--font-mono); font-size: 42px; font-weight: 800; color: var(--text-primary); line-height: 1; margin-bottom: 4px; }
+.adv-score-label { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.adv-score-date { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+.adv-analyze-btn { display: block; width: 100%; background: var(--accent-gold); border: none; border-radius: 12px; color: #000; font-size: 14px; font-weight: 700; padding: 14px; cursor: pointer; margin-bottom: 20px; transition: opacity 0.15s; }
+.adv-analyze-btn:disabled { opacity: 0.6; cursor: default; }
+.adv-section-title { font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-tertiary); margin: 20px 0 10px; display: flex; align-items: center; gap: 10px; }
+.adv-section-title::before { content: ''; flex: 1; height: 1px; background: var(--border-strong); }
+.adv-insight-card { background: var(--bg-card); border-radius: 12px; padding: 14px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+.adv-insight-icon { font-size: 18px; flex-shrink: 0; width: 28px; text-align: center; margin-top: 1px; }
+.adv-insight-body { flex: 1; min-width: 0; }
+.adv-insight-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.adv-insight-cat { font-size: 9px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; border: 1px solid var(--border-strong); border-radius: 4px; padding: 2px 6px; color: var(--text-tertiary); }
+.adv-insight-delta { font-family: var(--font-mono); font-size: 11px; font-weight: 700; }
+.adv-insight-delta.pos { color: var(--success); }
+.adv-insight-delta.neg { color: var(--danger); }
+.adv-insight-delta.warn { color: var(--warning); }
+.adv-insight-msg { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.adv-action-row { background: var(--bg-card); border-radius: 12px; padding: 14px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 12px; }
+.adv-action-prio { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 5px; padding: 3px 8px; flex-shrink: 0; margin-top: 2px; }
+.adv-action-prio.high { background: rgba(255,107,107,0.15); color: var(--danger); }
+.adv-action-prio.medium { background: rgba(242,192,99,0.15); color: var(--warning); }
+.adv-action-prio.low { background: var(--overlay-hover); color: var(--text-tertiary); }
+.adv-action-msg { flex: 1; font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+.adv-action-savings { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--success); flex-shrink: 0; }
+.adv-savings-total { background: rgba(107,227,164,0.08); border: 1px solid rgba(107,227,164,0.20); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--success); font-weight: 600; margin-top: 8px; text-align: center; }
+.adv-history { margin-top: 20px; }
+.adv-history-summary { font-size: 12px; color: var(--text-tertiary); cursor: pointer; padding: 10px 0; user-select: none; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.adv-history-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-strong); cursor: pointer; }
+.adv-history-row:last-child { border-bottom: none; }
+.adv-history-month { font-size: 13px; color: var(--text-secondary); flex: 1; }
+.adv-history-score { font-family: var(--font-mono); font-size: 15px; font-weight: 700; }
+.adv-empty { text-align: center; padding: 40px 20px; color: var(--text-tertiary); font-size: 13px; }
 </style>
 </head>
 <body>
@@ -1652,6 +1766,16 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
   </a>
   <div id="user-menu" style="margin-left:auto"></div>
 </div>
+
+<!-- ===== FINANCE TOP TABS ===== -->
+<div class="fin-tabs" role="tablist">
+  <button class="fin-tab active" data-fin="overview" role="tab">OVERVIEW</button>
+  <button class="fin-tab"        data-fin="cashflow"  role="tab">CASH FLOW</button>
+  <button class="fin-tab"        data-fin="advisor"   role="tab">ADVISOR</button>
+</div>
+
+<!-- ══ OVERVIEW panel (existing content) ══ -->
+<div data-fin-panel="overview">
 
 <!-- ===== FINANCE TICKER (rotating subscription renewals) ===== -->
 <div class="finance-ticker hidden" id="financeTicker">
@@ -1671,6 +1795,7 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
         <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;font-weight:500">Total net worth</div>
         <div id="netWorthTotal" style="font-size:34px;font-weight:700;color:var(--text-primary);line-height:1.05;margin-top:2px">CHF 0</div>
         <div id="netWorthBreakdown" style="font-size:11px;color:var(--text-tertiary);margin-top:4px"></div>
+        <div id="nwCfSavings" style="font-size:11px;margin-top:3px"></div>
       </div>
       <div style="display:flex;align-items:center;gap:6px">
         <span style="font-size:11px;color:var(--text-tertiary)">CHF</span>
@@ -1938,7 +2063,110 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
   </div>
 </div>
 
-</div>
+</div><!-- /overview panel -->
+
+<!-- ══ CASH FLOW panel ══ -->
+<div data-fin-panel="cashflow" hidden>
+
+  <!-- Month navigation -->
+  <div class="cf-nav">
+    <button class="cf-nav-btn" id="cfPrevMonth">‹</button>
+    <div class="cf-nav-label" id="cfMonthLabel">—</div>
+    <button class="cf-nav-btn" id="cfNextMonth">›</button>
+  </div>
+
+  <!-- KPI row -->
+  <div class="cf-kpi-grid" id="cfKpiRow">
+    <div class="cf-kpi"><div class="cf-kpi-label">Revenus</div><div class="cf-kpi-val" id="cfKpiIncome">—</div><div class="cf-kpi-delta" id="cfKpiIncomeDelta"></div></div>
+    <div class="cf-kpi"><div class="cf-kpi-label">Dépenses</div><div class="cf-kpi-val" id="cfKpiExpenses">—</div><div class="cf-kpi-delta" id="cfKpiExpensesDelta"></div></div>
+    <div class="cf-kpi"><div class="cf-kpi-label">Épargne nette</div><div class="cf-kpi-val" id="cfKpiSavings">—</div><div class="cf-kpi-delta" id="cfKpiSavingsDelta"></div></div>
+    <div class="cf-kpi"><div class="cf-kpi-label">Taux d'épargne</div><div class="cf-kpi-val" id="cfKpiRate">—</div><div class="cf-kpi-delta" id="cfKpiRateDelta"></div></div>
+  </div>
+
+  <!-- Income -->
+  <div class="cf-dir-card">
+    <div class="cf-dir-head">
+      <span class="cf-dir-title">REVENUS</span>
+      <span class="cf-dir-total" id="cfIncomeTotal">CHF 0</span>
+    </div>
+    <div id="cfIncomeList"></div>
+    <button class="cf-add-btn" id="cfAddIncomeBtn">+ Ajouter un revenu</button>
+    <div class="cf-auto-import" id="cfAutoImportNote" hidden>🔄 Certains abonnements ont été importés automatiquement</div>
+  </div>
+
+  <!-- Expenses -->
+  <div class="cf-dir-card">
+    <div class="cf-dir-head">
+      <span class="cf-dir-title">DÉPENSES</span>
+      <span class="cf-dir-total" id="cfExpenseTotal">CHF 0</span>
+    </div>
+    <div id="cfExpenseList"></div>
+    <button class="cf-add-btn" id="cfAddExpenseBtn">+ Ajouter une dépense</button>
+  </div>
+
+  <!-- Charts -->
+  <div class="cf-charts-grid">
+    <div class="cf-chart-card">
+      <div class="cf-chart-title">Répartition des dépenses</div>
+      <div id="cfDonutWrap" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <svg id="cfDonutSvg" viewBox="0 0 120 120" width="110" height="110" aria-hidden="true"></svg>
+        <div id="cfDonutLegend" style="flex:1;min-width:80px"></div>
+      </div>
+    </div>
+    <div class="cf-chart-card">
+      <div class="cf-chart-title">Tendance mensuelle (6 mois)</div>
+      <svg id="cfBarSvg" viewBox="0 0 260 120" width="100%" height="120" aria-hidden="true" preserveAspectRatio="none"></svg>
+    </div>
+  </div>
+
+  <!-- Top categories -->
+  <div class="cf-chart-card" style="margin-bottom:14px">
+    <div class="cf-chart-title">Top catégories de dépenses</div>
+    <div id="cfTopCats"></div>
+  </div>
+
+</div><!-- /cashflow panel -->
+
+<!-- ══ ADVISOR panel ══ -->
+<div data-fin-panel="advisor" hidden>
+
+  <!-- Health score gauge -->
+  <div class="adv-gauge-card">
+    <div class="adv-gauge-wrap">
+      <svg class="adv-gauge-svg" id="advGaugeSvg" viewBox="0 0 160 100" aria-hidden="true">
+        <path id="advGaugeTrack" fill="none" stroke-width="12" stroke-linecap="round"/>
+        <path id="advGaugeFill"  fill="none" stroke-width="12" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="adv-score-num" id="advScoreNum">—</div>
+    <div class="adv-score-label" id="advScoreLabel">—</div>
+    <div class="adv-score-date" id="advScoreDate"></div>
+  </div>
+
+  <button class="adv-analyze-btn" id="advAnalyzeBtn">Analyser ce mois</button>
+
+  <div id="advContent">
+    <div class="adv-empty" id="advEmpty">Cliquez sur "Analyser ce mois" pour générer une analyse de vos finances.</div>
+    <!-- Insights -->
+    <div id="advInsightsWrap" hidden>
+      <div class="adv-section-title">INSIGHTS</div>
+      <div id="advInsightsList"></div>
+    </div>
+    <!-- Actions -->
+    <div id="advActionsWrap" hidden>
+      <div class="adv-section-title">ACTIONS PRIORITAIRES</div>
+      <div id="advActionsList"></div>
+      <div class="adv-savings-total" id="advSavingsTotal" hidden></div>
+    </div>
+  </div>
+
+  <!-- Historical advice -->
+  <div class="adv-history" id="advHistory">
+    <div class="adv-history-summary" id="advHistorySummary">▸ Voir les analyses précédentes</div>
+    <div id="advHistoryList" hidden></div>
+  </div>
+
+</div><!-- /advisor panel -->
 
 <!-- ===== BOTTOM TAB BAR ===== -->
 <nav class="bottom-tabs" id="bottomTabs" aria-label="Sections">
@@ -1964,6 +2192,8 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 import { requireAuth } from './js/auth.js';
 import { initUserMenu } from './js/user-menu.js';
 import * as FinanceData from './js/finance-data.js';
+import * as CfData from './js/cashflow-data.js';
+import * as Advisor from './js/financial-advisor.js';
 await requireAuth();
 await initUserMenu();
 
@@ -3568,8 +3798,25 @@ await initUserMenu();
     }));
   }
 
+  async function refreshCfSavings() {
+    const el = document.getElementById('nwCfSavings');
+    if (!el) return;
+    try {
+      const now = new Date();
+      const snap = await CfData.loadMonthlySnapshot(now.getMonth() + 1, now.getFullYear());
+      if (!snap || snap.total_income == null) { el.textContent = ''; return; }
+      const net = Number(snap.net_savings) || 0;
+      const sign = net >= 0 ? '+' : '−';
+      const color = net >= 0 ? 'var(--success)' : 'var(--danger)';
+      const mons = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      el.style.color = color;
+      el.textContent = sign + ' CHF ' + Math.abs(net).toLocaleString('fr-CH', { maximumFractionDigits: 0 }) + ' cash flow ' + mons[now.getMonth()];
+    } catch { el.textContent = ''; }
+  }
+
   await initFinance();
   renderAllNetWorth();
+  refreshCfSavings();
   renderSubs();
   renderWishlist();
   renderOrders();
@@ -3577,6 +3824,501 @@ await initUserMenu();
   safeRenderTicker();
   setInterval(safeRenderTicker, 1500);
   loadExchangeRates();
+
+  // ============================================================
+  // FINANCE TOP TABS
+  // ============================================================
+  const _shell = document.querySelector('.shell');
+  const _bottomTabs = document.getElementById('bottomTabs');
+
+  function switchFinTab(name) {
+    localStorage.setItem('finance_fin_tab', name);
+    document.querySelectorAll('.fin-tab').forEach(t => t.classList.toggle('active', t.dataset.fin === name));
+    document.querySelectorAll('[data-fin-panel]').forEach(p => {
+      if (p.dataset.finPanel === name) p.removeAttribute('hidden');
+      else p.setAttribute('hidden', '');
+    });
+    const onOverview = name === 'overview';
+    _bottomTabs.style.display = onOverview ? '' : 'none';
+    _shell.classList.toggle('no-bot-tabs', !onOverview);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (name === 'cashflow' && !_cfInited) { _cfInited = true; initCashFlow(); }
+    if (name === 'advisor'  && !_advInited) { _advInited = true; initAdvisor(); }
+  }
+  document.querySelectorAll('.fin-tab').forEach(btn => btn.addEventListener('click', () => switchFinTab(btn.dataset.fin)));
+  const _savedFinTab = localStorage.getItem('finance_fin_tab');
+  switchFinTab(_savedFinTab && ['overview','cashflow','advisor'].includes(_savedFinTab) ? _savedFinTab : 'overview');
+
+  // ============================================================
+  // HELPERS
+  // ============================================================
+  const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const CAT_ICONS = {
+    salary:'💰', scholarship:'🎓', freelance:'💻', dividends:'📈', other_income:'➕',
+    housing:'🏠', transport:'🚗', food:'🍽️', leisure:'🎮', education:'📚',
+    health:'❤️', subscriptions:'📋', other_expense:'📦'
+  };
+  const CAT_LABELS_FR = {
+    salary:'Salaire', scholarship:'Bourse', freelance:'Freelance', dividends:'Dividendes', other_income:'Autres revenus',
+    housing:'Logement', transport:'Transport', food:'Alimentation', leisure:'Loisirs',
+    education:'Éducation', health:'Santé', subscriptions:'Abonnements', other_expense:'Autres dépenses'
+  };
+  const INCOME_CATS  = ['salary','scholarship','freelance','dividends','other_income'];
+  const EXPENSE_CATS = ['housing','transport','food','leisure','education','health','subscriptions','other_expense'];
+
+  function cfFmt(n) {
+    const ccy = localStorage.getItem('nw_currency') ? JSON.parse(localStorage.getItem('nw_currency')) : 'CHF';
+    return (ccy || 'CHF') + ' ' + Number(n || 0).toLocaleString('fr-CH', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+  function esc2(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // ============================================================
+  // CASH FLOW
+  // ============================================================
+  let _cfInited = false;
+  const _cfNow = new Date();
+  let _cfMonth = _cfNow.getMonth() + 1;
+  let _cfYear  = _cfNow.getFullYear();
+  let _cfEntries = [];
+  let _cfSnapshot = null;
+  let _cfPrevSnapshot = null;
+
+  async function initCashFlow() {
+    document.getElementById('cfPrevMonth').addEventListener('click', () => { _cfMonth--; if (_cfMonth < 1) { _cfMonth = 12; _cfYear--; } loadCashFlow(); });
+    document.getElementById('cfNextMonth').addEventListener('click', () => { _cfMonth++; if (_cfMonth > 12) { _cfMonth = 1; _cfYear++; } loadCashFlow(); });
+    document.getElementById('cfAddIncomeBtn').addEventListener('click',  () => openCfModal('income'));
+    document.getElementById('cfAddExpenseBtn').addEventListener('click', () => openCfModal('expense'));
+    CfData.subscribeCashFlow(() => loadCashFlow());
+    await loadCashFlow();
+  }
+
+  async function loadCashFlow() {
+    document.getElementById('cfMonthLabel').textContent = MONTHS_FR[_cfMonth - 1] + ' ' + _cfYear;
+    _cfEntries = await CfData.loadEntries(_cfMonth, _cfYear);
+    const prevM = _cfMonth === 1 ? 12 : _cfMonth - 1;
+    const prevY = _cfMonth === 1 ? _cfYear - 1 : _cfYear;
+    [_cfSnapshot, _cfPrevSnapshot] = await Promise.all([
+      CfData.computeMonthlySnapshot(_cfMonth, _cfYear),
+      CfData.loadMonthlySnapshot(prevM, prevY),
+    ]);
+    await autoImportSubs();
+    renderCfAll();
+  }
+
+  async function autoImportSubs() {
+    const subs = storeGet('subscriptions') || [];
+    if (!subs.length) return;
+    let imported = false;
+    for (const sub of subs) {
+      if (!sub.amount) continue;
+      let monthly = Number(sub.amount);
+      if (sub.renewal === 'yearly') monthly = monthly / 12;
+      const exists = _cfEntries.find(e => e.direction === 'expense' && e.category === 'subscriptions' && e.name === sub.name && e.is_recurring);
+      if (!exists) {
+        await CfData.addEntry({ month: _cfMonth, year: _cfYear, direction: 'expense', category: 'subscriptions', name: sub.name, amount: Math.round(monthly * 100) / 100, is_recurring: true, notes: 'Auto-importé depuis abonnements' });
+        imported = true;
+      }
+    }
+    if (imported) {
+      _cfEntries = await CfData.loadEntries(_cfMonth, _cfYear);
+      document.getElementById('cfAutoImportNote').hidden = false;
+    }
+  }
+
+  function renderCfAll() {
+    renderCfIncome();
+    renderCfExpenses();
+    renderCfKpis();
+    renderCfDonut();
+    renderCfBar();
+    renderCfTopCats();
+  }
+
+  function renderCfIncome() {
+    const income = _cfEntries.filter(e => e.direction === 'income');
+    const total  = income.reduce((s, e) => s + Number(e.amount), 0);
+    document.getElementById('cfIncomeTotal').textContent = cfFmt(total);
+    const el = document.getElementById('cfIncomeList');
+    if (!income.length) { el.innerHTML = '<div style="color:var(--text-tertiary);font-size:12px;padding:8px 0">Aucun revenu ce mois</div>'; return; }
+    el.innerHTML = income.map(e => `
+      <div class="cf-entry-row">
+        <span class="cf-entry-icon">${CAT_ICONS[e.category] || '💰'}</span>
+        <span class="cf-entry-name" title="${esc2(e.notes||'')}">
+          ${esc2(e.name)}
+          <span style="font-size:10px;color:var(--text-tertiary);margin-left:6px">${CAT_LABELS_FR[e.category] || e.category}</span>
+        </span>
+        ${e.is_recurring ? '<span class="cf-entry-recur">récurrent</span>' : ''}
+        <span class="cf-entry-amt">${cfFmt(e.amount)}</span>
+        <div class="cf-entry-btns">
+          <button class="cf-entry-btn" data-id="${e.id}" data-dir="income" data-action="edit">✏️</button>
+          <button class="cf-entry-btn" data-id="${e.id}" data-action="del">🗑</button>
+        </div>
+      </div>`).join('');
+    el.querySelectorAll('[data-action="edit"]').forEach(b => b.addEventListener('click', () => { const e = _cfEntries.find(x => x.id === b.dataset.id); if (e) openCfModal(e.direction, e); }));
+    el.querySelectorAll('[data-action="del"]').forEach(b => b.addEventListener('click', () => deleteCfEntry(b.dataset.id)));
+  }
+
+  function renderCfExpenses() {
+    const expenses = _cfEntries.filter(e => e.direction === 'expense');
+    const total    = expenses.reduce((s, e) => s + Number(e.amount), 0);
+    document.getElementById('cfExpenseTotal').textContent = cfFmt(total);
+    const byCategory = {};
+    for (const e of expenses) {
+      if (!byCategory[e.category]) byCategory[e.category] = [];
+      byCategory[e.category].push(e);
+    }
+    const el = document.getElementById('cfExpenseList');
+    if (!expenses.length) { el.innerHTML = '<div style="color:var(--text-tertiary);font-size:12px;padding:8px 0">Aucune dépense ce mois</div>'; return; }
+    el.innerHTML = EXPENSE_CATS.filter(c => byCategory[c]).map(cat => {
+      const rows = byCategory[cat];
+      const catTotal = rows.reduce((s, e) => s + Number(e.amount), 0);
+      return `<div class="cf-cat-group open" data-cat="${cat}">
+        <div class="cf-cat-head">
+          <span class="cf-cat-icon">${CAT_ICONS[cat] || '📦'}</span>
+          <span class="cf-cat-name">${CAT_LABELS_FR[cat] || cat}</span>
+          <span class="cf-cat-total">${cfFmt(catTotal)}</span>
+          <span class="cf-cat-chevron">›</span>
+        </div>
+        <div class="cf-cat-entries">
+          ${rows.map(e => `
+          <div class="cf-entry-row">
+            <span class="cf-entry-name" title="${esc2(e.notes||'')}">${esc2(e.name)}${e.is_recurring ? ' <span style="font-size:9px;color:var(--text-tertiary)">(récurrent)</span>' : ''}</span>
+            <span class="cf-entry-amt">${cfFmt(e.amount)}</span>
+            <div class="cf-entry-btns">
+              <button class="cf-entry-btn" data-id="${e.id}" data-dir="expense" data-action="edit">✏️</button>
+              <button class="cf-entry-btn" data-id="${e.id}" data-action="del">🗑</button>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+    el.querySelectorAll('.cf-cat-head').forEach(h => h.addEventListener('click', () => h.closest('.cf-cat-group').classList.toggle('open')));
+    el.querySelectorAll('[data-action="edit"]').forEach(b => b.addEventListener('click', () => { const e = _cfEntries.find(x => x.id === b.dataset.id); if (e) openCfModal(e.direction, e); }));
+    el.querySelectorAll('[data-action="del"]').forEach(b => b.addEventListener('click', () => deleteCfEntry(b.dataset.id)));
+  }
+
+  function renderCfKpis() {
+    const s = _cfSnapshot || {};
+    const p = _cfPrevSnapshot;
+    const setKpi = (id, val, deltaId, deltaVal, fmtFn) => {
+      document.getElementById(id).textContent = fmtFn ? fmtFn(val) : val;
+      if (deltaId && p) {
+        const d = deltaVal;
+        const el = document.getElementById(deltaId);
+        el.textContent = (d >= 0 ? '▲ ' : '▼ ') + (fmtFn ? fmtFn(Math.abs(d)) : Math.abs(d).toFixed(1) + '%') + ' vs mois préc.';
+        el.className = 'cf-kpi-delta ' + (d >= 0 ? 'pos' : 'neg');
+      }
+    };
+    setKpi('cfKpiIncome',   Number(s.total_income   || 0), 'cfKpiIncomeDelta',   p ? Number(s.total_income)   - Number(p.total_income)   : null, cfFmt);
+    setKpi('cfKpiExpenses', Number(s.total_expenses || 0), 'cfKpiExpensesDelta', p ? Number(s.total_expenses) - Number(p.total_expenses) : null, cfFmt);
+    setKpi('cfKpiSavings',  Number(s.net_savings    || 0), 'cfKpiSavingsDelta',  p ? Number(s.net_savings)    - Number(p.net_savings)    : null, cfFmt);
+    const rate = Number(s.savings_rate || 0);
+    const rateEl = document.getElementById('cfKpiRate');
+    rateEl.textContent = Math.round(rate) + '%';
+    rateEl.style.color = rate >= 20 ? 'var(--success)' : rate >= 10 ? 'var(--warning)' : 'var(--danger)';
+    if (p) {
+      const rd = rate - Number(p.savings_rate || 0);
+      const rdEl = document.getElementById('cfKpiRateDelta');
+      rdEl.textContent = (rd >= 0 ? '▲ ' : '▼ ') + Math.abs(rd).toFixed(1) + '% vs mois préc.';
+      rdEl.className = 'cf-kpi-delta ' + (rd >= 0 ? 'pos' : 'neg');
+    }
+  }
+
+  function renderCfDonut() {
+    const expenses = _cfEntries.filter(e => e.direction === 'expense');
+    const breakdown = CfData.computeCategoryBreakdown(expenses);
+    const svg = document.getElementById('cfDonutSvg');
+    const legend = document.getElementById('cfDonutLegend');
+    const total = Object.values(breakdown).reduce((s, v) => s + v, 0);
+    if (!total) { svg.innerHTML = ''; legend.innerHTML = '<div style="color:var(--text-tertiary);font-size:11px">Aucune dépense</div>'; return; }
+    const PALETTE = ['#d4a853','#6BE3A4','#7DD3FC','#B794F4','#FF6B6B','#F2C063','#E07658','#80CBC4'];
+    const cats = Object.entries(breakdown).sort((a,b) => b[1]-a[1]);
+    let angle = -90; // start at top
+    const cx = 60, cy = 60, r = 46, rIn = 28;
+    let paths = '', legendHtml = '';
+    cats.forEach(([cat, val], i) => {
+      const sweep = (val / total) * 360;
+      const a1 = angle * Math.PI / 180;
+      const a2 = (angle + sweep) * Math.PI / 180;
+      const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+      const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+      const xi1 = cx + rIn * Math.cos(a1), yi1 = cy + rIn * Math.sin(a1);
+      const xi2 = cx + rIn * Math.cos(a2), yi2 = cy + rIn * Math.sin(a2);
+      const large = sweep > 180 ? 1 : 0;
+      const color = PALETTE[i % PALETTE.length];
+      paths += `<path d="M${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} L${xi2},${yi2} A${rIn},${rIn} 0 ${large} 0 ${xi1},${yi1} Z" fill="${color}" opacity="0.9"/>`;
+      legendHtml += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="width:10px;height:10px;border-radius:3px;background:${color};flex-shrink:0"></span><span style="font-size:10px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${CAT_LABELS_FR[cat]||cat}</span></div>`;
+      angle += sweep;
+    });
+    svg.innerHTML = paths;
+    legend.innerHTML = legendHtml;
+  }
+
+  async function renderCfBar() {
+    const history = await CfData.loadSnapshotHistory(6);
+    const svg = document.getElementById('cfBarSvg');
+    const W = 260, H = 120, PAD = 20, BAR_W = 22, GAP = 4;
+    const maxVal = Math.max(...history.map(s => Math.max(Number(s.total_income||0), Number(s.total_expenses||0))), 1);
+    const scaleY = (v) => H - PAD - (v / maxVal) * (H - PAD * 2);
+    const slotW = W / history.length;
+    let rects = '', lines = '';
+    history.forEach((s, i) => {
+      const x = i * slotW + slotW / 2;
+      const inc = Number(s.total_income || 0);
+      const exp = Number(s.total_expenses || 0);
+      const incH = inc / maxVal * (H - PAD * 2);
+      const expH = exp / maxVal * (H - PAD * 2);
+      rects += `<rect x="${x - BAR_W - GAP/2}" y="${scaleY(inc)}" width="${BAR_W}" height="${incH}" rx="3" fill="#6BE3A4" opacity="0.8"/>`;
+      rects += `<rect x="${x + GAP/2}" y="${scaleY(exp)}" width="${BAR_W}" height="${expH}" rx="3" fill="#FF6B6B" opacity="0.7"/>`;
+      const label = MONTHS_FR[s.month - 1].slice(0, 3);
+      rects += `<text x="${x}" y="${H - 4}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="inherit">${label}</text>`;
+    });
+    // Net savings line
+    const pts = history.map((s, i) => {
+      const x = i * slotW + slotW / 2;
+      const net = Number(s.net_savings || 0);
+      const y = scaleY(Math.max(net, 0));
+      return `${x},${y}`;
+    }).join(' ');
+    if (pts) lines = `<polyline points="${pts}" fill="none" stroke="${'#d4a853'}" stroke-width="2" stroke-dasharray="4 2" opacity="0.9"/>`;
+    svg.innerHTML = rects + lines;
+  }
+
+  function renderCfTopCats() {
+    const expenses = _cfEntries.filter(e => e.direction === 'expense');
+    const breakdown = CfData.computeCategoryBreakdown(expenses);
+    const top = CfData.computeTopCategories(breakdown, 5);
+    const el = document.getElementById('cfTopCats');
+    if (!top.length) { el.innerHTML = '<div style="color:var(--text-tertiary);font-size:11px">Aucune dépense ce mois</div>'; return; }
+    const max = top[0].total;
+    el.innerHTML = top.map(t => `
+      <div class="cf-topcat-row">
+        <span class="cf-topcat-name">${CAT_ICONS[t.category]||'📦'} ${CAT_LABELS_FR[t.category]||t.category}</span>
+        <div class="cf-topcat-bar-wrap"><div class="cf-topcat-bar" style="width:${Math.round(t.total/max*100)}%"></div></div>
+        <span class="cf-topcat-amt">${cfFmt(t.total)}</span>
+      </div>`).join('');
+  }
+
+  // ── Entry modal ────────────────────────────────────────────────────────────
+  let _cfEditId = null;
+  function openCfModal(direction, entry = null) {
+    _cfEditId = entry ? entry.id : null;
+    const isEdit = !!entry;
+    const cats = direction === 'income' ? INCOME_CATS : EXPENSE_CATS;
+    const ov = document.createElement('div');
+    ov.className = 'cf-modal-overlay';
+    ov.innerHTML = `
+      <div class="cf-modal">
+        <div class="cf-modal-title">${isEdit ? 'Modifier' : 'Ajouter'} ${direction === 'income' ? 'un revenu' : 'une dépense'}</div>
+        <div class="cf-modal-field">
+          <div class="cf-modal-label">Nom</div>
+          <input class="cf-modal-input" id="cfMName" type="text" placeholder="ex. Salaire principal" value="${esc2(entry?.name||'')}">
+        </div>
+        <div class="cf-modal-row">
+          <div class="cf-modal-field">
+            <div class="cf-modal-label">Montant</div>
+            <input class="cf-modal-input" id="cfMAmount" type="number" step="0.01" placeholder="0.00" value="${entry?.amount||''}">
+          </div>
+          <div class="cf-modal-field">
+            <div class="cf-modal-label">Catégorie</div>
+            <select class="cf-modal-input" id="cfMCat">
+              ${cats.map(c => `<option value="${c}" ${entry?.category===c?'selected':''}>${CAT_ICONS[c]} ${CAT_LABELS_FR[c]}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="cf-modal-field">
+          <label class="cf-recur-toggle">
+            <input type="checkbox" id="cfMRecur" ${entry?.is_recurring?'checked':''}>
+            <span style="font-size:13px;color:var(--text-secondary)">Récurrent (se répète chaque mois)</span>
+          </label>
+        </div>
+        <div class="cf-modal-field">
+          <div class="cf-modal-label">Notes (optionnel)</div>
+          <input class="cf-modal-input" id="cfMNotes" type="text" placeholder="Note optionnelle…" value="${esc2(entry?.notes||'')}">
+        </div>
+        <div class="cf-modal-actions">
+          ${isEdit ? '<button class="cf-modal-delete" id="cfMDel">Supprimer</button>' : ''}
+          <button class="cf-modal-cancel" id="cfMCancel">Annuler</button>
+          <button class="cf-modal-save" id="cfMSave">Enregistrer</button>
+        </div>
+      </div>`;
+    document.body.appendChild(ov);
+    document.getElementById('cfMCancel').addEventListener('click', () => ov.remove());
+    ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+    if (isEdit) {
+      document.getElementById('cfMDel').addEventListener('click', async () => { await deleteCfEntry(entry.id); ov.remove(); });
+    }
+    document.getElementById('cfMSave').addEventListener('click', async () => {
+      const name   = document.getElementById('cfMName').value.trim();
+      const amount = parseFloat(document.getElementById('cfMAmount').value);
+      const category = document.getElementById('cfMCat').value;
+      const is_recurring = document.getElementById('cfMRecur').checked;
+      const notes  = document.getElementById('cfMNotes').value.trim();
+      if (!name || isNaN(amount) || amount <= 0) return;
+      const fields = { name, amount, category, direction, is_recurring, notes: notes || null, month: _cfMonth, year: _cfYear };
+      if (isEdit) await CfData.updateEntry(entry.id, fields);
+      else        await CfData.addEntry(fields);
+      ov.remove();
+      await loadCashFlow();
+    });
+    setTimeout(() => document.getElementById('cfMName').focus(), 50);
+  }
+
+  async function deleteCfEntry(id) {
+    await CfData.deleteEntry(id);
+    await loadCashFlow();
+  }
+
+  // ============================================================
+  // FINANCIAL ADVISOR
+  // ============================================================
+  let _advInited = false;
+  let _advMonth = _cfNow.getMonth() + 1;
+  let _advYear  = _cfNow.getFullYear();
+
+  function initAdvisor() {
+    document.getElementById('advAnalyzeBtn').addEventListener('click', runAnalysis);
+    document.getElementById('advHistorySummary').addEventListener('click', toggleAdvHistory);
+    loadStoredAdvice();
+  }
+
+  async function loadStoredAdvice() {
+    const stored = await Advisor.loadAdvice(_advMonth, _advYear);
+    if (stored) {
+      renderAdvScore(stored.health_score, stored.created_at);
+      renderAdvInsights(stored.insights || []);
+      renderAdvActions(stored.actions || []);
+      document.getElementById('advEmpty').hidden = true;
+    }
+    const history = await Advisor.loadAdviceHistory();
+    renderAdvHistory(history);
+  }
+
+  async function runAnalysis() {
+    const btn = document.getElementById('advAnalyzeBtn');
+    btn.disabled = true; btn.textContent = 'Analyse en cours…';
+    try {
+      const [entries, snapshot, subs] = await Promise.all([
+        CfData.loadEntries(_advMonth, _advYear),
+        CfData.computeMonthlySnapshot(_advMonth, _advYear),
+        Promise.resolve(storeGet('subscriptions') || []),
+      ]);
+      const prevM = _advMonth === 1 ? 12 : _advMonth - 1;
+      const prevY = _advMonth === 1 ? _advYear - 1 : _advYear;
+      const prevSnapshot = await CfData.loadMonthlySnapshot(prevM, prevY);
+      const analysis = Advisor.analyzeMonth(entries, snapshot, prevSnapshot, subs);
+      await Advisor.saveAdvice(_advMonth, _advYear, analysis);
+      renderAdvScore(analysis.healthScore, new Date().toISOString());
+      renderAdvInsights(analysis.insights);
+      renderAdvActions(analysis.actions);
+      document.getElementById('advEmpty').hidden = true;
+      const history = await Advisor.loadAdviceHistory();
+      renderAdvHistory(history);
+    } catch (e) { console.error('Advisor error:', e); }
+    btn.disabled = false; btn.textContent = 'Analyser ce mois';
+  }
+
+  function renderAdvScore(score, dateStr) {
+    const scoreNum = document.getElementById('advScoreNum');
+    const scoreLabel = document.getElementById('advScoreLabel');
+    const scoreDate  = document.getElementById('advScoreDate');
+    scoreNum.textContent = score ?? '—';
+    let label = '—', color = 'var(--text-tertiary)';
+    if (score >= 80)      { label = 'Excellent';     color = 'var(--success)'; }
+    else if (score >= 60) { label = 'Bon';           color = 'var(--accent-gold)'; }
+    else if (score >= 40) { label = 'À améliorer';   color = 'var(--warning)'; }
+    else if (score != null) { label = 'Attention';   color = 'var(--danger)'; }
+    scoreLabel.textContent = label;
+    scoreLabel.style.color = color;
+    scoreNum.style.color   = color;
+    if (dateStr) scoreDate.textContent = 'Analysé le ' + new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    renderAdvGauge(score, color);
+  }
+
+  function renderAdvGauge(score, color) {
+    const track = document.getElementById('advGaugeTrack');
+    const fill  = document.getElementById('advGaugeFill');
+    // Semi-circle: cx=80, cy=90, r=65, from 180° to 0°
+    const cx = 80, cy = 88, r = 65;
+    const arcPath = (a1Deg, a2Deg) => {
+      const a1 = a1Deg * Math.PI / 180, a2 = a2Deg * Math.PI / 180;
+      const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+      const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+      return `M${x1},${y1} A${r},${r} 0 0 1 ${x2},${y2}`;
+    };
+    track.setAttribute('d', arcPath(180, 0));
+    track.setAttribute('stroke', 'rgba(255,255,255,0.08)');
+    if (score != null) {
+      const endAngle = 180 - (score / 100) * 180;
+      fill.setAttribute('d', arcPath(180, endAngle));
+      fill.setAttribute('stroke', color);
+    } else {
+      fill.setAttribute('d', '');
+    }
+  }
+
+  const INSIGHT_ICONS = { alert: '🚨', warning: '⚠️', positive: '✅', tip: '💡' };
+  function renderAdvInsights(insights) {
+    const wrap = document.getElementById('advInsightsWrap');
+    const list = document.getElementById('advInsightsList');
+    if (!insights.length) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+    list.innerHTML = insights.map(ins => {
+      const delta = ins.delta != null ? `<span class="adv-insight-delta ${ins.delta > 0 ? (ins.type==='positive'?'pos':'neg') : 'pos'}">${ins.delta > 0 ? '▲' : '▼'} ${Math.abs(ins.delta)}${Math.abs(ins.delta) > 10 ? '%' : ''}</span>` : '';
+      return `<div class="adv-insight-card">
+        <div class="adv-insight-icon">${INSIGHT_ICONS[ins.type] || '•'}</div>
+        <div class="adv-insight-body">
+          <div class="adv-insight-meta">
+            <span class="adv-insight-cat">${CAT_LABELS_FR[ins.category] || ins.category}</span>
+            ${delta}
+          </div>
+          <div class="adv-insight-msg">${esc2(ins.message)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderAdvActions(actions) {
+    const wrap = document.getElementById('advActionsWrap');
+    const list = document.getElementById('advActionsList');
+    const totalEl = document.getElementById('advSavingsTotal');
+    if (!actions.length) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+    list.innerHTML = actions.map(a => `
+      <div class="adv-action-row">
+        <span class="adv-action-prio ${a.priority}">${a.priority === 'high' ? 'Haute' : a.priority === 'medium' ? 'Moyenne' : 'Basse'}</span>
+        <span class="adv-action-msg">${esc2(a.message)}</span>
+        ${a.potential_savings ? `<span class="adv-action-savings">−${cfFmt(a.potential_savings)}/mo</span>` : ''}
+      </div>`).join('');
+    const total = actions.reduce((s, a) => s + (a.potential_savings || 0), 0);
+    if (total > 0) {
+      totalEl.textContent = `Économies potentielles : ${cfFmt(total)}/mois`;
+      totalEl.hidden = false;
+    }
+  }
+
+  function renderAdvHistory(history) {
+    const list = document.getElementById('advHistoryList');
+    if (!history.length) { list.innerHTML = '<div class="adv-empty">Aucune analyse précédente</div>'; list.hidden = false; return; }
+    list.innerHTML = history.map(h => {
+      let color = 'var(--text-tertiary)';
+      if (h.health_score >= 80) color = 'var(--success)';
+      else if (h.health_score >= 60) color = 'var(--accent-gold)';
+      else if (h.health_score >= 40) color = 'var(--warning)';
+      else color = 'var(--danger)';
+      return `<div class="adv-history-row">
+        <span class="adv-history-month">${MONTHS_FR[h.month-1]} ${h.year}</span>
+        <span class="adv-history-score" style="color:${color}">${h.health_score ?? '—'}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleAdvHistory() {
+    const list = document.getElementById('advHistoryList');
+    const summary = document.getElementById('advHistorySummary');
+    list.hidden = !list.hidden;
+    summary.textContent = list.hidden ? '▸ Voir les analyses précédentes' : '▾ Masquer les analyses précédentes';
+  }
 
 </script>
 <script>if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js');</script>

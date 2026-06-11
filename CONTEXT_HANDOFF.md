@@ -1,5 +1,44 @@
 # CONTEXT_HANDOFF.md — Row Dashboard
 
+## Improvements Phase — COMPLETE ✓ (2026-06-11)
+
+### What was built
+
+| Step | Deliverable | Status |
+|------|---|---|
+| 1 | SQL migration (`20260611_improvements_finance_goals_library.sql`): 5 new tables + RLS | ✓ Done |
+| 2 | `js/cashflow-data.js`, `js/financial-advisor.js`, `js/library-data.js` | ✓ Done |
+| 3 | `index.html`: Goals restructured into ROUTINE / MONTHLY / TIME BLOCKS tabs | ✓ Done |
+| 4 | `finance.html`: CASH FLOW sub-tab (entries, KPIs, charts, sub auto-import) | ✓ Done |
+| 5 | `finance.html`: ADVISOR sub-tab (health score gauge, rule engine, French messages) | ✓ Done |
+| 6 | `library.html`: New page (queue, reading, completed, book CRUD, notes, stats) | ✓ Done |
+| 7 | Cross-section integrations + docs | ✓ Done |
+
+### New tables (all user-scoped, RLS owner-only)
+
+| Table | Purpose |
+|---|---|
+| `cash_flow_entries` | Monthly income / expense line items |
+| `cash_flow_monthly_snapshots` | Computed totals + breakdown per month |
+| `financial_advice_logs` | Cached advisor output per month |
+| `books` | Book library (queue → reading → completed) |
+| `book_notes` | Typed notes per book (highlight, summary, action, question, reflection) |
+
+`goals` table: added `linked_book_id uuid references books(id)`.
+
+### Architecture decisions
+
+- **Finance tab bar**: top-level `fin-tab` / `data-fin-panel` system separate from bottom `bot-tab` / `data-section`. Bottom tabs hidden when CASH FLOW or ADVISOR is active.
+- **Lazy init**: `_cfInited` and `_advInited` flags — cashflow/advisor JS only runs on first tab click.
+- **Subscription auto-import**: `autoImportSubs()` in cashflow checks for existing `is_recurring` entries before inserting.
+- **Advisor messages**: all French, rule-based (no AI). Health score = `savingsScore×0.4 + stabilityScore×0.2 + subScore×0.2 + progressScore×0.2`.
+- **Library ↔ Goals**: `LibData.loadBooksForObjective(id, which)` called for every objective in `loadObjectives()`; books shown as gold badge on objective cards.
+- **Cash Flow ↔ Overview**: `refreshCfSavings()` loads current month snapshot and shows net savings (green/red) below net worth total.
+- **Library pagination**: `loadBooks()` uses `.range(offset, offset+limit-1)` — default limit 50.
+- **Books ↔ Objectives**: books have `linked_objective_id` (monthly) and `linked_yearly_id` (yearly) columns.
+
+---
+
 ## Phase 3A — COMPLETE ✓ (both 3A-1 and 3A-2)
 
 ### Phase 3A-2 — Stretching tab

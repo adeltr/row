@@ -999,6 +999,7 @@ body.tb-no-scroll { overflow: hidden; }
 .obj-prog-bar-fill { height: 100%; background: var(--accent-gold); border-radius: 2px; box-shadow: 0 0 6px var(--accent-gold-glow); transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
 .obj-prog-pct { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--text-secondary); min-width: 32px; text-align: right; }
 .obj-todo-count { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); margin-top: 5px; }
+.obj-book-badge { font-family: var(--font-mono); font-size: 10px; color: var(--accent-gold); margin-top: 4px; opacity: 0.85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .obj-expand-btn {
   border: 0; background: transparent; color: var(--text-tertiary); font-size: 13px;
   cursor: pointer; padding: 4px; flex-shrink: 0;
@@ -1287,7 +1288,17 @@ body.tb-no-scroll { overflow: hidden; }
   .ob-row2 { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 600px) {
+  /* ===== Goals sub-tab bar ===== */
+  .goals-tabs { display: flex; gap: 4px; background: rgba(0,0,0,0.30); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 22px; }
+  [data-theme="light"] .goals-tabs { background: rgba(0,0,0,0.06); }
+  .goals-tab { flex: 1; background: transparent; border: none; border-radius: 9px; color: var(--text-tertiary); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 10px; cursor: pointer; transition: background 0.15s, color 0.15s; -webkit-tap-highlight-color: transparent; }
+  .goals-tab:hover { color: var(--text-secondary); }
+  .goals-tab.active { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+  [data-theme="light"] .goals-tab.active { background: rgba(0,0,0,0.06); }
+  [data-goals-panel][hidden] { display: none !important; }
+
   /* Habit tracker — ensure touch targets */
+  .goals-tab { min-height: 44px; padding: 10px 8px; }
   .rt-cell-date { min-height: 44px; padding: 6px 4px; font-size: 9px; }
   .rt-cell { min-height: 44px; min-width: 36px; }
   .rt-cell-pct { min-height: 44px; font-size: 10px; min-width: 44px; }
@@ -1349,87 +1360,108 @@ body.tb-no-scroll { overflow: hidden; }
     </div>
   </div>
 
-  <div class="section">
-    <div class="section-title">To Do List</div>
+  <!-- Goals sub-tab bar -->
+  <div class="goals-tabs" role="tablist">
+    <button class="goals-tab active" data-tab="routine"    role="tab">ROUTINE</button>
+    <button class="goals-tab"        data-tab="monthly"    role="tab">MONTHLY</button>
+    <button class="goals-tab"        data-tab="timeblocks" role="tab">TIME BLOCKS</button>
+  </div>
 
-    <!-- TODAY -->
-    <div class="gm-card" id="gmCardToday">
-      <div class="gm-header">
-        <div class="gm-header-left">
-          <div class="gm-eyebrow" id="todayLabel">Today —</div>
-          <div class="gm-progress-row">
-            <span class="gm-progress-num"   id="gmProgressNum">0</span>
-            <span class="gm-progress-total" id="gmProgressTotal">/ 0</span>
-            <span class="gm-progress-label" id="gmProgressLabel">no goals yet</span>
+  <!-- ══ ROUTINE panel ══ -->
+  <div data-goals-panel="routine">
+
+    <div class="section">
+      <div class="section-title">To Do List</div>
+
+      <!-- TODAY -->
+      <div class="gm-card" id="gmCardToday">
+        <div class="gm-header">
+          <div class="gm-header-left">
+            <div class="gm-eyebrow" id="todayLabel">Today —</div>
+            <div class="gm-progress-row">
+              <span class="gm-progress-num"   id="gmProgressNum">0</span>
+              <span class="gm-progress-total" id="gmProgressTotal">/ 0</span>
+              <span class="gm-progress-label" id="gmProgressLabel">no goals yet</span>
+            </div>
+          </div>
+          <div class="gm-streak" id="gmStreak">
+            <span class="gm-streak-icon">⚡</span>
+            <span class="gm-streak-num" id="gmStreakNum">0</span>
+            <span>day streak</span>
           </div>
         </div>
-        <div class="gm-streak" id="gmStreak">
-          <span class="gm-streak-icon">⚡</span>
-          <span class="gm-streak-num" id="gmStreakNum">0</span>
-          <span>day streak</span>
-        </div>
-      </div>
-      <div class="gm-bar" id="gmBar"></div>
-      <ul id="goalList" class="goal-list gm-list"></ul>
-      <div id="emptyState" class="empty-state">No goals for today yet — add one below.</div>
-      <button type="button" id="gmPushBtn" class="gm-push-btn" style="display:none;">Push remaining to tomorrow</button>
-      <div class="goal-input-wrap gm-input-wrap">
-        <input id="goalInput" class="gm-input" type="text" placeholder="Add a goal for today…" autocomplete="off">
-        <button type="button" id="goalAddBtn"    class="gm-add">+ Add</button>
-        <button type="button" id="goalPolishBtn" class="gm-polish">✨ Polish</button>
-        <div class="gm-status" id="polishStatus"></div>
-        <button type="button" class="gm-link-toggle" id="gmLinkToggle">▸ Link to objective</button>
-        <div class="gm-link-panel" id="gmLinkPanel">
-          <div class="gm-link-col">
-            <span class="gm-link-label">Monthly</span>
-            <select class="gm-link-sel" id="gmLinkMonthly"><option value="">— none —</option></select>
-          </div>
-          <div class="gm-link-col">
-            <span class="gm-link-label">Yearly</span>
-            <select class="gm-link-sel" id="gmLinkYearly"><option value="">— none —</option></select>
+        <div class="gm-bar" id="gmBar"></div>
+        <ul id="goalList" class="goal-list gm-list"></ul>
+        <div id="emptyState" class="empty-state">No goals for today yet — add one below.</div>
+        <button type="button" id="gmPushBtn" class="gm-push-btn" style="display:none;">Push remaining to tomorrow</button>
+        <div class="goal-input-wrap gm-input-wrap">
+          <input id="goalInput" class="gm-input" type="text" placeholder="Add a goal for today…" autocomplete="off">
+          <button type="button" id="goalAddBtn"    class="gm-add">+ Add</button>
+          <button type="button" id="goalPolishBtn" class="gm-polish">✨ Polish</button>
+          <div class="gm-status" id="polishStatus"></div>
+          <button type="button" class="gm-link-toggle" id="gmLinkToggle">▸ Link to objective</button>
+          <div class="gm-link-panel" id="gmLinkPanel">
+            <div class="gm-link-col">
+              <span class="gm-link-label">Monthly</span>
+              <select class="gm-link-sel" id="gmLinkMonthly"><option value="">— none —</option></select>
+            </div>
+            <div class="gm-link-col">
+              <span class="gm-link-label">Yearly</span>
+              <select class="gm-link-sel" id="gmLinkYearly"><option value="">— none —</option></select>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- OBJECTIVES -->
-  <div class="section">
-    <div class="section-title">Objectives</div>
-    <div class="gm-card">
-      <div class="obj-tabs">
-        <button type="button" class="obj-tab active" id="objTabMonth">This Month</button>
-        <button type="button" class="obj-tab"        id="objTabYear">This Year</button>
-      </div>
-      <div class="obj-tab-panel active" id="objPanelMonth">
-        <button type="button" class="obj-new-btn" id="objNewMonthBtn">+ New Monthly Objective</button>
-        <div id="objMonthList"></div>
-      </div>
-      <div class="obj-tab-panel" id="objPanelYear">
-        <button type="button" class="obj-new-btn" id="objNewYearBtn">+ New Yearly Objective</button>
-        <div id="objYearList"></div>
+    <!-- ROUTINE TRACKER -->
+    <div class="section">
+      <div class="section-title">Routine Tracker</div>
+      <div class="gm-card">
+        <div id="rtChallengeWrap"></div>
+        <div class="rt-toolbar">
+          <button type="button" class="rt-add-habit-btn" id="rtAddHabitBtn">+ Add Habit</button>
+          <button type="button" class="rt-start-btn"     id="rtStartChallengeBtn">🏆 Start Challenge</button>
+        </div>
+        <div class="rt-grid-wrap">
+          <div class="rt-grid" id="rtGrid"></div>
+        </div>
+        <div class="rt-pager" id="rtPager">
+          <button type="button" class="rt-load-more" id="rtLoadMore">Load more ▾</button>
+          <button type="button" class="rt-load-less" id="rtLoadLess" style="display:none">↑ Last 30 days</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ROUTINE TRACKER -->
-  <div class="section">
-    <div class="section-title">Routine Tracker</div>
-    <div class="gm-card">
-      <div id="rtChallengeWrap"></div>
-      <div class="rt-toolbar">
-        <button type="button" class="rt-add-habit-btn" id="rtAddHabitBtn">+ Add Habit</button>
-        <button type="button" class="rt-start-btn"     id="rtStartChallengeBtn">🏆 Start Challenge</button>
-      </div>
-      <div class="rt-grid-wrap">
-        <div class="rt-grid" id="rtGrid"></div>
-      </div>
-      <div class="rt-pager" id="rtPager">
-        <button type="button" class="rt-load-more" id="rtLoadMore">Load more ▾</button>
-        <button type="button" class="rt-load-less" id="rtLoadLess" style="display:none">↑ Last 30 days</button>
+  </div><!-- /routine panel -->
+
+  <!-- ══ MONTHLY panel ══ -->
+  <div data-goals-panel="monthly" hidden>
+
+    <div class="section">
+      <div class="section-title">Objectives</div>
+      <div class="gm-card">
+        <div class="obj-tabs">
+          <button type="button" class="obj-tab active" id="objTabMonth">This Month</button>
+          <button type="button" class="obj-tab"        id="objTabYear">This Year</button>
+        </div>
+        <div class="obj-tab-panel active" id="objPanelMonth">
+          <button type="button" class="obj-new-btn" id="objNewMonthBtn">+ New Monthly Objective</button>
+          <div id="objMonthList"></div>
+        </div>
+        <div class="obj-tab-panel" id="objPanelYear">
+          <button type="button" class="obj-new-btn" id="objNewYearBtn">+ New Yearly Objective</button>
+          <div id="objYearList"></div>
+        </div>
       </div>
     </div>
-  </div>
+
+  </div><!-- /monthly panel -->
+
+  <!-- ══ TIME BLOCKS panel ══ -->
+  <div data-goals-panel="timeblocks" hidden>
+    <div id="tbContainer"></div>
+  </div><!-- /timeblocks panel -->
 
 </div>
 
@@ -1439,11 +1471,24 @@ import { initUserMenu } from './js/user-menu.js';
 import * as GoalsData from './js/goals-data.js';
 import * as ObjData from './js/objectives-data.js';
 import * as HabitsData from './js/habits-data.js';
+import * as LibData from './js/library-data.js';
 import { supabase } from './js/supabase.js';
 
 // ── Boot ──────────────────────────────────────────────────────
 const user = await requireAuth();
 await initUserMenu();
+
+// ── Goals sub-tab system ──────────────────────────────────────
+function switchGoalsTab(name) {
+  localStorage.setItem('goals:active_tab', name);
+  document.querySelectorAll('.goals-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('[data-goals-panel]').forEach(p => {
+    if (p.dataset.goalsPanel === name) p.removeAttribute('hidden');
+    else p.setAttribute('hidden', '');
+  });
+}
+document.querySelectorAll('.goals-tab').forEach(btn => btn.addEventListener('click', () => switchGoalsTab(btn.dataset.tab)));
+switchGoalsTab(localStorage.getItem('goals:active_tab') || 'routine');
 
 // ── Constants ─────────────────────────────────────────────────
 const ANTHROPIC_API_KEY = '';
@@ -1993,6 +2038,8 @@ const ANTHROPIC_API_KEY = '';
   let _yearlyObjs  = [];
   let _monthlyLinked = {}; // { id: [goal,...] }
   let _yearlyLinked  = {}; // { id: [goal,...] }
+  let _monthlyBooks  = {}; // { id: [book,...] }
+  let _yearlyBooks   = {}; // { id: [book,...] }
 
   async function loadObjectives() {
     [_monthlyObjs, _yearlyObjs] = await Promise.all([
@@ -2003,9 +2050,13 @@ const ANTHROPIC_API_KEY = '';
     const autoYearly  = _yearlyObjs.filter(o => o.progress_mode === 'auto');
     _monthlyLinked = {};
     _yearlyLinked  = {};
+    _monthlyBooks  = {};
+    _yearlyBooks   = {};
     await Promise.all([
       ...autoMonthly.map(async o => { _monthlyLinked[o.id] = await ObjData.loadGoalsForMonthlyObjective(o.id); }),
       ...autoYearly.map( async o => { _yearlyLinked[o.id]  = await ObjData.loadGoalsForYearlyObjective(o.id);  }),
+      ..._monthlyObjs.map(async o => { try { _monthlyBooks[o.id] = await LibData.loadBooksForObjective(o.id, 'month'); } catch { _monthlyBooks[o.id] = []; } }),
+      ..._yearlyObjs.map( async o => { try { _yearlyBooks[o.id]  = await LibData.loadBooksForObjective(o.id, 'year');  } catch { _yearlyBooks[o.id]  = []; } }),
     ]);
     populateObjectiveSelects();
     renderObjectives();
@@ -2047,6 +2098,7 @@ const ANTHROPIC_API_KEY = '';
 
   function buildObjCard(obj, which) {
     const linked = which === 'month' ? (_monthlyLinked[obj.id] || []) : (_yearlyLinked[obj.id] || []);
+    const books  = (which === 'month' ? _monthlyBooks : _yearlyBooks)[obj.id] || [];
     const pct    = computeObjProgress(obj, linked);
     const isDone = obj.status === 'Completed';
 
@@ -2062,7 +2114,8 @@ const ANTHROPIC_API_KEY = '';
       `<div class="obj-title">${esc(obj.title)}${isDone ? '<span class="obj-done-badge">✓</span>' : ''}</div>` +
       `<div class="obj-meta">${obj.category ? `<span>${esc(obj.category)}</span>` : ''}<span>${obj.status}</span>${obj.target_date ? `<span>Due ${formatDateShort(obj.target_date)}</span>` : ''}</div>` +
       `<div class="obj-prog-row"><div class="obj-prog-bar-wrap"><div class="obj-prog-bar-fill" style="width:${pct}%"></div></div><div class="obj-prog-pct">${pct}%</div></div>` +
-      (linked.length ? `<div class="obj-todo-count">${linked.filter(g=>g.done).length} / ${linked.length} todos completed</div>` : '');
+      (linked.length ? `<div class="obj-todo-count">${linked.filter(g=>g.done).length} / ${linked.length} todos completed</div>` : '') +
+      (books.length ? `<div class="obj-book-badge">📚 ${books.length} book${books.length !== 1 ? 's' : ''} — ${books.slice(0,3).map(b => esc(b.title)).join(', ')}${books.length > 3 ? '…' : ''}</div>` : '');
 
     const expandBtn = document.createElement('button');
     expandBtn.type = 'button';

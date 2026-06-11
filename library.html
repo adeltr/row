@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>All In | Library</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script>(function(){document.documentElement.setAttribute('data-theme',localStorage.getItem('theme:preference')||'dark');})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="topbar.js" defer></script>
+<style>
+:root, [data-theme="dark"] {
+  --bg: #050506;
+  --bg-card: rgba(255,255,255,0.04);
+  --bg-secondary: rgba(255,255,255,0.035);
+  --bg-input: rgba(0,0,0,0.28);
+  --bg-modal: #131316;
+  --border: rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.12);
+  --border-soft: rgba(255,255,255,0.04);
+  --overlay-hover: rgba(255,255,255,0.06);
+  --overlay-active: rgba(255,255,255,0.12);
+  --text-primary: #FAFAFA;
+  --text-secondary: #B8B6B0;
+  --text-tertiary: #76746E;
+  --success: #6BE3A4;
+  --warning: #F2C063;
+  --danger: #FF6B6B;
+  --accent-gold: #d4a853;
+  --accent-gold-glow: rgba(212,168,83,0.35);
+  --card-shadow: 0 12px 40px rgba(0,0,0,0.45);
+  --font: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+[data-theme="light"] {
+  --bg: #f5f5f5;
+  --bg-card: #ffffff;
+  --bg-secondary: #efefef;
+  --bg-input: rgba(0,0,0,0.04);
+  --bg-modal: #ffffff;
+  --border: rgba(0,0,0,0.10);
+  --border-strong: rgba(0,0,0,0.18);
+  --border-soft: rgba(0,0,0,0.05);
+  --overlay-hover: rgba(0,0,0,0.05);
+  --overlay-active: rgba(0,0,0,0.08);
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --text-tertiary: #888888;
+  --success: #00a860;
+  --warning: #c48a00;
+  --danger: #cc3333;
+  --accent-gold: #b8943f;
+  --accent-gold-glow: rgba(184,148,63,0.35);
+  --card-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text-secondary); font-family: var(--font); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body { min-height: 100vh; overflow-x: hidden; padding: 0 0 60px; }
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background: radial-gradient(60% 50% at 82% 14%, rgba(212,168,83,0.08) 0%, transparent 60%), radial-gradient(50% 40% at 18% 90%, rgba(180,180,200,0.06) 0%, transparent 60%);
+  filter: blur(40px); pointer-events: none; z-index: 0;
+}
+
+.page { max-width: 960px; margin: 0 auto; padding: 22px 20px 40px; }
+
+/* ── Section title ── */
+.section-title {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-tertiary); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-title::before { content: ''; width: 18px; height: 1px; background: var(--text-tertiary); opacity: 0.6; }
+.section-title::after  { content: ''; flex: 1; height: 1px; background: var(--text-tertiary); opacity: 0.25; }
+
+/* ── Library tab bar ── */
+.lib-tabs { display: flex; gap: 4px; background: rgba(0,0,0,0.30); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 22px; }
+[data-theme="light"] .lib-tabs { background: rgba(0,0,0,0.06); }
+.lib-tab { flex: 1; background: transparent; border: none; border-radius: 9px; color: var(--text-tertiary); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 10px; cursor: pointer; transition: background 0.15s, color 0.15s; -webkit-tap-highlight-color: transparent; }
+.lib-tab:hover { color: var(--text-secondary); }
+.lib-tab.active { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+[data-theme="light"] .lib-tab.active { background: rgba(0,0,0,0.06); }
+[data-lib-panel][hidden] { display: none !important; }
+
+/* ── Toolbar ── */
+.lib-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.lib-add-btn { background: var(--accent-gold); border: none; border-radius: 10px; color: #000; font-size: 13px; font-weight: 700; padding: 9px 18px; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; }
+.lib-add-btn:hover { opacity: 0.88; }
+.lib-filter-select { background: var(--bg-card); border: 1px solid var(--border-strong); border-radius: 9px; color: var(--text-secondary); font-family: var(--font); font-size: 12px; padding: 7px 12px; cursor: pointer; }
+.lib-search { flex: 1; min-width: 140px; background: var(--bg-card); border: 1px solid var(--border-strong); border-radius: 9px; color: var(--text-primary); font-family: var(--font); font-size: 13px; padding: 8px 14px; outline: none; }
+.lib-search:focus { border-color: var(--accent-gold); }
+.lib-search::placeholder { color: var(--text-tertiary); }
+
+/* ── Book cards (Queue) ── */
+.lib-book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.lib-book-card { background: var(--bg-card); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: background 0.15s; }
+.lib-book-card:hover { background: var(--overlay-hover); }
+.lib-book-top { display: flex; gap: 12px; align-items: flex-start; }
+.lib-book-cover { width: 44px; height: 60px; border-radius: 6px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; border: 1px solid var(--border); }
+.lib-book-info { flex: 1; min-width: 0; }
+.lib-book-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-book-author { font-size: 12px; color: var(--text-tertiary); margin-bottom: 6px; }
+.lib-book-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+.lib-badge { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--border-strong); border-radius: 4px; padding: 2px 7px; color: var(--text-tertiary); }
+.lib-badge.gold { border-color: var(--accent-gold); color: var(--accent-gold); }
+.lib-badge.green { border-color: var(--success); color: var(--success); }
+.lib-book-meta { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--text-tertiary); flex-wrap: wrap; }
+.lib-book-priority { display: flex; gap: 2px; }
+.lib-star { font-size: 11px; }
+.lib-book-actions { display: flex; gap: 6px; margin-top: 2px; }
+.lib-action-btn { flex: 1; background: var(--overlay-hover); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text-secondary); font-size: 11px; font-weight: 600; padding: 7px 10px; cursor: pointer; transition: background 0.12s, color 0.12s; text-align: center; }
+.lib-action-btn:hover { background: var(--overlay-active); color: var(--text-primary); }
+.lib-action-btn.primary { background: var(--accent-gold); border-color: var(--accent-gold); color: #000; }
+.lib-action-btn.primary:hover { opacity: 0.88; }
+.lib-action-btn.danger { border-color: var(--danger); color: var(--danger); }
+
+/* ── Currently reading cards ── */
+.lib-reading-card { background: var(--bg-card); border-radius: 14px; padding: 18px; margin-bottom: 12px; }
+.lib-reading-top { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
+.lib-reading-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
+.lib-reading-author { font-size: 12px; color: var(--text-tertiary); margin-bottom: 8px; }
+.lib-progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); margin-bottom: 5px; }
+.lib-progress-track { height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
+.lib-progress-fill  { height: 6px; background: var(--accent-gold); border-radius: 3px; transition: width 0.4s; }
+.lib-page-input-row { display: flex; gap: 8px; align-items: center; }
+.lib-page-input { background: var(--bg-input); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 13px; padding: 7px 12px; width: 100px; outline: none; }
+.lib-page-input:focus { border-color: var(--accent-gold); }
+.lib-page-save-btn { background: var(--accent-gold); border: none; border-radius: 8px; color: #000; font-size: 12px; font-weight: 700; padding: 7px 14px; cursor: pointer; }
+.lib-reading-meta { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+.lib-reading-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+
+/* ── Completed tab ── */
+.lib-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.lib-stat-card { background: var(--bg-card); border-radius: 12px; padding: 14px; text-align: center; }
+.lib-stat-val { font-family: var(--font-mono); font-size: 24px; font-weight: 800; color: var(--text-primary); }
+.lib-stat-label { font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--text-tertiary); margin-top: 4px; }
+.lib-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+@media (max-width: 600px) { .lib-charts-grid { grid-template-columns: 1fr; } }
+.lib-chart-card { background: var(--bg-card); border-radius: 14px; padding: 16px; }
+.lib-chart-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 12px; }
+.lib-completed-card { background: var(--bg-card); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; display: flex; gap: 14px; align-items: flex-start; cursor: pointer; transition: background 0.12s; }
+.lib-completed-card:hover { background: var(--overlay-hover); }
+.lib-completed-info { flex: 1; min-width: 0; }
+.lib-completed-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-completed-meta { font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px; }
+.lib-completed-takeaway { font-size: 12px; color: var(--text-secondary); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.lib-rating { display: flex; gap: 2px; }
+.lib-rating-star { font-size: 13px; }
+
+/* ── Empty state ── */
+.lib-empty { text-align: center; padding: 48px 20px; color: var(--text-tertiary); font-size: 13px; }
+.lib-empty-icon { font-size: 36px; margin-bottom: 12px; }
+.lib-empty-title { font-weight: 700; color: var(--text-secondary); margin-bottom: 6px; }
+
+/* ── Book add/edit modal ── */
+.lib-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
+@media (min-width: 600px) { .lib-modal-overlay { align-items: center; } }
+.lib-modal { background: var(--bg-modal); border-radius: 20px 20px 0 0; padding: 24px; width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; }
+@media (min-width: 600px) { .lib-modal { border-radius: 20px; } }
+.lib-modal-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; }
+.lib-modal-field { margin-bottom: 14px; }
+.lib-modal-label { font-size: 11px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+.lib-modal-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border-strong); border-radius: 10px; color: var(--text-primary); font-family: var(--font); font-size: 14px; padding: 10px 14px; outline: none; transition: border-color 0.15s; }
+.lib-modal-input:focus { border-color: var(--accent-gold); }
+.lib-modal-row { display: flex; gap: 10px; }
+.lib-modal-row .lib-modal-field { flex: 1; }
+.lib-modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+.lib-modal-cancel { flex: 1; background: var(--overlay-hover); border: 1px solid var(--border-strong); border-radius: 10px; color: var(--text-secondary); font-size: 14px; font-weight: 600; padding: 12px; cursor: pointer; }
+.lib-modal-save   { flex: 1; background: var(--accent-gold); border: none; border-radius: 10px; color: #000; font-size: 14px; font-weight: 700; padding: 12px; cursor: pointer; }
+.lib-modal-delete { background: none; border: 1px solid var(--danger); border-radius: 10px; color: var(--danger); font-size: 14px; font-weight: 600; padding: 12px 18px; cursor: pointer; }
+.lib-priority-row { display: flex; gap: 6px; }
+.lib-priority-btn { flex: 1; background: var(--bg-input); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text-tertiary); font-size: 14px; padding: 8px; cursor: pointer; text-align: center; transition: background 0.12s, border-color 0.12s; }
+.lib-priority-btn.sel { background: var(--accent-gold); border-color: var(--accent-gold); color: #000; }
+
+/* ── Detail modal ── */
+.lib-detail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 210; display: flex; align-items: flex-end; justify-content: center; }
+@media (min-width: 600px) { .lib-detail-overlay { align-items: center; } }
+.lib-detail-modal { background: var(--bg-modal); border-radius: 20px 20px 0 0; padding: 0; width: 100%; max-width: 560px; max-height: 95vh; display: flex; flex-direction: column; overflow: hidden; }
+@media (min-width: 600px) { .lib-detail-modal { border-radius: 20px; } }
+.lib-detail-header { padding: 20px 20px 0; flex-shrink: 0; }
+.lib-detail-title  { font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 2px; }
+.lib-detail-author { font-size: 13px; color: var(--text-tertiary); margin-bottom: 12px; }
+.lib-detail-tabs { display: flex; gap: 4px; background: rgba(0,0,0,0.20); border-radius: 9px; padding: 3px; margin-bottom: 0; }
+.lib-detail-tab { flex: 1; background: transparent; border: none; border-radius: 7px; color: var(--text-tertiary); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; padding: 6px 8px; cursor: pointer; }
+.lib-detail-tab.active { background: rgba(255,255,255,0.10); color: var(--text-primary); }
+.lib-detail-body { padding: 16px 20px 20px; overflow-y: auto; flex: 1; }
+.lib-detail-close { float: right; background: none; border: none; color: var(--text-tertiary); font-size: 22px; cursor: pointer; padding: 0 4px; line-height: 1; }
+.lib-note-card { background: var(--bg-secondary); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+.lib-note-type { font-size: 9px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 4px; }
+.lib-note-content { font-size: 13px; color: var(--text-primary); line-height: 1.5; white-space: pre-wrap; }
+.lib-note-meta { font-size: 10px; color: var(--text-tertiary); margin-top: 6px; display: flex; justify-content: space-between; }
+.lib-note-del-btn { background: none; border: none; color: var(--danger); font-size: 12px; cursor: pointer; padding: 0; }
+.lib-add-note-form { background: var(--bg-secondary); border-radius: 10px; padding: 14px; margin-top: 12px; }
+.lib-add-note-form textarea { width: 100%; background: var(--bg-input); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text-primary); font-family: var(--font); font-size: 13px; padding: 10px 12px; outline: none; resize: vertical; min-height: 72px; }
+.lib-add-note-form textarea:focus { border-color: var(--accent-gold); }
+.lib-note-add-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+.lib-note-type-sel { background: var(--bg-input); border: 1px solid var(--border-strong); border-radius: 7px; color: var(--text-secondary); font-family: var(--font); font-size: 12px; padding: 6px 10px; }
+.lib-note-save-btn { background: var(--accent-gold); border: none; border-radius: 8px; color: #000; font-size: 12px; font-weight: 700; padding: 7px 16px; cursor: pointer; margin-left: auto; }
+.lib-export-btn { background: var(--overlay-hover); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 7px 14px; cursor: pointer; }
+.lib-detail-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.lib-detail-meta-item { background: var(--bg-secondary); border-radius: 8px; padding: 10px 12px; }
+.lib-detail-meta-label { font-size: 9px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 3px; }
+.lib-detail-meta-val { font-size: 13px; color: var(--text-primary); font-weight: 600; }
+.lib-complete-rating { display: flex; gap: 8px; justify-content: center; }
+.lib-complete-star { font-size: 28px; cursor: pointer; opacity: 0.35; transition: opacity 0.12s; }
+.lib-complete-star.sel { opacity: 1; }
+
+@media (max-width: 600px) {
+  .page { padding: 16px 14px 40px; }
+  .lib-tab { min-height: 44px; padding: 10px 8px; }
+  .lib-book-grid { grid-template-columns: 1fr; }
+  .lib-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="section-title" style="margin-bottom:18px">Library</div>
+
+  <!-- ── Library tab bar ── -->
+  <div class="lib-tabs" role="tablist">
+    <button class="lib-tab active" data-tab="queue"     role="tab">READING QUEUE</button>
+    <button class="lib-tab"        data-tab="reading"   role="tab">CURRENTLY READING</button>
+    <button class="lib-tab"        data-tab="completed" role="tab">COMPLETED</button>
+  </div>
+
+  <!-- ══ QUEUE panel ══ -->
+  <div data-lib-panel="queue">
+    <div class="lib-toolbar">
+      <button class="lib-add-btn" id="libAddBtn">+ Add Book</button>
+      <input class="lib-search" id="libSearch" type="search" placeholder="Search title or author…">
+      <select class="lib-filter-select" id="libFilterCat">
+        <option value="">All categories</option>
+        <option value="finance">Finance</option>
+        <option value="tech">Tech</option>
+        <option value="strategy">Strategy</option>
+        <option value="philosophy">Philosophy</option>
+        <option value="science">Science</option>
+        <option value="fiction">Fiction</option>
+        <option value="self-help">Self-help</option>
+        <option value="business">Business</option>
+        <option value="other">Other</option>
+      </select>
+      <select class="lib-filter-select" id="libSortBy">
+        <option value="priority">Sort: Priority</option>
+        <option value="date">Sort: Date added</option>
+        <option value="title">Sort: Title</option>
+        <option value="pages">Sort: Pages</option>
+      </select>
+    </div>
+    <div class="lib-book-grid" id="libQueueGrid"></div>
+    <div class="lib-empty" id="libQueueEmpty" hidden>
+      <div class="lib-empty-icon">📚</div>
+      <div class="lib-empty-title">No books in queue</div>
+      <div>Add a book to start building your reading list.</div>
+    </div>
+  </div>
+
+  <!-- ══ READING panel ══ -->
+  <div data-lib-panel="reading" hidden>
+    <div id="libReadingStats" style="display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap"></div>
+    <div id="libReadingList"></div>
+    <div class="lib-empty" id="libReadingEmpty" hidden>
+      <div class="lib-empty-icon">📖</div>
+      <div class="lib-empty-title">Nothing in progress</div>
+      <div>Start reading a book from your queue.</div>
+    </div>
+  </div>
+
+  <!-- ══ COMPLETED panel ══ -->
+  <div data-lib-panel="completed" hidden>
+    <div class="lib-stats-grid" id="libStatsGrid"></div>
+    <div class="lib-charts-grid">
+      <div class="lib-chart-card">
+        <div class="lib-chart-title">Books completed per month</div>
+        <svg id="libBarSvg" viewBox="0 0 260 100" width="100%" height="100" preserveAspectRatio="none" aria-hidden="true"></svg>
+      </div>
+      <div class="lib-chart-card">
+        <div class="lib-chart-title">By category</div>
+        <div id="libCatChartWrap" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <svg id="libCatDonut" viewBox="0 0 100 100" width="90" height="90" aria-hidden="true"></svg>
+          <div id="libCatLegend" style="flex:1;min-width:80px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="section-title">Completed Books</div>
+    <div id="libCompletedList"></div>
+    <div class="lib-empty" id="libCompletedEmpty" hidden>
+      <div class="lib-empty-icon">🏆</div>
+      <div class="lib-empty-title">No completed books yet</div>
+      <div>Finish a book to see it here.</div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { requireAuth } from './js/auth.js';
+import { initUserMenu } from './js/user-menu.js';
+import * as LibData from './js/library-data.js';
+import * as ObjData from './js/objectives-data.js';
+
+const user = await requireAuth();
+await initUserMenu();
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+const DIFF_LABELS = { easy:'Easy', medium:'Medium', hard:'Hard', expert:'Expert' };
+const NOTE_TYPE_ICONS = { note:'📝', quote:'💬', idea:'💡', summary:'📋' };
+const CAT_ICONS_LIB = { finance:'💰', tech:'💻', strategy:'♟️', philosophy:'🧠', science:'🔬', fiction:'📖', 'self-help':'🌱', business:'📈', other:'📚' };
+
+function stars(n, max=5) {
+  return Array.from({length:max}, (_,i) => `<span class="lib-rating-star">${i < (n||0) ? '⭐' : '☆'}</span>`).join('');
+}
+function priorityStars(n) {
+  return `<span class="lib-book-priority">${Array.from({length:5}, (_,i) => `<span class="lib-star">${i < n ? '★' : '☆'}</span>`).join('')}</span>`;
+}
+function daysSince(dateStr) {
+  if (!dateStr) return null;
+  return Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
+}
+
+// ── Tab system ─────────────────────────────────────────────────────────────
+function switchLibTab(name) {
+  localStorage.setItem('library:active_tab', name);
+  document.querySelectorAll('.lib-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('[data-lib-panel]').forEach(p => {
+    if (p.dataset.libPanel === name) p.removeAttribute('hidden');
+    else p.setAttribute('hidden', '');
+  });
+  if (name === 'queue' && !_queueLoaded) loadQueue();
+  if (name === 'reading') loadReading();
+  if (name === 'completed') loadCompleted();
+}
+document.querySelectorAll('.lib-tab').forEach(btn => btn.addEventListener('click', () => switchLibTab(btn.dataset.tab)));
+
+// ── State ──────────────────────────────────────────────────────────────────
+let _queueLoaded = false;
+let _monthlyObjs = [], _yearlyObjs = [];
+
+// Pre-load objectives for linking
+async function loadObjectives() {
+  try {
+    const now = new Date();
+    [_monthlyObjs, _yearlyObjs] = await Promise.all([
+      ObjData.loadMonthlyObjectives(now.getFullYear(), now.getMonth() + 1),
+      ObjData.loadYearlyObjectives(now.getFullYear()),
+    ]);
+  } catch {}
+}
+loadObjectives();
+
+// ── Realtime ───────────────────────────────────────────────────────────────
+LibData.subscribeBooks(() => {
+  const active = localStorage.getItem('library:active_tab') || 'queue';
+  if (active === 'queue')     loadQueue();
+  if (active === 'reading')   loadReading();
+  if (active === 'completed') loadCompleted();
+});
+
+// ── READING QUEUE ──────────────────────────────────────────────────────────
+async function loadQueue() {
+  _queueLoaded = true;
+  const cat    = document.getElementById('libFilterCat').value;
+  const sortBy = document.getElementById('libSortBy').value;
+  const query  = document.getElementById('libSearch').value.trim();
+  let books;
+  if (query) books = (await LibData.searchBooks(query)).filter(b => b.status === 'queue');
+  else       books = await LibData.loadBooks({ status: 'queue', category: cat || undefined, sortBy });
+  renderQueue(books);
+}
+
+function renderQueue(books) {
+  const grid  = document.getElementById('libQueueGrid');
+  const empty = document.getElementById('libQueueEmpty');
+  if (!books.length) { grid.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+  grid.innerHTML = books.map(b => `
+    <div class="lib-book-card" data-id="${b.id}">
+      <div class="lib-book-top">
+        <div class="lib-book-cover">${CAT_ICONS_LIB[b.category] || '📚'}</div>
+        <div class="lib-book-info">
+          <div class="lib-book-title" title="${esc(b.title)}">${esc(b.title)}</div>
+          <div class="lib-book-author">${esc(b.author || '—')}</div>
+          <div class="lib-book-badges">
+            ${b.category ? `<span class="lib-badge">${esc(b.category)}</span>` : ''}
+            ${b.difficulty ? `<span class="lib-badge">${DIFF_LABELS[b.difficulty]||b.difficulty}</span>` : ''}
+            ${b.pages ? `<span class="lib-badge">${b.pages} pages</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="lib-book-meta">
+        ${priorityStars(b.priority || 0)}
+        ${b.estimated_hours ? `<span>${b.estimated_hours}h est.</span>` : ''}
+        ${b.linked_objective_id || b.linked_yearly_id ? `<span class="lib-badge gold">🎯 Linked</span>` : ''}
+      </div>
+      ${b.tags && b.tags.length ? `<div class="lib-book-badges">${(b.tags||[]).map(t=>`<span class="lib-badge">${esc(t)}</span>`).join('')}</div>` : ''}
+      <div class="lib-book-actions">
+        <button class="lib-action-btn primary" data-id="${b.id}" data-action="start">📖 Start reading</button>
+        <button class="lib-action-btn" data-id="${b.id}" data-action="edit">✏️ Edit</button>
+        <button class="lib-action-btn danger" data-id="${b.id}" data-action="del">🗑</button>
+      </div>
+    </div>`).join('');
+
+  grid.querySelectorAll('[data-action="start"]').forEach(btn =>
+    btn.addEventListener('click', e => { e.stopPropagation(); startReading(btn.dataset.id); }));
+  grid.querySelectorAll('[data-action="edit"]').forEach(btn =>
+    btn.addEventListener('click', e => { e.stopPropagation(); const b = books.find(x=>x.id===btn.dataset.id); openBookModal(b); }));
+  grid.querySelectorAll('[data-action="del"]').forEach(btn =>
+    btn.addEventListener('click', e => { e.stopPropagation(); deleteBook(btn.dataset.id); }));
+  grid.querySelectorAll('.lib-book-card').forEach(card =>
+    card.addEventListener('click', () => openDetailModal(card.dataset.id)));
+}
+
+async function startReading(id) {
+  await LibData.updateBook(id, { status: 'reading', started_at: new Date().toISOString().slice(0,10) });
+  loadQueue();
+}
+async function deleteBook(id) {
+  if (!confirm('Delete this book?')) return;
+  await LibData.deleteBook(id);
+  loadQueue();
+}
+
+// ── CURRENTLY READING ──────────────────────────────────────────────────────
+async function loadReading() {
+  const books = await LibData.loadBooks({ status: 'reading' });
+  renderReading(books);
+}
+
+function renderReading(books) {
+  const list  = document.getElementById('libReadingList');
+  const empty = document.getElementById('libReadingEmpty');
+  const stats = document.getElementById('libReadingStats');
+  stats.innerHTML = `
+    <div style="background:var(--bg-card);border-radius:10px;padding:10px 16px;font-size:12px;color:var(--text-tertiary)">
+      <span style="font-family:var(--font-mono);font-size:18px;font-weight:800;color:var(--text-primary)">${books.length}</span>
+      <span style="margin-left:6px">in progress</span>
+    </div>`;
+  if (!books.length) { list.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+  list.innerHTML = books.map(b => {
+    const pct = b.pages && b.current_page ? Math.min(100, Math.round(b.current_page / b.pages * 100)) : 0;
+    const days = daysSince(b.started_at);
+    return `<div class="lib-reading-card" data-id="${b.id}">
+      <div class="lib-reading-top">
+        <div class="lib-book-cover" style="width:50px;height:68px;font-size:26px">${CAT_ICONS_LIB[b.category]||'📚'}</div>
+        <div style="flex:1;min-width:0">
+          <div class="lib-reading-title">${esc(b.title)}</div>
+          <div class="lib-reading-author">${esc(b.author||'—')}</div>
+          <div class="lib-book-badges">
+            ${b.category ? `<span class="lib-badge">${esc(b.category)}</span>` : ''}
+            ${b.difficulty ? `<span class="lib-badge">${DIFF_LABELS[b.difficulty]||b.difficulty}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="lib-progress-label">
+        <span>${b.current_page||0}${b.pages ? ' / '+b.pages+' pages' : ' pages read'}</span>
+        <span>${pct}%</span>
+      </div>
+      <div class="lib-progress-track"><div class="lib-progress-fill" style="width:${pct}%"></div></div>
+      <div class="lib-page-input-row">
+        <input class="lib-page-input" type="number" placeholder="Current page" value="${b.current_page||''}" data-id="${b.id}" min="0" max="${b.pages||9999}">
+        <button class="lib-page-save-btn" data-id="${b.id}">Save progress</button>
+      </div>
+      <div class="lib-reading-meta">${days !== null ? `Started ${days} day${days!==1?'s':''} ago` : ''}${b.pages && pct > 0 && days ? ` · ~${Math.round((b.pages - b.current_page) / Math.max(1, (b.current_page/Math.max(1,days))))} days remaining` : ''}</div>
+      <div class="lib-reading-actions">
+        <button class="lib-action-btn primary" data-id="${b.id}" data-action="complete">✅ Mark complete</button>
+        <button class="lib-action-btn" data-id="${b.id}" data-action="notes">📝 Notes</button>
+        <button class="lib-action-btn" data-id="${b.id}" data-action="back">⏸ Back to queue</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('.lib-page-save-btn').forEach(btn => btn.addEventListener('click', async () => {
+    const input = list.querySelector(`.lib-page-input[data-id="${btn.dataset.id}"]`);
+    const page = parseInt(input.value);
+    if (!isNaN(page) && page >= 0) { await LibData.updateReadingProgress(btn.dataset.id, page); loadReading(); }
+  }));
+  list.querySelectorAll('[data-action="complete"]').forEach(btn =>
+    btn.addEventListener('click', () => openCompleteModal(btn.dataset.id, books)));
+  list.querySelectorAll('[data-action="notes"]').forEach(btn =>
+    btn.addEventListener('click', () => openDetailModal(btn.dataset.id)));
+  list.querySelectorAll('[data-action="back"]').forEach(btn =>
+    btn.addEventListener('click', async () => { await LibData.updateBook(btn.dataset.id, { status: 'queue' }); loadReading(); }));
+}
+
+function openCompleteModal(id, books) {
+  const book = books.find(b => b.id === id);
+  let selectedRating = 0;
+  const ov = document.createElement('div');
+  ov.className = 'lib-modal-overlay';
+  ov.innerHTML = `<div class="lib-modal">
+    <div class="lib-modal-title">✅ Mark "${esc(book?.title||'')}" as completed</div>
+    <div class="lib-modal-field">
+      <label class="lib-modal-label">Rating</label>
+      <div class="lib-complete-rating" id="cmRating">
+        ${[1,2,3,4,5].map(i=>`<span class="lib-complete-star" data-val="${i}">⭐</span>`).join('')}
+      </div>
+    </div>
+    <div class="lib-modal-field">
+      <label class="lib-modal-label">Key takeaways (optional)</label>
+      <textarea class="lib-modal-input" id="cmTakeaways" style="min-height:80px;resize:vertical" placeholder="What did you learn?"></textarea>
+    </div>
+    <div class="lib-modal-field">
+      <label class="lib-modal-label">Personal notes (optional)</label>
+      <textarea class="lib-modal-input" id="cmNotes" style="min-height:60px;resize:vertical" placeholder="Thoughts, reflections…"></textarea>
+    </div>
+    <div class="lib-modal-actions">
+      <button class="lib-modal-cancel" id="cmCancel">Cancel</button>
+      <button class="lib-modal-save" id="cmSave">Finish reading</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+
+  const ratingStars = ov.querySelectorAll('.lib-complete-star');
+  ratingStars.forEach(s => {
+    s.addEventListener('click', () => { selectedRating = parseInt(s.dataset.val); ratingStars.forEach(x => x.classList.toggle('sel', parseInt(x.dataset.val) <= selectedRating)); });
+  });
+  document.getElementById('cmCancel').addEventListener('click', () => ov.remove());
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  document.getElementById('cmSave').addEventListener('click', async () => {
+    const takeaways = document.getElementById('cmTakeaways').value.trim();
+    const notes     = document.getElementById('cmNotes').value.trim();
+    await LibData.updateBook(id, {
+      status: 'completed',
+      finished_at: new Date().toISOString().slice(0,10),
+      rating: selectedRating || null,
+      key_takeaways: takeaways ? [takeaways] : [],
+      personal_notes: notes || null,
+    });
+    ov.remove();
+    loadReading();
+  });
+}
+
+// ── COMPLETED ──────────────────────────────────────────────────────────────
+async function loadCompleted() {
+  const [books, stats, byMonth] = await Promise.all([
+    LibData.loadBooks({ status: 'completed', sortBy: 'date' }),
+    LibData.loadBookStats(),
+    LibData.loadCompletedByMonth(),
+  ]);
+  renderStats(stats);
+  renderCompletedCharts(books, byMonth);
+  renderCompleted(books);
+}
+
+function renderStats(s) {
+  const grid = document.getElementById('libStatsGrid');
+  grid.innerHTML = [
+    { val: s.completed,          label: 'Total finished' },
+    { val: s.completedThisYear,  label: 'This year' },
+    { val: s.totalPages > 999 ? Math.round(s.totalPages/1000)+'k' : s.totalPages, label: 'Pages read' },
+    { val: s.avgRating ? '⭐ '+s.avgRating : '—', label: 'Avg rating' },
+    { val: s.reading,            label: 'In progress' },
+    { val: s.queue,              label: 'In queue' },
+  ].map(x => `<div class="lib-stat-card"><div class="lib-stat-val">${x.val ?? 0}</div><div class="lib-stat-label">${x.label}</div></div>`).join('');
+}
+
+function renderCompletedCharts(books, byMonth) {
+  // Bar chart: last 12 months
+  const svg = document.getElementById('libBarSvg');
+  const now = new Date();
+  const months = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    months.push({ key, label: ['J','F','M','A','M','J','J','A','S','O','N','D'][d.getMonth()], count: byMonth[key] || 0 });
+  }
+  const max = Math.max(...months.map(m => m.count), 1);
+  const W = 260, H = 100, PAD = 16, slotW = W / months.length;
+  const barW = Math.min(14, slotW - 4);
+  svg.innerHTML = months.map((m, i) => {
+    const x = i * slotW + slotW / 2;
+    const barH = (m.count / max) * (H - PAD * 2);
+    const y = H - PAD - barH;
+    return `<rect x="${x - barW/2}" y="${y}" width="${barW}" height="${barH}" rx="3" fill="#d4a853" opacity="${m.count ? '0.85' : '0.15'}"/>
+    <text x="${x}" y="${H - 3}" text-anchor="middle" font-size="7" fill="rgba(255,255,255,0.35)" font-family="inherit">${m.label}</text>
+    ${m.count ? `<text x="${x}" y="${y - 3}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.6)" font-family="inherit">${m.count}</text>` : ''}`;
+  }).join('');
+
+  // Category donut
+  const catDonut = document.getElementById('libCatDonut');
+  const catLegend = document.getElementById('libCatLegend');
+  const catCounts = {};
+  for (const b of books) { if (b.category) catCounts[b.category] = (catCounts[b.category]||0)+1; }
+  const cats = Object.entries(catCounts).sort((a,b)=>b[1]-a[1]);
+  if (!cats.length) { catDonut.innerHTML = ''; catLegend.innerHTML = '<span style="color:var(--text-tertiary);font-size:11px">No data</span>'; return; }
+  const total = cats.reduce((s,[,v])=>s+v, 0);
+  const PALETTE = ['#d4a853','#6BE3A4','#7DD3FC','#B794F4','#FF6B6B','#F2C063','#E07658'];
+  let angle = -90;
+  const cx=50, cy=50, r=38, ri=22;
+  let paths='', legend='';
+  cats.forEach(([cat,count],i) => {
+    const sweep = (count/total)*360;
+    const a1=angle*Math.PI/180, a2=(angle+sweep)*Math.PI/180;
+    const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+    const xi1=cx+ri*Math.cos(a1),yi1=cy+ri*Math.sin(a1),xi2=cx+ri*Math.cos(a2),yi2=cy+ri*Math.sin(a2);
+    const large=sweep>180?1:0;
+    const color=PALETTE[i%PALETTE.length];
+    paths+=`<path d="M${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} L${xi2},${yi2} A${ri},${ri} 0 ${large} 0 ${xi1},${yi1} Z" fill="${color}" opacity="0.9"/>`;
+    legend+=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px"><span style="width:9px;height:9px;border-radius:2px;background:${color};flex-shrink:0"></span><span style="font-size:10px;color:var(--text-secondary)">${esc(cat)} <span style="color:var(--text-tertiary)">(${count})</span></span></div>`;
+    angle+=sweep;
+  });
+  catDonut.innerHTML=paths;
+  catLegend.innerHTML=legend;
+}
+
+function renderCompleted(books) {
+  const list  = document.getElementById('libCompletedList');
+  const empty = document.getElementById('libCompletedEmpty');
+  if (!books.length) { list.innerHTML=''; empty.hidden=false; return; }
+  empty.hidden = true;
+  list.innerHTML = books.map(b => {
+    const takeaway = (b.key_takeaways||[])[0] || b.personal_notes || '';
+    return `<div class="lib-completed-card" data-id="${b.id}">
+      <div style="font-size:28px;flex-shrink:0">${CAT_ICONS_LIB[b.category]||'📚'}</div>
+      <div class="lib-completed-info">
+        <div class="lib-completed-title">${esc(b.title)}</div>
+        <div class="lib-completed-meta">${esc(b.author||'')}${b.finished_at ? ' · Finished '+new Date(b.finished_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : ''}</div>
+        ${b.rating ? `<div class="lib-rating">${stars(b.rating)}</div>` : ''}
+        ${takeaway ? `<div class="lib-completed-takeaway">${esc(takeaway)}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.lib-completed-card').forEach(card =>
+    card.addEventListener('click', () => openDetailModal(card.dataset.id)));
+}
+
+// ── BOOK ADD / EDIT MODAL ──────────────────────────────────────────────────
+function openBookModal(book = null) {
+  const isEdit = !!book;
+  let selectedPriority = book?.priority || 3;
+  const ov = document.createElement('div');
+  ov.className = 'lib-modal-overlay';
+  ov.innerHTML = `<div class="lib-modal">
+    <div class="lib-modal-title">${isEdit ? 'Edit book' : 'Add a book'}</div>
+    <div class="lib-modal-row">
+      <div class="lib-modal-field" style="flex:2">
+        <label class="lib-modal-label">Title *</label>
+        <input class="lib-modal-input" id="lmTitle" type="text" placeholder="Book title" value="${esc(book?.title||'')}">
+      </div>
+      <div class="lib-modal-field" style="flex:1">
+        <label class="lib-modal-label">Author</label>
+        <input class="lib-modal-input" id="lmAuthor" type="text" placeholder="Author name" value="${esc(book?.author||'')}">
+      </div>
+    </div>
+    <div class="lib-modal-row">
+      <div class="lib-modal-field">
+        <label class="lib-modal-label">Category</label>
+        <select class="lib-modal-input" id="lmCat">
+          <option value="">—</option>
+          ${['finance','tech','strategy','philosophy','science','fiction','self-help','business','other'].map(c=>`<option value="${c}" ${book?.category===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="lib-modal-field">
+        <label class="lib-modal-label">Difficulty</label>
+        <select class="lib-modal-input" id="lmDiff">
+          <option value="">—</option>
+          ${['easy','medium','hard','expert'].map(d=>`<option value="${d}" ${book?.difficulty===d?'selected':''}>${DIFF_LABELS[d]}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="lib-modal-row">
+      <div class="lib-modal-field">
+        <label class="lib-modal-label">Pages</label>
+        <input class="lib-modal-input" id="lmPages" type="number" placeholder="e.g. 320" value="${book?.pages||''}">
+      </div>
+      <div class="lib-modal-field">
+        <label class="lib-modal-label">Est. hours</label>
+        <input class="lib-modal-input" id="lmHours" type="number" step="0.5" placeholder="e.g. 6" value="${book?.estimated_hours||''}">
+      </div>
+    </div>
+    <div class="lib-modal-field">
+      <label class="lib-modal-label">Priority</label>
+      <div class="lib-priority-row" id="lmPriorityRow">
+        ${[1,2,3,4,5].map(i=>`<button type="button" class="lib-priority-btn ${(book?.priority||3)===i?'sel':''}" data-val="${i}">${'★'.repeat(i)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="lib-modal-field">
+      <label class="lib-modal-label">Tags (comma separated)</label>
+      <input class="lib-modal-input" id="lmTags" type="text" placeholder="e.g. investing, must-read" value="${esc((book?.tags||[]).join(', '))}">
+    </div>
+    <div class="lib-modal-row">
+      <div class="lib-modal-field">
+        <label class="lib-modal-label">Link to monthly objective</label>
+        <select class="lib-modal-input" id="lmObjMonth">
+          <option value="">— none —</option>
+          ${_monthlyObjs.map(o=>`<option value="${o.id}" ${book?.linked_objective_id===o.id?'selected':''}>${esc(o.title)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="lib-modal-field">
+        <label class="lib-modal-label">Link to yearly objective</label>
+        <select class="lib-modal-input" id="lmObjYear">
+          <option value="">— none —</option>
+          ${_yearlyObjs.map(o=>`<option value="${o.id}" ${book?.linked_yearly_id===o.id?'selected':''}>${esc(o.title)}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="lib-modal-field">
+      <label class="lib-modal-label">Notes</label>
+      <textarea class="lib-modal-input" id="lmNotes" style="min-height:60px;resize:vertical">${esc(book?.personal_notes||'')}</textarea>
+    </div>
+    <div class="lib-modal-actions">
+      ${isEdit ? '<button class="lib-modal-delete" id="lmDel">Delete</button>' : ''}
+      <button class="lib-modal-cancel" id="lmCancel">Cancel</button>
+      <button class="lib-modal-save" id="lmSave">Save</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+
+  const priorityBtns = ov.querySelectorAll('.lib-priority-btn');
+  priorityBtns.forEach(btn => btn.addEventListener('click', () => {
+    selectedPriority = parseInt(btn.dataset.val);
+    priorityBtns.forEach(b => b.classList.toggle('sel', parseInt(b.dataset.val) === selectedPriority));
+  }));
+  document.getElementById('lmCancel').addEventListener('click', () => ov.remove());
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  if (isEdit) {
+    document.getElementById('lmDel').addEventListener('click', async () => {
+      if (!confirm('Delete this book?')) return;
+      await LibData.deleteBook(book.id); ov.remove(); loadQueue();
+    });
+  }
+  document.getElementById('lmSave').addEventListener('click', async () => {
+    const title = document.getElementById('lmTitle').value.trim();
+    if (!title) { document.getElementById('lmTitle').focus(); return; }
+    const tagsRaw = document.getElementById('lmTags').value.trim();
+    const tags = tagsRaw ? tagsRaw.split(',').map(t=>t.trim()).filter(Boolean) : [];
+    const fields = {
+      title,
+      author:    document.getElementById('lmAuthor').value.trim() || null,
+      category:  document.getElementById('lmCat').value    || null,
+      difficulty:document.getElementById('lmDiff').value   || null,
+      pages:     parseInt(document.getElementById('lmPages').value) || null,
+      estimated_hours: parseFloat(document.getElementById('lmHours').value) || null,
+      priority: selectedPriority,
+      tags,
+      personal_notes: document.getElementById('lmNotes').value.trim() || null,
+      linked_objective_id: document.getElementById('lmObjMonth').value || null,
+      linked_yearly_id:    document.getElementById('lmObjYear').value  || null,
+    };
+    if (isEdit) await LibData.updateBook(book.id, fields);
+    else        await LibData.addBook(fields);
+    ov.remove();
+    loadQueue();
+  });
+  setTimeout(() => document.getElementById('lmTitle').focus(), 50);
+}
+
+// ── BOOK DETAIL MODAL ──────────────────────────────────────────────────────
+async function openDetailModal(bookId) {
+  const detail = await LibData.loadBookDetail(bookId);
+  const ov = document.createElement('div');
+  ov.className = 'lib-detail-overlay';
+  ov.innerHTML = `<div class="lib-detail-modal">
+    <div class="lib-detail-header">
+      <button class="lib-detail-close" id="detClose">×</button>
+      <div class="lib-detail-title">${esc(detail.title)}</div>
+      <div class="lib-detail-author">${esc(detail.author||'')}</div>
+      <div class="lib-detail-tabs">
+        <button class="lib-detail-tab active" data-dtab="info">INFO</button>
+        <button class="lib-detail-tab" data-dtab="notes">NOTES (${detail.notes.length})</button>
+      </div>
+    </div>
+    <div class="lib-detail-body" id="detBody">
+      <div data-dtab-panel="info">
+        <div class="lib-detail-meta-grid">
+          ${detail.category  ? `<div class="lib-detail-meta-item"><div class="lib-detail-meta-label">Category</div><div class="lib-detail-meta-val">${esc(detail.category)}</div></div>` : ''}
+          ${detail.pages     ? `<div class="lib-detail-meta-item"><div class="lib-detail-meta-label">Pages</div><div class="lib-detail-meta-val">${detail.pages}</div></div>` : ''}
+          ${detail.difficulty? `<div class="lib-detail-meta-item"><div class="lib-detail-meta-label">Difficulty</div><div class="lib-detail-meta-val">${DIFF_LABELS[detail.difficulty]||detail.difficulty}</div></div>` : ''}
+          ${detail.rating    ? `<div class="lib-detail-meta-item"><div class="lib-detail-meta-label">Rating</div><div class="lib-detail-meta-val">${stars(detail.rating)}</div></div>` : ''}
+          ${detail.started_at  ? `<div class="lib-detail-meta-item"><div class="lib-detail-meta-label">Started</div><div class="lib-detail-meta-val">${detail.started_at}</div></div>` : ''}
+          ${detail.finished_at ? `<div class="lib-detail-meta-item"><div class="lib-detail-meta-label">Finished</div><div class="lib-detail-meta-val">${detail.finished_at}</div></div>` : ''}
+        </div>
+        ${(detail.key_takeaways||[]).length ? `<div style="margin-bottom:12px"><div class="lib-detail-meta-label" style="margin-bottom:6px">Key takeaways</div>${(detail.key_takeaways||[]).map(t=>`<div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">• ${esc(t)}</div>`).join('')}</div>` : ''}
+        ${detail.personal_notes ? `<div><div class="lib-detail-meta-label" style="margin-bottom:6px">Personal notes</div><div style="font-size:13px;color:var(--text-secondary);white-space:pre-wrap">${esc(detail.personal_notes)}</div></div>` : ''}
+        ${detail.status === 'completed' ? `<button class="lib-action-btn" id="detReread" style="margin-top:16px;width:100%">🔄 Re-read (move to queue)</button>` : ''}
+      </div>
+      <div data-dtab-panel="notes" hidden>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font-size:12px;color:var(--text-tertiary)">${detail.notes.length} note${detail.notes.length!==1?'s':''}</span>
+          <button class="lib-export-btn" id="detExport">Copy all notes</button>
+        </div>
+        <div id="detNotesList">${renderNotesList(detail.notes)}</div>
+        <div class="lib-add-note-form">
+          <select class="lib-note-type-sel" id="detNoteType">
+            <option value="note">📝 Note</option>
+            <option value="quote">💬 Quote</option>
+            <option value="idea">💡 Idea</option>
+            <option value="summary">📋 Summary</option>
+          </select>
+          <textarea id="detNoteContent" placeholder="Add a note, quote, or idea…" style="margin-top:8px;width:100%;background:var(--bg-input);border:1px solid var(--border-strong);border-radius:8px;color:var(--text-primary);font-family:var(--font);font-size:13px;padding:10px 12px;outline:none;resize:vertical;min-height:72px"></textarea>
+          <div class="lib-note-add-row">
+            <button class="lib-note-save-btn" id="detNoteSave">Add note</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+
+  // Tab switching inside detail modal
+  ov.querySelectorAll('.lib-detail-tab').forEach(tab => tab.addEventListener('click', () => {
+    ov.querySelectorAll('.lib-detail-tab').forEach(t => t.classList.toggle('active', t === tab));
+    ov.querySelectorAll('[data-dtab-panel]').forEach(p => { p.hidden = p.dataset.dtabPanel !== tab.dataset.dtab; });
+  }));
+
+  document.getElementById('detClose').addEventListener('click', () => ov.remove());
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+
+  if (detail.status === 'completed') {
+    document.getElementById('detReread')?.addEventListener('click', async () => {
+      await LibData.updateBook(bookId, { status: 'queue' }); ov.remove(); loadCompleted();
+    });
+  }
+
+  // Notes
+  document.getElementById('detExport')?.addEventListener('click', () => {
+    const text = detail.notes.map(n => `[${n.note_type.toUpperCase()}]\n${n.content}`).join('\n\n---\n\n');
+    navigator.clipboard.writeText(text).then(() => { const btn = document.getElementById('detExport'); if (btn) { btn.textContent = 'Copied!'; setTimeout(()=>{ if(btn)btn.textContent='Copy all notes'; }, 1500); } });
+  });
+
+  document.getElementById('detNoteSave')?.addEventListener('click', async () => {
+    const content = document.getElementById('detNoteContent').value.trim();
+    const type    = document.getElementById('detNoteType').value;
+    if (!content) return;
+    await LibData.addBookNote(bookId, { note_type: type, content });
+    document.getElementById('detNoteContent').value = '';
+    const updated = await LibData.loadBookDetail(bookId);
+    detail.notes = updated.notes;
+    document.getElementById('detNotesList').innerHTML = renderNotesList(detail.notes);
+    attachNoteDeleteHandlers(ov, bookId, detail);
+  });
+  attachNoteDeleteHandlers(ov, bookId, detail);
+}
+
+function renderNotesList(notes) {
+  if (!notes.length) return '<div style="color:var(--text-tertiary);font-size:12px;padding:8px 0">No notes yet.</div>';
+  return notes.map(n => `
+    <div class="lib-note-card" data-nid="${n.id}">
+      <div class="lib-note-type">${NOTE_TYPE_ICONS[n.note_type]||'•'} ${n.note_type}</div>
+      <div class="lib-note-content">${esc(n.content)}</div>
+      <div class="lib-note-meta">
+        <span>${n.page ? 'p. '+n.page : ''}</span>
+        <button class="lib-note-del-btn" data-nid="${n.id}">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function attachNoteDeleteHandlers(ov, bookId, detail) {
+  ov.querySelectorAll('.lib-note-del-btn').forEach(btn => btn.addEventListener('click', async () => {
+    await LibData.deleteBookNote(btn.dataset.nid);
+    const updated = await LibData.loadBookDetail(bookId);
+    detail.notes = updated.notes;
+    const listEl = document.getElementById('detNotesList');
+    if (listEl) listEl.innerHTML = renderNotesList(detail.notes);
+  }));
+}
+
+// ── Search + filter events ─────────────────────────────────────────────────
+document.getElementById('libAddBtn').addEventListener('click', () => openBookModal());
+document.getElementById('libSearch').addEventListener('input', debounce(loadQueue, 300));
+document.getElementById('libFilterCat').addEventListener('change', loadQueue);
+document.getElementById('libSortBy').addEventListener('change', loadQueue);
+
+function debounce(fn, ms) {
+  let timer; return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
+}
+
+// ── Boot ───────────────────────────────────────────────────────────────────
+const savedTab = localStorage.getItem('library:active_tab') || 'queue';
+switchLibTab(savedTab);
+</script>
+
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js');</script>
+</body>
+</html>

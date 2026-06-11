@@ -874,7 +874,7 @@
     if (!page) return;
 
     var section = buildSection();
-    page.appendChild(section);
+    (document.getElementById('tbContainer') || page).appendChild(section);
 
     _currentWeekMonday = getMondayOf(getTodayStr());
     _currentView = getViewPref();
