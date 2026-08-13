@@ -372,6 +372,14 @@ body.ios-scroll-lock {
   font-size: 12px;
   color: var(--text-secondary);
   font-weight: 400;
+  max-height: 36px;
+  overflow: hidden;
+  transition: max-height 0.28s ease, opacity 0.28s ease, padding-bottom 0.28s ease;
+}
+.ios-page-header.collapsed .ios-header-greeting {
+  max-height: 0;
+  opacity: 0;
+  padding-bottom: 0;
 }
 
 /* Style the injected user-menu inside the header */
@@ -631,6 +639,22 @@ main     { padding-top: 8px; }
     });
   }
 
+  // ─── Header collapse on scroll ───────────────────────────────
+  function setupHeaderCollapse() {
+    const header = document.getElementById('ios-page-header');
+    if (!header) return;
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          header.classList.toggle('collapsed', window.scrollY > 48);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
   // ─── rowprogress backward compat ─────────────────────────────
   window.addEventListener('rowprogress', function () {
     // Bottom nav doesn't display counts, but the event contract is preserved
@@ -643,7 +667,7 @@ main     { padding-top: 8px; }
     setupTheme();
     lockGestures();
     startModalLock();
-    if (!isAuthPage) setupNavInteractions();
+    if (!isAuthPage) { setupNavInteractions(); setupHeaderCollapse(); }
   }
 
   if (document.readyState === 'loading') {

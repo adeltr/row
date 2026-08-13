@@ -1323,6 +1323,137 @@ body.tb-no-scroll { overflow: hidden; }
   .modal input, .modal select, .modal textarea { min-height: 44px; font-size: 15px; }
   .modal button:not(.modal-close) { min-height: 44px; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   STEP 2 — iOS UX OVERHAUL: Goals page
+═══════════════════════════════════════════════════════════ */
+
+/* ── Segmented control: Goals main tabs ── */
+.goals-tabs {
+  display: flex !important;
+  background: var(--bg-tertiary) !important;
+  border-radius: 10px !important;
+  padding: 3px !important;
+  margin-bottom: 20px !important;
+  border: none !important;
+  gap: 0 !important;
+}
+.goals-tab {
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  padding: 9px 4px !important;
+  border-radius: 8px !important;
+  min-height: 36px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  -webkit-tap-highlight-color: transparent;
+}
+.goals-tab:hover { color: var(--text-primary) !important; }
+.goals-tab.active {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2) !important;
+}
+.goals-tab:active { transform: scale(0.97); }
+
+/* ── Segmented control: Objectives Month/Year tabs ── */
+.obj-tabs {
+  display: flex !important;
+  background: var(--bg-tertiary) !important;
+  border-radius: 10px !important;
+  padding: 3px !important;
+  margin-bottom: 16px !important;
+  gap: 0 !important;
+}
+.obj-tab {
+  flex: 1;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 4px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 36px !important;
+}
+.obj-tab.active {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18) !important;
+}
+
+/* ── Day ring card polish ── */
+.day-ring-wrap {
+  border: none !important;
+  margin-bottom: 16px !important;
+  contain: layout style paint;
+}
+
+/* ── Section cards ── */
+.gm-card {
+  border: none !important;
+  box-shadow: none !important;
+  background: var(--bg-card) !important;
+  contain: layout style paint;
+}
+
+/* ── Bottom sheet: ALL three modal families ── */
+/* Backdrop: dark overlay, align to bottom */
+.tb-modal-bg,
+.obj-modal-bg,
+.rt-modal-bg {
+  align-items: flex-end !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(0,0,0,0.45) !important;
+}
+
+/* Sheet: full-width, slides up from bottom */
+.tb-modal,
+.obj-modal,
+.rt-modal {
+  width: 100% !important;
+  max-width: 500px !important;
+  max-height: 88vh !important;
+  border-radius: 20px 20px 0 0 !important;
+  padding: 8px 22px 24px !important;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important;
+  border: none !important;
+  animation: ios-sheet-up 0.36s cubic-bezier(0.32, 0.72, 0, 1) !important;
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.35) !important;
+}
+@keyframes ios-sheet-up {
+  from { transform: translateY(100%); opacity: 0.6; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Drag handle before content */
+.tb-modal::before,
+.obj-modal::before,
+.rt-modal::before {
+  content: '';
+  display: block;
+  width: 36px; height: 5px;
+  background: var(--text-tertiary);
+  border-radius: 3px;
+  margin: 0 auto 16px;
+  opacity: 0.5;
+}
+
+/* Ensure hidden panels stay hidden */
+[data-goals-panel][hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -1403,8 +1534,12 @@ body.tb-no-scroll { overflow: hidden; }
           </div>
         </div>
         <div class="gm-bar" id="gmBar"></div>
-        <ul id="goalList" class="goal-list gm-list"></ul>
-        <div id="emptyState" class="empty-state">No goals for today yet — add one below.</div>
+        <ul id="goalList" class="goal-list gm-list">
+          <li class="skeleton" style="height:42px;margin-bottom:8px;border-radius:10px;list-style:none"></li>
+          <li class="skeleton" style="height:42px;margin-bottom:8px;border-radius:10px;list-style:none"></li>
+          <li class="skeleton" style="height:42px;border-radius:10px;list-style:none"></li>
+        </ul>
+        <div id="emptyState" class="empty-state" style="display:none">No goals for today yet — add one below.</div>
         <button type="button" id="gmPushBtn" class="gm-push-btn" style="display:none;">Push remaining to tomorrow</button>
         <div class="goal-input-wrap gm-input-wrap">
           <input id="goalInput" class="gm-input" type="text" placeholder="Add a goal for today…" autocomplete="off">
@@ -1436,7 +1571,9 @@ body.tb-no-scroll { overflow: hidden; }
           <button type="button" class="rt-start-btn"     id="rtStartChallengeBtn">🏆 Start Challenge</button>
         </div>
         <div class="rt-grid-wrap">
-          <div class="rt-grid" id="rtGrid"></div>
+          <div class="rt-grid" id="rtGrid">
+            <div class="skeleton" id="rtGridSkeleton" style="height:120px;border-radius:10px;margin:4px"></div>
+          </div>
         </div>
         <div class="rt-pager" id="rtPager">
           <button type="button" class="rt-load-more" id="rtLoadMore">Load more ▾</button>
@@ -1491,16 +1628,28 @@ const user = await requireAuth();
 await initUserMenu();
 
 // ── Goals sub-tab system ──────────────────────────────────────
-function switchGoalsTab(name) {
+function switchGoalsTab(name, animate = false) {
   localStorage.setItem('goals:active_tab', name);
   document.querySelectorAll('.goals-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
   document.querySelectorAll('[data-goals-panel]').forEach(p => {
-    if (p.dataset.goalsPanel === name) p.removeAttribute('hidden');
-    else p.setAttribute('hidden', '');
+    if (p.dataset.goalsPanel === name) {
+      p.removeAttribute('hidden');
+      if (animate) {
+        p.classList.remove('tab-slide-in');
+        void p.offsetWidth; // force reflow
+        p.classList.add('tab-slide-in');
+        setTimeout(() => p.classList.remove('tab-slide-in'), 300);
+      }
+    } else {
+      p.setAttribute('hidden', '');
+    }
   });
 }
-document.querySelectorAll('.goals-tab').forEach(btn => btn.addEventListener('click', () => switchGoalsTab(btn.dataset.tab)));
-switchGoalsTab(localStorage.getItem('goals:active_tab') || 'routine');
+document.querySelectorAll('.goals-tab').forEach(btn => btn.addEventListener('click', () => {
+  if (typeof window.haptic === 'function') window.haptic('light');
+  switchGoalsTab(btn.dataset.tab, true);
+}));
+switchGoalsTab(localStorage.getItem('goals:active_tab') || 'routine', false);
 
 // ── Constants ─────────────────────────────────────────────────
 const ANTHROPIC_API_KEY = '';
@@ -2308,19 +2457,23 @@ const ANTHROPIC_API_KEY = '';
     bg.querySelector('#omTitle').focus();
   }
 
-  // Objectives tab toggle
-  document.getElementById('objTabMonth').addEventListener('click', () => {
-    document.getElementById('objTabMonth').classList.add('active');
-    document.getElementById('objTabYear').classList.remove('active');
-    document.getElementById('objPanelMonth').classList.add('active');
-    document.getElementById('objPanelYear').classList.remove('active');
-  });
-  document.getElementById('objTabYear').addEventListener('click', () => {
-    document.getElementById('objTabYear').classList.add('active');
-    document.getElementById('objTabMonth').classList.remove('active');
-    document.getElementById('objPanelYear').classList.add('active');
-    document.getElementById('objPanelMonth').classList.remove('active');
-  });
+  // Objectives tab toggle (with animation)
+  function switchObjTab(which) {
+    const isMonth = (which === 'month');
+    document.getElementById('objTabMonth').classList.toggle('active', isMonth);
+    document.getElementById('objTabYear').classList.toggle('active', !isMonth);
+    const show = document.getElementById(isMonth ? 'objPanelMonth' : 'objPanelYear');
+    const hide = document.getElementById(isMonth ? 'objPanelYear' : 'objPanelMonth');
+    hide.classList.remove('active');
+    show.classList.add('active');
+    show.classList.remove('tab-slide-in');
+    void show.offsetWidth;
+    show.classList.add('tab-slide-in');
+    setTimeout(() => show.classList.remove('tab-slide-in'), 300);
+    if (typeof window.haptic === 'function') window.haptic('light');
+  }
+  document.getElementById('objTabMonth').addEventListener('click', () => switchObjTab('month'));
+  document.getElementById('objTabYear').addEventListener('click',  () => switchObjTab('year'));
   document.getElementById('objNewMonthBtn').addEventListener('click', () => openObjModal(null, 'month'));
   document.getElementById('objNewYearBtn').addEventListener('click',  () => openObjModal(null, 'year'));
 
@@ -2489,6 +2642,7 @@ const ANTHROPIC_API_KEY = '';
         const cb = document.createElement('input');
         cb.type = 'checkbox'; cb.className = 'rt-hb-check'; cb.checked = completed;
         cb.addEventListener('change', async () => {
+          if (typeof window.haptic === 'function') window.haptic(cb.checked ? 'success' : 'light');
           await HabitsData.toggleHabitLog(h.id, ds, cb.checked);
           loadRoutineTracker();
         });
