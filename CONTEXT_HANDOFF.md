@@ -1,5 +1,34 @@
 # CONTEXT_HANDOFF.md — Row Dashboard
 
+## UX Overhaul — COMPLETE ✓ (2026-08-14)
+
+### What was built
+Pure CSS/HTML/JS layer on top of all existing pages. Zero SQL changes, zero new modules, zero PWA manifest changes.
+
+| Step | Deliverable | Status |
+|------|---|---|
+| 1 | `js/bottom-nav.js`: iOS zoom fix, global haptic, touch-action | ✓ Done |
+| 2 | `index.html`: viewport, segmented controls, bottom sheet modals | ✓ Done |
+| 3 | `health.html`: segmented tabs, bottom sheet for stack add, haptics | ✓ Done |
+| 4 | `gym.html`: segmented tabs, bottom sheets, stch session player full-height | ✓ Done |
+| 5 | `finance.html`: segmented tabs, bottom sheet modal, nav offset, 8 accordions | ✓ Done |
+| 6 | `library.html`: segmented tabs, bottom sheet modals, haptics | ✓ Done |
+| 7 | `auth.html`: segmented sign-in/up control, haptic | ✓ Done |
+| 8 | `po-water.html`: viewport fix | ✓ Done |
+
+### Architecture decisions
+
+- **iOS segmented control pattern**: `background: rgba(120,120,128,0.16)`, `border-radius:10px`, `padding:3px`, active segment `background: var(--bg-card)` + `box-shadow: 0 1px 4px rgba(0,0,0,0.25)`
+- **Bottom sheet pattern**: overlay `align-items:flex-end`, sheet `border-radius:20px 20px 0 0`, drag handle via `::before` pseudo-element, `animation: *-sheet-up 0.36s cubic-bezier(0.32,0.72,0,1)`, `padding-bottom: calc(20px + env(safe-area-inset-bottom))` on sheet (NOT overlay)
+- **Tab slide animation**: `@keyframes *-panel-in { from { opacity:0; translateX(18px) } }`, triggered via `.tab-slide-in` class + `void el.offsetWidth` reflow reset
+- **Finance accordions**: `.fin-acc-trigger` + `.fin-acc-body` pattern, `max-height:0 → 2400px` transition, state in `localStorage('fin-acc-*')`
+- **Finance bottom-tabs**: `bottom: calc(62px + env(safe-area-inset-bottom)) !important` to clear global bottom nav
+- **Stch session player**: `#stchDetailModal .stch-modal-inner` uses `position:fixed; top:10vh; left:0; right:0; bottom:0` with flex column layout — exercise list gets `flex:1; overflow-y:auto`
+- **CSS injection order**: overrides appended at end of each `<style>` block → naturally higher cascade specificity via source order + `!important` where needed
+- **No JS module changes**: all new JS is either in `bottom-nav.js` global IIFE or at end of existing `<script type="module">` blocks
+
+---
+
 ## Improvements Phase — COMPLETE ✓ (2026-06-11)
 
 ### What was built

@@ -1,3 +1,55 @@
+# UX Overhaul — iOS-native Design System (2026-08-14)
+
+No SQL changes. No new JS modules. Pure CSS/HTML/JS UI layer.
+
+## Global changes (bottom-nav.js)
+- iOS zoom prevention: `text-size-adjust: 100%`, `touch-action: manipulation`, `font-size: 16px !important` on all inputs
+- `window.haptic()` via `navigator.vibrate()` wired across all tab/button interactions
+
+## Per-page changes
+
+### index.html
+- Viewport: `maximum-scale=1.0, user-scalable=no`
+- Goals tabs + Objectives tabs → iOS segmented control
+- All modals (tb-modal, obj-modal, rt-modal) → bottom sheet with drag handle, slide-up animation, safe-area padding
+
+### gym.html
+- Viewport fix
+- Gym tabs + Strength tabs → iOS segmented controls with slide-in panel animation + haptic
+- PO modal → bottom sheet
+- Stretching modals (routine, detail, stretch editor) → bottom sheet with safe-area padding
+- Stretching session player (`#stchDetailModal`) → full-height panel `top:10vh` to `bottom:0`, flex layout, scrollable exercise list
+
+### health.html
+- Viewport fix
+- Intake tabs → iOS segmented control with slide-in animation + haptic
+- Water +/− buttons → haptic feedback
+- Stack check buttons → spring scale animation + haptic
+- Stack add form → replaced with trigger button + bottom sheet
+
+### finance.html
+- Viewport fix
+- Top fin-tabs (OVERVIEW/CASH FLOW/ADVISOR) → iOS segmented control + slide-in animation + haptic
+- Bottom bot-tabs (Net Worth/Subs/Orders/Wishlist) → haptic
+- Cash Flow entry modal → bottom sheet on mobile
+- Finance bottom-tabs repositioned above global nav (`bottom: calc(62px + env(safe-area-inset-bottom))`)
+- 8 accordion sections in OVERVIEW: Recent Activity, 4 asset subcards, Subs add form, Orders add form, Wishlist add form — collapsed by default, state persisted to localStorage
+
+### library.html
+- Viewport fix
+- Library tabs → iOS segmented control + slide-in animation + haptic
+- Detail modal inner tabs → iOS segmented control + haptic
+- Book add/edit modals → bottom sheet on mobile with drag handle, slide-up animation, safe-area padding
+
+### auth.html
+- Viewport fix + iOS zoom CSS
+- Sign In / Sign Up segmented control → gold-tinted iOS style + haptic
+
+### po-water.html
+- Viewport fix
+
+---
+
 # Improvements Phase — Cash Flow, Advisor, Library, Integrations (2026-06-11)
 
 ## SQL migration

@@ -219,6 +219,25 @@ body::before {
   .lib-book-grid { grid-template-columns: 1fr; }
   .lib-stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── iOS UX overrides ── */
+.lib-tabs { background: var(--bg-secondary, rgba(120,120,128,0.16)) !important; border-radius: 10px !important; padding: 3px !important; border: none !important; gap: 0 !important; }
+.lib-tab { font-family: var(--font) !important; font-size: 13px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important; border-radius: 8px !important; padding: 7px 12px !important; min-height: 36px !important; transition: background 0.2s, color 0.2s, box-shadow 0.2s !important; color: var(--text-tertiary) !important; }
+.lib-tab.active { background: var(--bg-card, #1c1c1e) !important; color: var(--text-primary) !important; box-shadow: 0 1px 4px rgba(0,0,0,0.25) !important; }
+.lib-detail-tabs { background: rgba(120,120,128,0.14) !important; border-radius: 9px !important; padding: 3px !important; gap: 0 !important; }
+.lib-detail-tab { font-family: var(--font) !important; font-size: 12px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important; border-radius: 7px !important; padding: 6px 10px !important; transition: background 0.2s, color 0.2s, box-shadow 0.2s !important; color: var(--text-tertiary) !important; }
+.lib-detail-tab.active { background: var(--bg-card, #1c1c1e) !important; color: var(--text-primary) !important; box-shadow: 0 1px 4px rgba(0,0,0,0.25) !important; }
+@media (max-width: 599px) {
+  .lib-modal-overlay { backdrop-filter: none !important; background: rgba(0,0,0,0.48) !important; }
+  .lib-modal { border-radius: 20px 20px 0 0 !important; animation: lib-sheet-up 0.36s cubic-bezier(0.32,0.72,0,1) !important; padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; border: none !important; border-top: 1px solid var(--border-strong) !important; }
+  .lib-modal::before { content: ''; display: block; width: 36px; height: 5px; background: var(--text-tertiary); border-radius: 3px; margin: 0 auto 16px; opacity: 0.4; }
+  .lib-detail-overlay { backdrop-filter: none !important; background: rgba(0,0,0,0.52) !important; }
+  .lib-detail-modal { border-radius: 20px 20px 0 0 !important; animation: lib-sheet-up 0.36s cubic-bezier(0.32,0.72,0,1) !important; padding-bottom: env(safe-area-inset-bottom) !important; border: none !important; border-top: 1px solid var(--border-strong) !important; }
+  .lib-detail-modal::before { content: ''; display: block; width: 36px; height: 5px; background: var(--text-tertiary); border-radius: 3px; margin: 8px auto 0; opacity: 0.4; flex-shrink: 0; }
+}
+@keyframes lib-sheet-up { from { transform: translateY(100%); opacity: 0.6; } to { transform: translateY(0); opacity: 1; } }
+@keyframes lib-panel-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+[data-lib-panel].tab-slide-in { animation: lib-panel-in 0.28s cubic-bezier(0.22,1,0.36,1); }
 </style>
 </head>
 <body>
@@ -330,18 +349,26 @@ function daysSince(dateStr) {
 }
 
 // ── Tab system ─────────────────────────────────────────────────────────────
-function switchLibTab(name) {
+function switchLibTab(name, animate = false) {
   localStorage.setItem('library:active_tab', name);
   document.querySelectorAll('.lib-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
   document.querySelectorAll('[data-lib-panel]').forEach(p => {
-    if (p.dataset.libPanel === name) p.removeAttribute('hidden');
-    else p.setAttribute('hidden', '');
+    if (p.dataset.libPanel === name) {
+      p.removeAttribute('hidden');
+      if (animate) { p.classList.remove('tab-slide-in'); void p.offsetWidth; p.classList.add('tab-slide-in'); }
+    } else {
+      p.setAttribute('hidden', '');
+      p.classList.remove('tab-slide-in');
+    }
   });
   if (name === 'queue' && !_queueLoaded) loadQueue();
   if (name === 'reading') loadReading();
   if (name === 'completed') loadCompleted();
 }
-document.querySelectorAll('.lib-tab').forEach(btn => btn.addEventListener('click', () => switchLibTab(btn.dataset.tab)));
+document.querySelectorAll('.lib-tab').forEach(btn => btn.addEventListener('click', () => {
+  window.haptic && window.haptic('light');
+  switchLibTab(btn.dataset.tab, true);
+}));
 
 // ── State ──────────────────────────────────────────────────────────────────
 let _queueLoaded = false;
@@ -812,6 +839,7 @@ async function openDetailModal(bookId) {
 
   // Tab switching inside detail modal
   ov.querySelectorAll('.lib-detail-tab').forEach(tab => tab.addEventListener('click', () => {
+    window.haptic && window.haptic('light');
     ov.querySelectorAll('.lib-detail-tab').forEach(t => t.classList.toggle('active', t === tab));
     ov.querySelectorAll('[data-dtab-panel]').forEach(p => { p.hidden = p.dataset.dtabPanel !== tab.dataset.dtab; });
   }));
