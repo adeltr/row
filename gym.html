@@ -1685,9 +1685,11 @@ img, video, canvas, svg { max-width: 100%; }
 .stch-day-dur { font-family:var(--font-mono); font-size:11px; color:var(--good); flex-shrink:0; }
 .stch-day-notes { font-size:11px; color:var(--text-3); width:100%; }
 /* Stretching modals */
-.stch-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.82); z-index:400; display:flex; align-items:flex-end; padding-bottom:env(safe-area-inset-bottom,0); }
+.stch-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:400; display:flex; align-items:flex-end; justify-content:center; }
 .stch-modal-overlay[hidden] { display:none !important; }
-.stch-modal-inner { width:100%; max-width:540px; margin:0 auto; background:#16181a; border:1px solid var(--border); border-bottom:none; border-radius:20px 20px 0 0; padding:20px 18px 32px; max-height:88vh; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.stch-modal-inner { width:100%; max-width:540px; background:var(--bg-card,#1c1c1e); border:1px solid var(--border-strong); border-bottom:none; border-radius:20px 20px 0 0; padding:6px 18px calc(28px + env(safe-area-inset-bottom)); max-height:85vh; overflow-y:auto; -webkit-overflow-scrolling:touch; box-sizing:border-box; animation:stch-sheet-up 0.34s cubic-bezier(0.32,0.72,0,1); }
+.stch-modal-inner::before { content:''; display:block; width:36px; height:5px; background:var(--text-3,rgba(255,255,255,0.3)); border-radius:3px; margin:0 auto 14px; opacity:0.45; }
+@keyframes stch-sheet-up { from { transform:translateY(100%); opacity:0.5; } to { transform:translateY(0); opacity:1; } }
 .stch-modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
 .stch-modal-title { font-family:var(--font-mono); font-size:12px; font-weight:700; letter-spacing:0.14em; color:var(--text-1); text-transform:uppercase; }
 .stch-modal-close { background:transparent; border:none; color:var(--text-3); font-size:16px; cursor:pointer; padding:4px 8px; -webkit-tap-highlight-color:transparent; }
@@ -6471,9 +6473,11 @@ await initUserMenu();
     // Routine modal
     document.getElementById('stchRoutineModalClose').addEventListener('click', closeStchRoutineModal);
     document.getElementById('stchRoutineModalSave').addEventListener('click', handleStchRoutineSave);
+    document.getElementById('stchRoutineModal').addEventListener('click', e => { if (e.target === document.getElementById('stchRoutineModal')) closeStchRoutineModal(); });
 
     // Detail modal
     document.getElementById('stchDetailModalClose').addEventListener('click', closeStchDetailModal);
+    document.getElementById('stchDetailModal').addEventListener('click', e => { if (e.target === document.getElementById('stchDetailModal')) closeStchDetailModal(); });
     document.getElementById('stchDetailAddStretchBtn').addEventListener('click', () => openStchStretchModal(null));
     document.getElementById('stchDetailStretchList').addEventListener('click', async e => {
       const btn = e.target.closest('[data-saction]');
@@ -6493,6 +6497,7 @@ await initUserMenu();
 
     // Stretch modal
     document.getElementById('stchStretchModalClose').addEventListener('click', closeStchStretchModal);
+    document.getElementById('stchStretchModal').addEventListener('click', e => { if (e.target === document.getElementById('stchStretchModal')) closeStchStretchModal(); });
     document.getElementById('stchStretchModalSave').addEventListener('click', handleStchStretchSave);
     document.getElementById('stchStretchPhotoInput').addEventListener('change', e => {
       const file = e.target.files?.[0];

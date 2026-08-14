@@ -438,6 +438,13 @@ main { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; padding
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
 
+/* ── STACK ADD TRIGGER + SHEET ── */
+.stack-trigger-btn { width:100%; padding:13px 16px; background:transparent; border:1px dashed var(--border-strong); border-radius:12px; color:var(--text-tertiary); font-family:var(--font); font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:background 0.15s,border-color 0.15s,color 0.15s; -webkit-tap-highlight-color:transparent; }
+.stack-trigger-btn:hover { background:var(--overlay-hover); border-color:var(--accent-gold); color:var(--accent-gold); }
+.stack-trigger-btn:active { transform:scale(0.98); }
+.stack-add-modal { overflow:visible !important; }
+.stack-add-modal .stack-search-results { max-height:220px; }
+
 /* ── iOS SEGMENTED CONTROL ── */
 .intake-tabs { background: var(--bg-tertiary, rgba(120,120,128,0.16)) !important; border-radius: 10px !important; padding: 3px !important; border: none !important; gap: 0 !important; }
 .intake-tab { font-family: var(--font) !important; font-size: 13px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important; border-radius: 8px !important; padding: 7px 12px !important; min-height: 36px !important; transition: background 0.2s, color 0.2s, box-shadow 0.2s !important; color: var(--text-secondary) !important; }
@@ -494,21 +501,7 @@ main { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; padding
       <div class="stack-progress-track"><div id="stackProgressBar" class="stack-progress-fill"></div></div>
       <div id="stackGroups"></div>
       <div class="stack-add-wrap">
-        <div class="sf-eyebrow stack-add-label">Add to stack</div>
-        <div class="stack-add-row">
-          <div class="stack-name-wrap">
-            <input id="stackAddName" type="text" placeholder="Name (e.g. B-complex)" class="stack-input" autocomplete="off" spellcheck="false">
-            <div id="stackSearchResults" class="stack-search-results" hidden></div>
-          </div>
-          <input id="stackAddDose" type="text" placeholder="Dose (e.g. 1 cap)" class="stack-input">
-          <select id="stackAddWindow" class="stack-input stack-select">
-            <option value="morning">Morning</option>
-            <option value="lunch">Lunch</option>
-            <option value="evening">Evening</option>
-            <option value="anytime">Anytime</option>
-          </select>
-          <button id="stackAddBtn" class="stack-add-btn">+ Add</button>
-        </div>
+        <button id="stackAddTriggerBtn" class="stack-trigger-btn">＋ Add supplement</button>
       </div>
     </div>
     <div class="attribution">// editable template · data stored in Supabase</div>
@@ -649,6 +642,25 @@ main { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; padding
 
   </div>
 </main>
+
+<!-- Stack add bottom sheet -->
+<div class="modal-bg" id="stackAddSheetBg">
+  <div class="modal stack-add-modal">
+    <h3>Add supplement</h3>
+    <div class="stack-name-wrap" style="margin-bottom:12px">
+      <input id="stackAddName" type="text" placeholder="Name (e.g. B-complex)" class="stack-input" autocomplete="off" spellcheck="false" style="width:100%">
+      <div id="stackSearchResults" class="stack-search-results" hidden></div>
+    </div>
+    <input id="stackAddDose" type="text" placeholder="Dose (e.g. 1 cap)" class="stack-input" style="width:100%;display:block;margin-bottom:12px">
+    <select id="stackAddWindow" class="stack-input stack-select" style="width:100%;display:block;margin-bottom:20px">
+      <option value="morning">Morning</option>
+      <option value="lunch">Lunch</option>
+      <option value="evening">Evening</option>
+      <option value="anytime">Anytime</option>
+    </select>
+    <button id="stackAddBtn" class="stack-add-btn" style="width:100%;padding:14px;font-size:15px">+ Add to stack</button>
+  </div>
+</div>
 
 <!-- Water settings modal -->
 <div class="modal-bg" id="wSetModalBg">
@@ -1034,14 +1046,22 @@ _nameIn.addEventListener('input',()=>{ renderSearchResults(_nameIn.value); _pend
 _nameIn.addEventListener('focus',()=>{ if(_nameIn.value.trim()) renderSearchResults(_nameIn.value); });
 document.addEventListener('click',e=>{ if(!e.target.closest('.stack-name-wrap')) _resEl.hidden=true; });
 _resEl.addEventListener('click',e=>{ const btn=e.target.closest('.stack-result'); if(!btn) return; _nameIn.value=btn.dataset.name; _doseIn.value=btn.dataset.dose; _winSel.value=btn.dataset.intakeWindow; _pendNote=btn.dataset.note; _resEl.hidden=true; _addBtn.focus(); });
+const _stackSheet = document.getElementById('stackAddSheetBg');
 _addBtn.addEventListener('click',()=>{
   const name=_nameIn.value.trim(); if(!name) return;
   StackData.addItem({name,dose:_doseIn.value.trim(),intake_window:['morning','lunch','evening','anytime'].includes(_winSel.value)?_winSel.value:'anytime',note:_pendNote,tag:null,ordered:true}).then(renderStack);
-  _nameIn.value=''; _doseIn.value=''; _pendNote=''; _resEl.hidden=true; _nameIn.focus();
+  _nameIn.value=''; _doseIn.value=''; _pendNote=''; _resEl.hidden=true;
+  _stackSheet.classList.remove('show');
 });
+document.getElementById('stackAddTriggerBtn').addEventListener('click',()=>{
+  window.haptic&&window.haptic('light');
+  _stackSheet.classList.add('show');
+  setTimeout(()=>_nameIn.focus(),360);
+});
+_stackSheet.addEventListener('click',e=>{ if(e.target===_stackSheet) _stackSheet.classList.remove('show'); });
 [_nameIn,_doseIn].forEach(inp=>inp.addEventListener('keydown',e=>{
   if(e.key==='Enter'){if(!_resEl.hidden&&inp===_nameIn){const f=_resEl.querySelector('.stack-result');if(f){e.preventDefault();f.click();return;}} _addBtn.click();}
-  if(e.key==='Escape') _resEl.hidden=true;
+  if(e.key==='Escape'){ _resEl.hidden=true; _stackSheet.classList.remove('show'); }
 }));
 
 setInterval(renderStack, 60000);
