@@ -2408,33 +2408,62 @@ img, video, canvas, svg { max-width: 100%; }
 .po-reps-pill { transition: background 0.15s, color 0.15s, transform 0.1s !important; }
 .po-reps-pill:active { transform: scale(0.94) !important; }
 
-/* ── Stretching session player: full-height panel from top ── */
-#stchDetailModal { align-items: stretch !important; }
+/* ── Workout player: safe-area + exercise list ── */
+.wp-header { padding-top: calc(10px + env(safe-area-inset-top)) !important; }
+.wp-bottom-bar { padding-bottom: max(10px, calc(env(safe-area-inset-bottom) + 8px)) !important; }
+.wp-finish-inner { padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; }
+/* Exercise list cards */
+.wp-ex-item { border-radius: 12px; margin-bottom: 8px; overflow: hidden; }
+.wp-ex-current { border: 1px solid var(--accent-gold) !important; border-left: 3px solid var(--accent-gold) !important; background: rgba(212,168,83,0.04); padding: 14px; }
+.wp-ex-collapsed { display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); padding:12px 14px; cursor:pointer; -webkit-tap-highlight-color:transparent; border-radius:12px; }
+.wp-ex-collapsed:active { background:var(--overlay-active); }
+.wp-ex-collapsed-name { flex:1; font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wp-ex-collapsed-meta { font-family:var(--font-mono); font-size:10px; color:var(--text-3); flex-shrink:0; }
+.wp-ex-done .wp-ex-collapsed-name { color:var(--good); }
+.wp-ex-done.wp-ex-collapsed { border-color:rgba(110,231,183,0.25); }
+.wp-ss-badge { background:rgba(147,197,253,0.15); color:#93c5fd; font-family:var(--font-mono); font-size:9px; font-weight:700; padding:2px 6px; border-radius:4px; flex-shrink:0; }
+.wp-set-row.logged { background:rgba(110,231,183,0.08) !important; opacity:1 !important; border-radius:6px; }
+.wp-set-row.logged .wp-set-input:disabled { color:var(--good) !important; border-color:transparent !important; background:transparent !important; }
+
+/* ── Stretching session player (full-screen) ── */
+.stch-sp-overlay { position:fixed; inset:0; z-index:9999; background:var(--bg,#050506); display:flex; flex-direction:column; overflow:hidden; }
+.stch-sp-overlay.hidden { display:none !important; }
+.stch-sp-header { display:flex; align-items:center; gap:10px; padding:10px 14px; padding-top:calc(10px + env(safe-area-inset-top)); background:rgba(0,0,0,0.6); border-bottom:1px solid var(--border-strong,rgba(255,255,255,0.12)); flex-shrink:0; }
+.stch-sp-quit { background:transparent; border:1px solid var(--border,rgba(255,255,255,0.06)); border-radius:7px; color:var(--text-3,rgba(255,255,255,0.4)); font-family:var(--font-mono); font-size:11px; font-weight:700; padding:6px 10px; cursor:pointer; flex-shrink:0; -webkit-tap-highlight-color:transparent; }
+.stch-sp-header-mid { flex:1; text-align:center; min-width:0; }
+.stch-sp-title { font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-1,#fafafa); letter-spacing:0.06em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stch-sp-progress-label { font-family:var(--font-mono); font-size:9px; color:var(--text-3,rgba(255,255,255,0.4)); margin-top:2px; }
+.stch-sp-elapsed { font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--good,#6be3a4); min-width:42px; text-align:right; }
+.stch-sp-body { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; display:flex; flex-direction:column; align-items:center; padding:28px 20px 16px; }
+.stch-sp-stretch-name { font-size:28px; font-weight:800; color:var(--text-1,#fafafa); text-align:center; margin-bottom:14px; line-height:1.2; }
+.stch-sp-duration-badge { display:inline-block; background:rgba(212,168,83,0.15); color:var(--accent-gold,#d4a853); font-family:var(--font-mono); font-size:14px; font-weight:700; padding:6px 18px; border-radius:20px; margin-bottom:18px; }
+.stch-sp-photo { width:100%; max-width:280px; height:180px; object-fit:cover; border-radius:14px; margin-bottom:16px; }
+.stch-sp-desc { font-size:14px; color:var(--text-2,rgba(255,255,255,0.6)); text-align:center; line-height:1.6; max-width:340px; }
+.stch-sp-rest-area { text-align:center; padding:12px 0; }
+.stch-sp-rest-lbl { font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:0.14em; color:var(--text-3,rgba(255,255,255,0.4)); margin-bottom:4px; }
+.stch-sp-rest-time { font-family:var(--font-mono); font-size:52px; font-weight:700; color:var(--good,#6be3a4); line-height:1; margin-bottom:10px; transition:color 0.4s; }
+.stch-sp-rest-time.warn { color:var(--warn,#f2c063); }
+.stch-sp-rest-time.danger { color:var(--bad,#ff6b6b); }
+.stch-sp-rest-skip { background:transparent; border:1px solid rgba(110,231,183,0.4); border-radius:8px; color:var(--good,#6be3a4); font-family:var(--font-mono); font-size:11px; font-weight:700; padding:8px 20px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.stch-sp-controls { display:flex; align-items:center; gap:8px; padding:12px 14px; padding-bottom:max(12px, calc(env(safe-area-inset-bottom) + 8px)); border-top:1px solid var(--border-strong,rgba(255,255,255,0.12)); background:rgba(0,0,0,0.4); flex-shrink:0; }
+.stch-sp-nav-btn { flex:1; background:var(--overlay-hover,rgba(255,255,255,0.06)); border:1px solid var(--border,rgba(255,255,255,0.06)); border-radius:10px; color:var(--text-2,rgba(255,255,255,0.7)); font-family:var(--font-mono); font-size:11px; font-weight:700; padding:12px 6px; cursor:pointer; letter-spacing:0.06em; -webkit-tap-highlight-color:transparent; transition:background 0.15s; }
+.stch-sp-nav-btn:disabled { opacity:0.3; cursor:not-allowed; }
+.stch-sp-nav-btn:active { background:var(--overlay-active,rgba(255,255,255,0.12)); }
+.stch-sp-complete-btn { flex:2; background:var(--good,#6be3a4); border:none; border-radius:10px; color:#0a0a0b; font-family:var(--font-mono); font-size:13px; font-weight:700; padding:13px; cursor:pointer; letter-spacing:0.1em; -webkit-tap-highlight-color:transparent; }
+.stch-sp-complete-btn.hidden { display:none !important; }
+.stch-sp-nav-btn.hidden { display:none !important; }
+.stch-sp-progress-dots { display:flex; gap:5px; justify-content:center; margin-top:auto; padding-top:16px; flex-wrap:wrap; }
+.stch-sp-dot { width:7px; height:7px; border-radius:50%; background:var(--border-strong,rgba(255,255,255,0.12)); transition:background 0.2s; }
+.stch-sp-dot.done { background:var(--good,#6be3a4); }
+.stch-sp-dot.current { background:var(--accent-gold,#d4a853); transform:scale(1.2); }
+
+/* Keep stch detail modal as editor (not player) */
+#stchDetailModal { align-items: flex-end !important; }
 #stchDetailModal .stch-modal-inner {
-  position: fixed !important;
-  top: 10vh !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  max-height: none !important;
-  max-width: none !important;
-  width: 100% !important;
-  border-radius: 20px 20px 0 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  padding-bottom: 0 !important;
-  overflow-y: hidden !important;
-}
-#stchDetailModal #stchDetailStretchList {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  min-height: 0;
-}
-#stchDetailModal .stch-detail-add-btn {
-  flex-shrink: 0;
-  margin: 12px 0 0 !important;
-  padding: 12px !important;
+  position: static !important;
+  max-height: 88vh !important;
+  overflow-y: auto !important;
+  display: block !important;
   padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
 }
 </style>
@@ -5957,12 +5986,12 @@ await initUserMenu();
   }
 
   function _wpRender() {
+    const total = _wp.groups.length;
     const group = _wp.groups[_wp.groupIdx];
     if (!group) return;
     const ex = group[_wp.ssPos];
     const isSuperset = group.length === 2;
     const partner = isSuperset ? group[1 - _wp.ssPos] : null;
-    const total = _wp.groups.length;
 
     document.getElementById('wpExerciseIdx').textContent =
       'Exercise ' + (_wp.groupIdx + 1) + '/' + total + (isSuperset ? ' · SUPERSET' : '');
@@ -5996,7 +6025,7 @@ await initUserMenu();
       </div>`;
     }
 
-    document.getElementById('wpExCard').innerHTML = `
+    const currentCardHtml = `
       ${isSuperset ? `<div class="wp-superset-tag">🔗 Superset with ${escHtml(partner.name)}</div>` : ''}
       <div id="wpAutoAdvance" class="wp-auto-advance hidden"><span class="wp-aa-text">Next in <b id="wpAaCount">5</b>s</span><button class="wp-aa-stay" id="wpAaStay">Stay</button></div>
       <div class="wp-ex-name">${escHtml(ex.name)}</div>
@@ -6008,6 +6037,29 @@ await initUserMenu();
       ${isSuperset ? `<button class="wp-ss-switch" id="wpSsSwitch">Switch to ${escHtml(partner.name)} →</button>` : ''}
     `;
 
+    // Build full exercise list: current expanded, others collapsed
+    let listHtml = '';
+    for (let gi = 0; gi < total; gi++) {
+      const g = _wp.groups[gi];
+      const isCur = gi === _wp.groupIdx;
+      const gEx = g[isCur ? _wp.ssPos : 0];
+      const gLogged = (_wp.loggedSets[gEx.id]||[]).length;
+      const gTarget = _wp.exerciseTargets[gEx.id] || 4;
+      const gDone = gLogged >= gTarget;
+      const gSS = g.length === 2;
+      if (isCur) {
+        listHtml += `<div class="wp-ex-item wp-ex-current" id="wpExCard">${currentCardHtml}</div>`;
+      } else {
+        listHtml += `<div class="wp-ex-item wp-ex-collapsed${gDone?' wp-ex-done':''}" data-gi="${gi}">
+          ${gSS ? '<span class="wp-ss-badge">SS</span>' : ''}
+          <div class="wp-ex-collapsed-name">${escHtml(gEx.name)}</div>
+          <div class="wp-ex-collapsed-meta">${gDone ? '✓' : gLogged+'/'+gTarget}</div>
+        </div>`;
+      }
+    }
+    document.getElementById('wpBody').innerHTML = listHtml;
+
+    // Wire current exercise buttons
     document.getElementById('wpAddSet').onclick = () => { _wp.exerciseTargets[ex.id]++; _wpRender(); };
     document.getElementById('wpSsSwitch')?.addEventListener('click', () => {
       _wp.ssPos = 1 - _wp.ssPos; _wpRender(); _wpLoadPrevPerf(_wp.groups[_wp.groupIdx][_wp.ssPos]);
@@ -6018,6 +6070,21 @@ await initUserMenu();
     document.getElementById('wpExCard').querySelectorAll('.wp-check-btn').forEach(btn => {
       btn.addEventListener('click', () => _wpLogSet(ex, parseInt(btn.dataset.idx)));
     });
+    // Select all on focus for easier input
+    document.getElementById('wpExCard').querySelectorAll('.wp-set-input').forEach(inp => {
+      inp.addEventListener('focus', () => inp.select());
+    });
+    // Wire collapsed exercise items — tap to jump
+    document.querySelectorAll('.wp-ex-collapsed').forEach(el => {
+      el.addEventListener('click', () => {
+        _wp.groupIdx = parseInt(el.dataset.gi);
+        _wp.ssPos = 0;
+        _wpRender();
+        _wpLoadPrevPerf(_wp.groups[_wp.groupIdx][0]);
+        document.getElementById('wpBody').scrollTop = 0;
+      });
+    });
+
     if (isSuperset) _wpLoadPrevPerf(partner);
   }
 
@@ -6422,8 +6489,8 @@ await initUserMenu();
           ${lastUsed[r.id] ? `<div class="stch-rc-last">Last: ${lastUsed[r.id]}</div>` : ''}
         </div>
         <div class="stch-rc-actions">
-          <button class="stch-rc-btn" data-action="start" data-rid="${escHtml(r.id)}" title="View stretches">▶</button>
-          <button class="stch-rc-btn" data-action="edit" data-rid="${escHtml(r.id)}" title="Edit">✎</button>
+          <button class="stch-rc-btn" data-action="start" data-rid="${escHtml(r.id)}" title="Start session">▶</button>
+          <button class="stch-rc-btn" data-action="edit" data-rid="${escHtml(r.id)}" title="Edit stretches">✎</button>
           <button class="stch-rc-btn danger" data-action="delete" data-rid="${escHtml(r.id)}" title="Delete">✕</button>
         </div>
       </div>
@@ -6472,8 +6539,8 @@ await initUserMenu();
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
       const { action, rid } = btn.dataset;
-      if (action === 'start')  { openStchDetailModal(rid); return; }
-      if (action === 'edit')   { const r = _stchRoutines.find(x => x.id === rid); if (r) openStchRoutineModal(r); return; }
+      if (action === 'start')  { openStchSession(rid); return; }
+      if (action === 'edit')   { openStchDetailModal(rid); return; }
       if (action === 'delete') {
         if (!confirm('Delete this routine and all its stretches?')) return;
         try { const mod = await getStchMod(); await mod.deleteRoutine(rid); await refreshStchData(); }
@@ -6624,6 +6691,148 @@ await initUserMenu();
     document.getElementById('stchDetailModal').setAttribute('hidden', '');
     _stchDetailRoutineId  = null;
     _stchDetailStretches  = [];
+  }
+
+  // ── Stretching session player ──────────────────────────────────
+  const _sp = { routineName:'', stretches:[], routineId:null, idx:0, startMs:0, elapsedIv:null, restIv:null, restSecs:0, restTotal:0 };
+
+  async function openStchSession(routineId) {
+    const mod = await getStchMod();
+    let routine;
+    try { routine = await mod.loadRoutineWithStretches(routineId); }
+    catch (e) { alert('Error: ' + e.message); return; }
+    if (!routine) return;
+    const stretches = (routine.stretches || []).slice().sort((a, b) => a.order_index - b.order_index);
+    if (!stretches.length) { alert('No stretches in this routine. Use ✎ to add some first.'); return; }
+
+    _sp.routineName = routine.name;
+    _sp.routineId   = routineId;
+    _sp.stretches   = stretches;
+    _sp.idx         = 0;
+    _sp.startMs     = Date.now();
+
+    // Load signed photo URLs
+    stretches.forEach(s => {
+      if (!s.photo_url) return;
+      mod.getStretchPhotoUrl(s.photo_url).then(url => { s._signedUrl = url; _spRenderBody(); }).catch(() => {});
+    });
+
+    document.body.style.overflow = 'hidden';
+    document.getElementById('stchSpOverlay').classList.remove('hidden');
+    document.getElementById('stchSpTitle').textContent = routine.name;
+    _spStartElapsed();
+    _spRender();
+    _spWireButtons();
+  }
+
+  function _spClose() {
+    clearInterval(_sp.elapsedIv); clearInterval(_sp.restIv);
+    _sp.elapsedIv = null; _sp.restIv = null;
+    document.getElementById('stchSpOverlay').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function _spRender() {
+    _spRenderBody();
+    const total = _sp.stretches.length;
+    document.getElementById('stchSpProgress').textContent = (_sp.idx + 1) + ' / ' + total;
+    document.getElementById('stchSpPrev').disabled = _sp.idx === 0;
+    const isLast = _sp.idx === total - 1;
+    document.getElementById('stchSpNext').classList.toggle('hidden', isLast);
+    document.getElementById('stchSpComplete').classList.toggle('hidden', !isLast);
+    _spStopRest();
+  }
+
+  function _spRenderBody() {
+    const s = _sp.stretches[_sp.idx];
+    if (!s) return;
+    const dur = s.duration_sec || s.hold_duration_sec || 30;
+    const total = _sp.stretches.length;
+    const dots = _sp.stretches.map((_, i) => {
+      const cls = i < _sp.idx ? 'done' : i === _sp.idx ? 'current' : '';
+      return `<div class="stch-sp-dot${cls?' '+cls:''}"></div>`;
+    }).join('');
+
+    document.getElementById('stchSpBody').innerHTML = `
+      <div class="stch-sp-stretch-name">${escHtml(s.name)}</div>
+      <div class="stch-sp-duration-badge">⏱ ${dur}s</div>
+      ${s._signedUrl ? `<img class="stch-sp-photo" src="${escHtml(s._signedUrl)}" alt="${escHtml(s.name)}" loading="lazy" onerror="this.style.display='none'">` : ''}
+      ${s.description ? `<div class="stch-sp-desc">${escHtml(s.description)}</div>` : ''}
+      <div class="stch-sp-progress-dots">${dots}</div>
+    `;
+  }
+
+  function _spStartElapsed() {
+    clearInterval(_sp.elapsedIv);
+    _sp.elapsedIv = setInterval(() => {
+      const sec = Math.floor((Date.now() - _sp.startMs) / 1000);
+      const el = document.getElementById('stchSpElapsed');
+      if (el) el.textContent = Math.floor(sec/60) + ':' + String(sec%60).padStart(2,'0');
+    }, 1000);
+  }
+
+  function _spStartRest(secs) {
+    _sp.restSecs = Math.min(secs, 90); _sp.restTotal = _sp.restSecs;
+    clearInterval(_sp.restIv);
+    const body = document.getElementById('stchSpBody');
+    const restHtml = `<div class="stch-sp-rest-area">
+      <div class="stch-sp-rest-lbl">REST</div>
+      <div class="stch-sp-rest-time" id="spRestTime">${Math.floor(_sp.restSecs/60)}:${String(_sp.restSecs%60).padStart(2,'0')}</div>
+      <button class="stch-sp-rest-skip" id="spRestSkip">SKIP</button>
+    </div>`;
+    if (body) body.innerHTML = restHtml;
+    document.getElementById('spRestSkip')?.addEventListener('click', () => {
+      _spStopRest();
+      _spRenderBody();
+    });
+    _sp.restIv = setInterval(() => {
+      _sp.restSecs--;
+      const t = document.getElementById('spRestTime');
+      if (t) {
+        t.textContent = Math.floor(_sp.restSecs/60) + ':' + String(_sp.restSecs%60).padStart(2,'0');
+        const frac = _sp.restTotal > 0 ? _sp.restSecs / _sp.restTotal : 0;
+        t.className = 'stch-sp-rest-time' + (frac < 0.25 ? ' danger' : frac < 0.5 ? ' warn' : '');
+      }
+      if (_sp.restSecs <= 0) {
+        _spStopRest();
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        _spRenderBody();
+      }
+    }, 1000);
+  }
+
+  function _spStopRest() {
+    clearInterval(_sp.restIv); _sp.restIv = null;
+  }
+
+  function _spWireButtons() {
+    document.getElementById('stchSpQuit').onclick = _spClose;
+    document.getElementById('stchSpPrev').onclick = () => {
+      if (_sp.idx > 0) { _sp.idx--; _spRender(); }
+    };
+    document.getElementById('stchSpNext').onclick = () => {
+      if (_sp.idx < _sp.stretches.length - 1) {
+        const dur = _sp.stretches[_sp.idx].duration_sec || 30;
+        _sp.idx++;
+        _spRender();
+        _spStartRest(dur);
+      }
+    };
+    document.getElementById('stchSpComplete').onclick = async () => {
+      const elapsed = Math.round((Date.now() - _sp.startMs) / 60000);
+      try {
+        const mod = await getStchMod();
+        await mod.addStretchingLog({
+          routine_id: _sp.routineId,
+          date: new Date().toISOString().slice(0, 10),
+          duration_min: Math.max(1, elapsed),
+          notes: `${_sp.stretches.length} stretches completed`
+        });
+        await refreshStchData();
+      } catch(e) { console.warn('Session log failed:', e.message); }
+      window.haptic && window.haptic('success');
+      _spClose();
+    };
   }
 
   function stchRenderDetailStretches() {
@@ -8349,9 +8558,7 @@ await initUserMenu();
     </div>
     <div id="wpElapsed" class="wp-elapsed">0:00</div>
   </div>
-  <div class="wp-body" id="wpBody">
-    <div class="wp-ex-card" id="wpExCard"></div>
-  </div>
+  <div class="wp-body" id="wpBody"></div>
   <div class="wp-rest-bar hidden" id="wpRestBar">
     <div class="wp-rest-inner">
       <span class="wp-rest-label">REST</span>
@@ -8389,6 +8596,24 @@ await initUserMenu();
     <textarea class="wp-finish-notes" id="wpFinishNotes" placeholder="Notes (optional)"></textarea>
     <button class="wp-save-btn" id="wpSaveBtn">SAVE WORKOUT</button>
     <button class="wp-discard-btn" id="wpDiscardBtn">Discard without saving</button>
+  </div>
+</div>
+
+<!-- ── Stretching session player ── -->
+<div id="stchSpOverlay" class="stch-sp-overlay hidden">
+  <div class="stch-sp-header">
+    <button class="stch-sp-quit" id="stchSpQuit">✕</button>
+    <div class="stch-sp-header-mid">
+      <div class="stch-sp-title" id="stchSpTitle">SESSION</div>
+      <div class="stch-sp-progress-label" id="stchSpProgress">1 / 1</div>
+    </div>
+    <div class="stch-sp-elapsed" id="stchSpElapsed">0:00</div>
+  </div>
+  <div class="stch-sp-body" id="stchSpBody"></div>
+  <div class="stch-sp-controls">
+    <button class="stch-sp-nav-btn" id="stchSpPrev">← PREV</button>
+    <button class="stch-sp-nav-btn stch-sp-complete-btn hidden" id="stchSpComplete">✓ COMPLETE</button>
+    <button class="stch-sp-nav-btn" id="stchSpNext">NEXT →</button>
   </div>
 </div>
 

@@ -238,6 +238,10 @@ body::before {
 @keyframes lib-sheet-up { from { transform: translateY(100%); opacity: 0.6; } to { transform: translateY(0); opacity: 1; } }
 @keyframes lib-panel-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
 [data-lib-panel].tab-slide-in { animation: lib-panel-in 0.28s cubic-bezier(0.22,1,0.36,1); }
+
+/* ── FAB ── */
+.lib-fab { position:fixed; bottom:calc(72px + env(safe-area-inset-bottom) + 16px); right:20px; z-index:1000; width:56px; height:56px; border-radius:50%; background:var(--accent-gold); border:none; color:#000; font-size:26px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 16px rgba(212,168,83,0.4); cursor:pointer; -webkit-tap-highlight-color:transparent; transition:transform 0.15s, box-shadow 0.15s; }
+.lib-fab:active { transform:scale(0.92); box-shadow:0 2px 8px rgba(212,168,83,0.3); }
 </style>
 </head>
 <body>
@@ -321,6 +325,8 @@ body::before {
   </div>
 
 </div>
+
+<button class="lib-fab" id="libFab" aria-label="Add book">＋</button>
 
 <script type="module">
 import { requireAuth } from './js/auth.js';
@@ -898,6 +904,7 @@ function attachNoteDeleteHandlers(ov, bookId, detail) {
 
 // ── Search + filter events ─────────────────────────────────────────────────
 document.getElementById('libAddBtn').addEventListener('click', () => openBookModal());
+document.getElementById('libFab').addEventListener('click', () => { window.haptic && window.haptic('light'); openBookModal(); });
 document.getElementById('libSearch').addEventListener('input', debounce(loadQueue, 300));
 document.getElementById('libFilterCat').addEventListener('change', loadQueue);
 document.getElementById('libSortBy').addEventListener('change', loadQueue);
