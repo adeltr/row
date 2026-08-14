@@ -2375,6 +2375,36 @@ img, video, canvas, svg { max-width: 100%; }
   .gym-tab { font-size: 9px; padding: 10px 5px; }
   .ran-stats-row { grid-template-columns: 1fr; }
 }
+
+/* ── iOS SEGMENTED CONTROL — outer gym tabs ── */
+.gym-tabs { background: rgba(120,120,128,0.16) !important; border-radius: 10px !important; padding: 3px !important; border: none !important; gap: 0 !important; }
+.gym-tab { font-family: var(--font) !important; font-size: 13px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important; border-radius: 8px !important; padding: 7px 12px !important; min-height: 36px !important; transition: background 0.2s, color 0.2s, box-shadow 0.2s !important; color: var(--text-2) !important; }
+.gym-tab.active { background: var(--bg-card) !important; color: var(--text-1) !important; box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important; }
+
+/* ── iOS PILL TABS — strength sub-tabs (scrollable) ── */
+.strength-tabs { background: rgba(120,120,128,0.10) !important; border-radius: 10px !important; padding: 3px !important; gap: 0 !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; scrollbar-width: none !important; }
+.strength-tabs::-webkit-scrollbar { display: none !important; }
+.strength-tab { font-family: var(--font) !important; font-size: 12px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important; border: none !important; border-bottom: none !important; border-radius: 8px !important; padding: 7px 14px !important; white-space: nowrap !important; flex: 0 0 auto !important; color: var(--text-2) !important; transition: background 0.2s, color 0.2s !important; }
+.strength-tab.active { background: var(--bg-card) !important; color: var(--text-1) !important; box-shadow: 0 1px 4px rgba(0,0,0,0.25) !important; }
+
+/* ── BOTTOM SHEETS — po-modal ── */
+.po-modal-bg { align-items: flex-end !important; justify-content: center !important; padding: 0 !important; backdrop-filter: none !important; background: rgba(0,0,0,0.50) !important; }
+.po-modal { width: 100% !important; max-width: 500px !important; border-radius: 20px 20px 0 0 !important; animation: gym-sheet-up 0.36s cubic-bezier(0.32,0.72,0,1) !important; max-height: 88vh !important; padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; border: none !important; border-top: 1px solid var(--border-strong) !important; }
+.po-modal::before { content: ''; display: block; width: 36px; height: 5px; background: var(--text-3); border-radius: 3px; margin: 0 auto 16px; opacity: 0.4; }
+@keyframes gym-sheet-up { from { transform: translateY(100%); opacity: 0.6; } to { transform: translateY(0); opacity: 1; } }
+
+/* ── TAB SLIDE ANIMATION ── */
+@keyframes gym-tab-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+[data-gym-panel].tab-slide-in,
+[data-strength-panel].tab-slide-in { animation: gym-tab-in 0.26s cubic-bezier(0.22,1,0.36,1); }
+
+/* ── BUTTON FEEDBACK ── */
+.po-w-btn { transition: transform 0.1s, background 0.15s !important; }
+.po-w-btn:active { transform: scale(0.90) !important; }
+.po-btn-primary { transition: transform 0.1s, filter 0.15s !important; }
+.po-btn-primary:active { transform: scale(0.98) !important; }
+.po-reps-pill { transition: background 0.15s, color 0.15s, transform 0.1s !important; }
+.po-reps-pill:active { transform: scale(0.94) !important; }
 </style>
 </head>
 <body>
@@ -4077,11 +4107,13 @@ await initUserMenu();
     const ex = getCurrentEx(); if (!ex || ex.bw) return;
     const w = parseFloat($('weightInput').value) || 0;
     $('weightInput').value = Math.max(0, w - (ex.step || 2.5));
+    window.haptic && window.haptic('light');
   });
   $('weightUpBtn').addEventListener('click', () => {
     const ex = getCurrentEx(); if (!ex || ex.bw) return;
     const w = parseFloat($('weightInput').value) || 0;
     $('weightInput').value = w + (ex.step || 2.5);
+    window.haptic && window.haptic('light');
   });
   // Delegated click handler — reps row is regenerated per exercise via
   // renderRepsRow(), so we listen on the container rather than the
@@ -4092,6 +4124,7 @@ await initUserMenu();
     $('repsRow').querySelectorAll('.po-reps-pill').forEach(x => x.classList.remove('active'));
     p.classList.add('active');
     $('repsRow').dataset.value = p.dataset.v;
+    window.haptic && window.haptic('light');
   });
   $('logBtn').addEventListener('click', () => {
     const ex = getCurrentEx();
@@ -4110,6 +4143,7 @@ await initUserMenu();
     // Strength changed → composition estimate may shift
     if (typeof wtRender === 'function') wtRender();
     // Tiny pulse on the button so the user feels the save
+    window.haptic && window.haptic('success');
     const btn = $('logBtn');
     btn.style.transition = 'transform 0.15s';
     btn.style.transform = 'scale(0.96)';
@@ -5182,18 +5216,24 @@ await initUserMenu();
 
   // ── Gym tab system ────────────────────────────────────────────
 
-  function switchGymTab(name) {
+  function switchGymTab(name, animate) {
     localStorage.setItem('gym:active_tab', name);
     document.querySelectorAll('.gym-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
-    document.querySelectorAll('[data-gym-panel]').forEach(p => { p.hidden = p.dataset.gymPanel !== name; });
+    document.querySelectorAll('[data-gym-panel]').forEach(p => {
+      p.hidden = p.dataset.gymPanel !== name;
+      if (!p.hidden && animate) { p.classList.remove('tab-slide-in'); void p.offsetWidth; p.classList.add('tab-slide-in'); }
+    });
     if (name === 'stretching') initStretchingTab();
     if (name === 'running') initRunningTab();
   }
 
-  function switchStrengthTab(name) {
+  function switchStrengthTab(name, animate) {
     localStorage.setItem('gym:strength_tab', name);
     document.querySelectorAll('.strength-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
-    document.querySelectorAll('[data-strength-panel]').forEach(p => { p.hidden = p.dataset.strengthPanel !== name; });
+    document.querySelectorAll('[data-strength-panel]').forEach(p => {
+      p.hidden = p.dataset.strengthPanel !== name;
+      if (!p.hidden && animate) { p.classList.remove('tab-slide-in'); void p.offsetWidth; p.classList.add('tab-slide-in'); }
+    });
   }
 
   // Running state — ALL declared before initGymTabs() fires to avoid TDZ errors
@@ -5224,10 +5264,10 @@ await initUserMenu();
 
   (function initGymTabs() {
     document.querySelectorAll('.gym-tab').forEach(btn => {
-      btn.addEventListener('click', () => switchGymTab(btn.dataset.tab));
+      btn.addEventListener('click', () => { window.haptic && window.haptic('light'); switchGymTab(btn.dataset.tab, true); });
     });
     document.querySelectorAll('.strength-tab').forEach(btn => {
-      btn.addEventListener('click', () => switchStrengthTab(btn.dataset.tab));
+      btn.addEventListener('click', () => { window.haptic && window.haptic('light'); switchStrengthTab(btn.dataset.tab, true); });
     });
     const savedGymTab = localStorage.getItem('gym:active_tab') || 'strength';
     switchGymTab(savedGymTab);
