@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0b">
 <link rel="manifest" href="/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -437,6 +437,29 @@ main { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; padding
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* ── iOS SEGMENTED CONTROL ── */
+.intake-tabs { background: var(--bg-tertiary, rgba(120,120,128,0.16)) !important; border-radius: 10px !important; padding: 3px !important; border: none !important; gap: 0 !important; }
+.intake-tab { font-family: var(--font) !important; font-size: 13px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important; border-radius: 8px !important; padding: 7px 12px !important; min-height: 36px !important; transition: background 0.2s, color 0.2s, box-shadow 0.2s !important; color: var(--text-secondary) !important; }
+.intake-tab.active { background: var(--bg-card, #1c1c1e) !important; color: var(--text-primary) !important; box-shadow: 0 1px 4px rgba(0,0,0,0.25) !important; }
+
+/* ── BOTTOM SHEETS (shared modal-bg + modal) ── */
+.modal-bg { align-items: flex-end !important; justify-content: center !important; padding: 0 !important; backdrop-filter: none !important; background: rgba(0,0,0,0.45) !important; }
+.modal { width: 100% !important; max-width: 540px !important; border-radius: 20px 20px 0 0 !important; animation: health-sheet-up 0.36s cubic-bezier(0.32,0.72,0,1) !important; max-height: 88vh !important; padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; border: none !important; border-top: 1px solid var(--border-strong) !important; }
+.modal::before { content: ''; display: block; width: 36px; height: 5px; background: var(--text-tertiary); border-radius: 3px; margin: 0 auto 16px; opacity: 0.4; }
+@keyframes health-sheet-up { from { transform: translateY(100%); opacity: 0.6; } to { transform: translateY(0); opacity: 1; } }
+
+/* ── TAB SLIDE ANIMATION ── */
+@keyframes intake-tab-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+[data-tab-panel].tab-slide-in { animation: intake-tab-in 0.28s cubic-bezier(0.22,1,0.36,1); }
+
+/* ── WATER BUTTON PRESS FEEDBACK ── */
+.water-plus-btn:active { transform: scale(0.97) !important; }
+.water-minus-btn:active { background: var(--overlay-active) !important; }
+
+/* ── STACK CHECK ANIMATION ── */
+.stack-check { transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1) !important; }
+.stack-check.checked { transform: scale(1.08); }
 </style>
 </head>
 <body>
@@ -777,14 +800,24 @@ await initUserMenu();
 let _waterInited = false;
 let _nutInited = false;
 
-function switchTab(name) {
+function switchTab(name, animate) {
   localStorage.setItem('intake:active_tab', name);
   document.querySelectorAll('.intake-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
-  document.querySelectorAll('[data-tab-panel]').forEach(p => { p.hidden = p.dataset.tabPanel !== name; });
+  document.querySelectorAll('[data-tab-panel]').forEach(p => {
+    p.hidden = p.dataset.tabPanel !== name;
+    if (!p.hidden && animate) {
+      p.classList.remove('tab-slide-in');
+      void p.offsetWidth;
+      p.classList.add('tab-slide-in');
+    }
+  });
   if (name === 'water' && !_waterInited) { _waterInited = true; initWaterTab().catch(console.error); }
   if (name === 'nutrition' && !_nutInited) { _nutInited = true; initNutritionTab().catch(console.error); }
 }
-document.querySelectorAll('.intake-tab').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+document.querySelectorAll('.intake-tab').forEach(btn => btn.addEventListener('click', () => {
+  window.haptic && window.haptic('light');
+  switchTab(btn.dataset.tab, true);
+}));
 const _savedTab = localStorage.getItem('intake:active_tab') || 'stack';
 switchTab(_savedTab);
 
@@ -940,7 +973,7 @@ document.getElementById('stackGroups').addEventListener('click', e => {
   const btn = e.target.closest('[data-action]'); if (!btn) return;
   e.stopPropagation();
   const id = btn.dataset.id;
-  if (btn.dataset.action==='toggle') StackData.setTaken(id,_sDate,!_sTaken[id]).then(renderStack);
+  if (btn.dataset.action==='toggle') { window.haptic && window.haptic(_sTaken[id] ? 'light' : 'success'); StackData.setTaken(id,_sDate,!_sTaken[id]).then(renderStack); }
   else if (btn.dataset.action==='low') { const it=_sItems.find(i=>i.id===id); if(it) StackData.updateItem(id,{low_stock:!it.low_stock}).then(renderStack); }
   else if (btn.dataset.action==='del') StackData.deleteItem(id).then(renderStack);
 });
@@ -1137,8 +1170,8 @@ function wRenderSpark(tgt) {
   svg.innerHTML=html;
 }
 
-w$('wWaterPlusBtn').addEventListener('click',()=>{ wSetCount(wCount()+1); wRenderWater(); const b=w$('wWaterPlusBtn'); b.style.transform='scale(0.97)'; setTimeout(()=>{b.style.transform='';},120); });
-w$('wWaterMinusBtn').addEventListener('click',()=>{ wSetCount(Math.max(0,wCount()-1)); wRenderWater(); });
+w$('wWaterPlusBtn').addEventListener('click',()=>{ window.haptic && window.haptic('success'); wSetCount(wCount()+1); wRenderWater(); const b=w$('wWaterPlusBtn'); b.style.transform='scale(0.97)'; setTimeout(()=>{b.style.transform='';},120); });
+w$('wWaterMinusBtn').addEventListener('click',()=>{ window.haptic && window.haptic('light'); wSetCount(Math.max(0,wCount()-1)); wRenderWater(); });
 w$('wWhyToggle').addEventListener('click',()=>{ const b=w$('wWhyBody'); b.classList.toggle('show'); w$('wWhyToggle').setAttribute('aria-expanded',b.classList.contains('show')?'true':'false'); });
 
 function wRenderSettings() {

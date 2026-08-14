@@ -135,10 +135,22 @@ body {
 }
 * { -webkit-overflow-scrolling: touch; }
 
+/* ── iOS zoom / tap prevention ── */
+html { text-size-adjust: 100%; }
+button, a, label, [role="button"], [tabindex] { touch-action: manipulation; }
+select { -webkit-appearance: none; }
+
+/* font-size floor: iOS Safari zooms when focused input < 16px */
 @media (max-width: 768px) {
   html { touch-action: pan-y; }
   ::-webkit-scrollbar { width: 0; height: 0; display: none; }
   html, body { scrollbar-width: none; -ms-overflow-style: none; }
+  input, select, textarea { font-size: 16px !important; }
+  /* Preserve intentionally large inputs */
+  .po-field input[type="number"],
+  .po-field input[type="text"],
+  .run-input.big,
+  .wt-input { font-size: 22px !important; }
 }
 
 /* Scroll lock when a modal/sheet is open */
