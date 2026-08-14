@@ -2407,6 +2407,36 @@ img, video, canvas, svg { max-width: 100%; }
 .po-btn-primary:active { transform: scale(0.98) !important; }
 .po-reps-pill { transition: background 0.15s, color 0.15s, transform 0.1s !important; }
 .po-reps-pill:active { transform: scale(0.94) !important; }
+
+/* ── Stretching session player: full-height panel from top ── */
+#stchDetailModal { align-items: stretch !important; }
+#stchDetailModal .stch-modal-inner {
+  position: fixed !important;
+  top: 10vh !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  max-height: none !important;
+  max-width: none !important;
+  width: 100% !important;
+  border-radius: 20px 20px 0 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding-bottom: 0 !important;
+  overflow-y: hidden !important;
+}
+#stchDetailModal #stchDetailStretchList {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+}
+#stchDetailModal .stch-detail-add-btn {
+  flex-shrink: 0;
+  margin: 12px 0 0 !important;
+  padding: 12px !important;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+}
 </style>
 </head>
 <body>

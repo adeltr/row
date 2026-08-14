@@ -1767,6 +1767,17 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 }
 @keyframes cf-sheet-up { from { transform: translateY(100%); opacity: 0.6; } to { transform: translateY(0); opacity: 1; } }
 .bottom-tabs { bottom: calc(62px + env(safe-area-inset-bottom)) !important; background: var(--bg-secondary, rgba(18,18,20,0.95)) !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border-top: 1px solid var(--border-strong) !important; }
+
+/* ── Accordion collapse for bottom sections ── */
+.fin-acc-trigger { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; }
+.fin-acc-chevron { margin-left:auto; color:var(--text-tertiary); font-size:10px; transition:transform 0.25s cubic-bezier(0.4,0,0.2,1); flex-shrink:0; line-height:1; }
+.fin-acc-chevron.open { transform:rotate(180deg); }
+.fin-acc-body { max-height:0; overflow:hidden; transition:max-height 0.38s cubic-bezier(0.4,0,0.2,1); }
+.fin-acc-body.open { max-height:2400px; }
+.nw-subcard .label { padding-bottom:4px; }
+.fin-add-trigger { width:100%; padding:10px 14px; background:transparent; border:1px dashed var(--border); border-radius:10px; color:var(--text-tertiary); font-family:var(--font); font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:background 0.15s,border-color 0.15s,color 0.15s; -webkit-tap-highlight-color:transparent; margin-top:12px; }
+.fin-add-trigger:active { transform:scale(0.98); }
+.fin-add-trigger:hover { background:var(--overlay-hover); border-color:var(--accent-gold); color:var(--accent-gold); }
 </style>
 </head>
 <body>
@@ -1890,53 +1901,64 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 
     <!-- Activity log — every add / edit, newest first -->
     <div class="nw-activity" id="nwActivity">
-      <div class="nw-activity-h">
+      <div class="nw-activity-h fin-acc-trigger" id="nwActivityToggle">
         <span class="nw-chart-label">Recent activity</span>
         <span class="nw-chart-delta" id="nwActivityCount">—</span>
+        <span class="fin-acc-chevron">▾</span>
       </div>
-      <div class="nw-activity-list" id="nwActivityList"></div>
-      <div class="nw-activity-empty" id="nwActivityEmpty">No activity yet — add your first account.</div>
+      <div class="fin-acc-body" id="nwActivityBody">
+        <div class="nw-activity-list" id="nwActivityList"></div>
+        <div class="nw-activity-empty" id="nwActivityEmpty">No activity yet — add your first account.</div>
+      </div>
     </div>
 
     <div class="card-grid" style="gap:10px">
       <!-- Bank accounts -->
       <div class="card nw-subcard">
-        <div class="label" style="display:flex;justify-content:space-between;align-items:center"><span>🏦 Bank accounts</span><span id="bankTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span></div>
-        <div id="bankList" class="nw-list"></div>
-        <div class="quick-add">
-          <input type="text" placeholder="Account name" id="bankName" />
-          <input type="number" placeholder="Amount" id="bankAmount" step="0.01" />
-          <button class="quick-add-btn" id="bankAddBtn">+</button>
+        <div class="label fin-acc-trigger" id="nwSubBankToggle" style="display:flex;justify-content:space-between;align-items:center"><span>🏦 Bank accounts</span><span style="display:flex;align-items:center;gap:8px"><span id="bankTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span><span class="fin-acc-chevron">▾</span></span></div>
+        <div class="fin-acc-body" id="nwSubBankBody">
+          <div id="bankList" class="nw-list"></div>
+          <div class="quick-add">
+            <input type="text" placeholder="Account name" id="bankName" />
+            <input type="number" placeholder="Amount" id="bankAmount" step="0.01" />
+            <button class="quick-add-btn" id="bankAddBtn">+</button>
+          </div>
         </div>
       </div>
       <!-- Stocks / Investments -->
       <div class="card nw-subcard">
-        <div class="label" style="display:flex;justify-content:space-between;align-items:center"><span>📈 Stocks / Investments</span><span id="stocksTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span></div>
-        <div id="stocksList" class="nw-list"></div>
-        <div class="quick-add">
-          <input type="text" placeholder="Stock / fund" id="stocksName" />
-          <input type="number" placeholder="Value" id="stocksAmount" step="0.01" />
-          <button class="quick-add-btn" id="stocksAddBtn">+</button>
+        <div class="label fin-acc-trigger" id="nwSubStocksToggle" style="display:flex;justify-content:space-between;align-items:center"><span>📈 Stocks / Investments</span><span style="display:flex;align-items:center;gap:8px"><span id="stocksTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span><span class="fin-acc-chevron">▾</span></span></div>
+        <div class="fin-acc-body" id="nwSubStocksBody">
+          <div id="stocksList" class="nw-list"></div>
+          <div class="quick-add">
+            <input type="text" placeholder="Stock / fund" id="stocksName" />
+            <input type="number" placeholder="Value" id="stocksAmount" step="0.01" />
+            <button class="quick-add-btn" id="stocksAddBtn">+</button>
+          </div>
         </div>
       </div>
       <!-- Crypto -->
       <div class="card nw-subcard">
-        <div class="label" style="display:flex;justify-content:space-between;align-items:center"><span>🪙 Crypto</span><span id="cryptoTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span></div>
-        <div id="cryptoList" class="nw-list"></div>
-        <div class="quick-add">
-          <input type="text" placeholder="Coin / wallet" id="cryptoName" />
-          <input type="number" placeholder="Value" id="cryptoAmount" step="0.01" />
-          <button class="quick-add-btn" id="cryptoAddBtn">+</button>
+        <div class="label fin-acc-trigger" id="nwSubCryptoToggle" style="display:flex;justify-content:space-between;align-items:center"><span>🪙 Crypto</span><span style="display:flex;align-items:center;gap:8px"><span id="cryptoTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span><span class="fin-acc-chevron">▾</span></span></div>
+        <div class="fin-acc-body" id="nwSubCryptoBody">
+          <div id="cryptoList" class="nw-list"></div>
+          <div class="quick-add">
+            <input type="text" placeholder="Coin / wallet" id="cryptoName" />
+            <input type="number" placeholder="Value" id="cryptoAmount" step="0.01" />
+            <button class="quick-add-btn" id="cryptoAddBtn">+</button>
+          </div>
         </div>
       </div>
       <!-- Other assets -->
       <div class="card nw-subcard">
-        <div class="label" style="display:flex;justify-content:space-between;align-items:center"><span>💼 Other assets</span><span id="otherTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span></div>
-        <div id="otherList" class="nw-list"></div>
-        <div class="quick-add">
-          <input type="text" placeholder="Asset name" id="otherName" />
-          <input type="number" placeholder="Value" id="otherAmount" step="0.01" />
-          <button class="quick-add-btn" id="otherAddBtn">+</button>
+        <div class="label fin-acc-trigger" id="nwSubOtherToggle" style="display:flex;justify-content:space-between;align-items:center"><span>💼 Other assets</span><span style="display:flex;align-items:center;gap:8px"><span id="otherTotal" style="font-size:13px;color:var(--text-primary);font-weight:600">0</span><span class="fin-acc-chevron">▾</span></span></div>
+        <div class="fin-acc-body" id="nwSubOtherBody">
+          <div id="otherList" class="nw-list"></div>
+          <div class="quick-add">
+            <input type="text" placeholder="Asset name" id="otherName" />
+            <input type="number" placeholder="Value" id="otherAmount" step="0.01" />
+            <button class="quick-add-btn" id="otherAddBtn">+</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1959,32 +1981,35 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
     </div>
     <div id="subsList"></div>
     <div class="empty-state" id="subsEmpty">No subscriptions yet</div>
-    <div class="quick-add" style="flex-wrap:wrap;gap:6px">
-      <input type="text" placeholder="Service (e.g. Netflix)" id="subName" style="flex:1.5;min-width:120px" />
-      <input type="number" placeholder="Amount" id="subAmount" step="0.01" style="flex:1;max-width:100px" />
-      <select id="subCurrency" style="padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);max-width:90px">
-        <option value="CHF">CHF</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="CAD">CA$</option>
-        <option value="DZD">DZD</option>
-      </select>
-      <select id="subPeriod" style="padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);max-width:100px">
-        <option value="monthly">Monthly</option>
-        <option value="yearly">Yearly</option>
-        <option value="weekly">Weekly</option>
-      </select>
-      <label class="date-field" title="Next renewal date" style="min-width:150px"><span class="date-emoji" aria-hidden="true">📅</span><input type="date" id="subRenewal" /></label>
-      <select id="subFromCat" title="Which net worth account to deduct from" style="padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);min-width:130px">
-        <option value="">No accounts yet</option>
-      </select>
-      <label class="sub-auto-toggle" title="Auto-deduct from the linked account on each renewal">
-        <input type="checkbox" id="subAutoDeduct" />
-        <span class="sub-auto-track"><span class="sub-auto-thumb"></span></span>
-        <span class="sub-auto-label">Auto-deduct</span>
-      </label>
-      <button class="quick-add-btn" id="subAddBtn" onclick="window.__addSub && window.__addSub()">+ Add</button>
+    <button class="fin-add-trigger" id="subsFormToggle">＋ Add subscription <span class="fin-acc-chevron">▾</span></button>
+    <div class="fin-acc-body" id="subsFormBody">
+      <div class="quick-add" style="flex-wrap:wrap;gap:6px;margin-top:10px">
+        <input type="text" placeholder="Service (e.g. Netflix)" id="subName" style="flex:1.5;min-width:120px" />
+        <input type="number" placeholder="Amount" id="subAmount" step="0.01" style="flex:1;max-width:100px" />
+        <select id="subCurrency" style="padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);max-width:90px">
+          <option value="CHF">CHF</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="CAD">CA$</option>
+          <option value="DZD">DZD</option>
+        </select>
+        <select id="subPeriod" style="padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);max-width:100px">
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+          <option value="weekly">Weekly</option>
+        </select>
+        <label class="date-field" title="Next renewal date" style="min-width:150px"><span class="date-emoji" aria-hidden="true">📅</span><input type="date" id="subRenewal" /></label>
+        <select id="subFromCat" title="Which net worth account to deduct from" style="padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);min-width:130px">
+          <option value="">No accounts yet</option>
+        </select>
+        <label class="sub-auto-toggle" title="Auto-deduct from the linked account on each renewal">
+          <input type="checkbox" id="subAutoDeduct" />
+          <span class="sub-auto-track"><span class="sub-auto-thumb"></span></span>
+          <span class="sub-auto-label">Auto-deduct</span>
+        </label>
+        <button class="quick-add-btn" id="subAddBtn" onclick="window.__addSub && window.__addSub()">+ Add</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1997,25 +2022,27 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 
   <!-- Add card with cost + currency + from-category + arrival date -->
   <div class="card ord-add-card">
-    <div class="ord-add-eyebrow">+ NEW ORDER</div>
-    <div class="ord-add-grid">
-      <input type="text"   id="ordName"   placeholder="Item (e.g. New iPhone)" class="ord-input ord-input-name">
-      <input type="number" id="ordCost"   placeholder="Cost" step="0.01" class="ord-input ord-input-cost">
-      <select id="ordCurrency" class="ord-input ord-input-ccy">
-        <option value="CHF">CHF</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="CAD">CA$</option>
-        <option value="DZD">DZD</option>
-      </select>
-      <select id="ordFromCat" class="ord-input ord-input-from" title="Which net worth account this comes out of">
-        <option value="">No accounts yet</option>
-      </select>
-      <label class="date-field ord-input-date" title="Expected arrival"><span class="date-emoji" aria-hidden="true">📅</span><input type="date" id="ordArrival" /></label>
-      <button class="ord-add-btn" id="ordAddBtn" onclick="window.__addOrder && window.__addOrder()">+ Add Order</button>
+    <div class="ord-add-eyebrow fin-acc-trigger" id="ordFormToggle" style="display:flex;align-items:center">＋ NEW ORDER <span class="fin-acc-chevron" style="margin-left:auto">▾</span></div>
+    <div class="fin-acc-body" id="ordFormBody">
+      <div class="ord-add-grid" style="margin-top:10px">
+        <input type="text"   id="ordName"   placeholder="Item (e.g. New iPhone)" class="ord-input ord-input-name">
+        <input type="number" id="ordCost"   placeholder="Cost" step="0.01" class="ord-input ord-input-cost">
+        <select id="ordCurrency" class="ord-input ord-input-ccy">
+          <option value="CHF">CHF</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="CAD">CA$</option>
+          <option value="DZD">DZD</option>
+        </select>
+        <select id="ordFromCat" class="ord-input ord-input-from" title="Which net worth account this comes out of">
+          <option value="">No accounts yet</option>
+        </select>
+        <label class="date-field ord-input-date" title="Expected arrival"><span class="date-emoji" aria-hidden="true">📅</span><input type="date" id="ordArrival" /></label>
+        <button class="ord-add-btn" id="ordAddBtn" onclick="window.__addOrder && window.__addOrder()">+ Add Order</button>
+      </div>
+      <div class="ord-add-preview" id="ordAddPreview">Type a cost — preview will show what % of net worth it takes.</div>
     </div>
-    <div class="ord-add-preview" id="ordAddPreview">Type a cost — preview will show what % of net worth it takes.</div>
   </div>
 
   <!-- Items list -->
@@ -2056,19 +2083,21 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 
   <!-- Add row -->
   <div class="card wish-add-card">
-    <div class="wish-add-eyebrow">+ ADD AN ITEM</div>
-    <div class="wish-add-row">
-      <input type="text"   id="wishName"   placeholder="Item name (e.g. New iPhone Pro Max)" class="wish-input wish-input-name">
-      <input type="number" id="wishAmount" placeholder="Cost" step="0.01" class="wish-input wish-input-amt">
-      <select id="wishCurrency" class="wish-input wish-input-ccy">
-        <option value="CHF">CHF</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="CAD">CA$</option>
-        <option value="DZD">DZD</option>
-      </select>
-      <button class="wish-add-btn" id="wishAddBtn" onclick="window.__addWish && window.__addWish()">+ Add</button>
+    <div class="wish-add-eyebrow fin-acc-trigger" id="wishFormToggle" style="display:flex;align-items:center">＋ ADD AN ITEM <span class="fin-acc-chevron" style="margin-left:auto">▾</span></div>
+    <div class="fin-acc-body" id="wishFormBody">
+      <div class="wish-add-row" style="margin-top:10px">
+        <input type="text"   id="wishName"   placeholder="Item name (e.g. New iPhone Pro Max)" class="wish-input wish-input-name">
+        <input type="number" id="wishAmount" placeholder="Cost" step="0.01" class="wish-input wish-input-amt">
+        <select id="wishCurrency" class="wish-input wish-input-ccy">
+          <option value="CHF">CHF</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="CAD">CA$</option>
+          <option value="DZD">DZD</option>
+        </select>
+        <button class="wish-add-btn" id="wishAddBtn" onclick="window.__addWish && window.__addWish()">+ Add</button>
+      </div>
     </div>
   </div>
 
@@ -4351,6 +4380,31 @@ await initUserMenu();
     list.hidden = !list.hidden;
     summary.textContent = list.hidden ? '▸ Voir les analyses précédentes' : '▾ Masquer les analyses précédentes';
   }
+
+  // ── Accordion behavior for bottom sections ──
+  function _initFinAcc(triggerId, bodyId, key, defaultOpen) {
+    const trigger = document.getElementById(triggerId);
+    const body    = document.getElementById(bodyId);
+    if (!trigger || !body) return;
+    const chevron = trigger.querySelector('.fin-acc-chevron');
+    const stored  = localStorage.getItem('fin-acc-' + key);
+    const open    = stored !== null ? stored === '1' : defaultOpen;
+    if (open) { body.classList.add('open'); if (chevron) chevron.classList.add('open'); }
+    trigger.addEventListener('click', () => {
+      window.haptic && window.haptic('selection');
+      const isOpen = body.classList.toggle('open');
+      if (chevron) chevron.classList.toggle('open', isOpen);
+      localStorage.setItem('fin-acc-' + key, isOpen ? '1' : '0');
+    });
+  }
+  _initFinAcc('nwActivityToggle', 'nwActivityBody',   'nwActivity', false);
+  _initFinAcc('nwSubBankToggle',  'nwSubBankBody',    'nwBank',     false);
+  _initFinAcc('nwSubStocksToggle','nwSubStocksBody',  'nwStocks',   false);
+  _initFinAcc('nwSubCryptoToggle','nwSubCryptoBody',  'nwCrypto',   false);
+  _initFinAcc('nwSubOtherToggle', 'nwSubOtherBody',   'nwOther',    false);
+  _initFinAcc('subsFormToggle',   'subsFormBody',      'subsForm',   false);
+  _initFinAcc('ordFormToggle',    'ordFormBody',       'ordForm',    false);
+  _initFinAcc('wishFormToggle',   'wishFormBody',      'wishForm',   false);
 
 </script>
 <script>if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js');</script>
