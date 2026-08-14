@@ -1753,6 +1753,20 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 .adv-history-month { font-size: 13px; color: var(--text-secondary); flex: 1; }
 .adv-history-score { font-family: var(--font-mono); font-size: 15px; font-weight: 700; }
 .adv-empty { text-align: center; padding: 40px 20px; color: var(--text-tertiary); font-size: 13px; }
+
+/* ── iOS UX overrides ───────────────────────────────────────── */
+.fin-tabs { background: var(--bg-tertiary, rgba(120,120,128,0.16)) !important; border-radius: 10px !important; padding: 3px !important; border: none !important; gap: 0 !important; }
+.fin-tab { font-family: var(--font) !important; font-size: 13px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important; border-radius: 8px !important; padding: 7px 12px !important; min-height: 36px !important; transition: background 0.2s, color 0.2s, box-shadow 0.2s !important; color: var(--text-tertiary) !important; }
+.fin-tab.active { background: var(--bg-card, #1c1c1e) !important; color: var(--text-primary) !important; box-shadow: 0 1px 4px rgba(0,0,0,0.25) !important; }
+@keyframes fin-panel-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+[data-fin-panel].tab-slide-in { animation: fin-panel-in 0.28s cubic-bezier(0.22,1,0.36,1); }
+.cf-modal-overlay { background: rgba(0,0,0,0.48) !important; backdrop-filter: none !important; }
+@media (max-width: 599px) {
+  .cf-modal { border-radius: 20px 20px 0 0 !important; animation: cf-sheet-up 0.36s cubic-bezier(0.32,0.72,0,1) !important; padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; border: none !important; border-top: 1px solid var(--border-strong) !important; }
+  .cf-modal::before { content: ''; display: block; width: 36px; height: 5px; background: var(--text-tertiary); border-radius: 3px; margin: 0 auto 16px; opacity: 0.4; }
+}
+@keyframes cf-sheet-up { from { transform: translateY(100%); opacity: 0.6; } to { transform: translateY(0); opacity: 1; } }
+.bottom-tabs { bottom: calc(62px + env(safe-area-inset-bottom)) !important; background: var(--bg-secondary, rgba(18,18,20,0.95)) !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border-top: 1px solid var(--border-strong) !important; }
 </style>
 </head>
 <body>
@@ -2256,7 +2270,7 @@ await initUserMenu();
     storeSet(TAB_KEY, name);
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
-  tabs.forEach(b => b.addEventListener('click', () => setActiveTab(b.dataset.tab)));
+  tabs.forEach(b => b.addEventListener('click', () => { window.haptic && window.haptic('light'); setActiveTab(b.dataset.tab); }));
   const savedTab = storeGet(TAB_KEY);
   setActiveTab(savedTab && ['net','subs','incoming','wish'].includes(savedTab) ? savedTab : 'net');
 
@@ -3841,12 +3855,17 @@ await initUserMenu();
   const _shell = document.querySelector('.shell');
   const _bottomTabs = document.getElementById('bottomTabs');
 
-  function switchFinTab(name) {
+  function switchFinTab(name, animate = false) {
     localStorage.setItem('finance_fin_tab', name);
     document.querySelectorAll('.fin-tab').forEach(t => t.classList.toggle('active', t.dataset.fin === name));
     document.querySelectorAll('[data-fin-panel]').forEach(p => {
-      if (p.dataset.finPanel === name) p.removeAttribute('hidden');
-      else p.setAttribute('hidden', '');
+      if (p.dataset.finPanel === name) {
+        p.removeAttribute('hidden');
+        if (animate) { p.classList.remove('tab-slide-in'); void p.offsetWidth; p.classList.add('tab-slide-in'); }
+      } else {
+        p.setAttribute('hidden', '');
+        p.classList.remove('tab-slide-in');
+      }
     });
     const onOverview = name === 'overview';
     _bottomTabs.style.display = onOverview ? '' : 'none';
@@ -3855,7 +3874,10 @@ await initUserMenu();
     if (name === 'cashflow' && !_cfInited) { _cfInited = true; initCashFlow(); }
     if (name === 'advisor'  && !_advInited) { _advInited = true; initAdvisor(); }
   }
-  document.querySelectorAll('.fin-tab').forEach(btn => btn.addEventListener('click', () => switchFinTab(btn.dataset.fin)));
+  document.querySelectorAll('.fin-tab').forEach(btn => btn.addEventListener('click', () => {
+    window.haptic && window.haptic('light');
+    switchFinTab(btn.dataset.fin, true);
+  }));
   const _savedFinTab = localStorage.getItem('finance_fin_tab');
   switchFinTab(_savedFinTab && ['overview','cashflow','advisor'].includes(_savedFinTab) ? _savedFinTab : 'overview');
 
