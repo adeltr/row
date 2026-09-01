@@ -1656,6 +1656,8 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 .cf-nav-btn { background: var(--overlay-hover); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text-secondary); font-size: 18px; line-height: 1; padding: 6px 14px; cursor: pointer; transition: background 0.15s; }
 .cf-nav-btn:hover { background: var(--overlay-active); }
 .cf-nav-label { font-family: var(--font-mono); font-size: 14px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-primary); }
+.cf-ccy-btn { background: var(--accent,#6c63ff); border: none; border-radius: 8px; color: #fff; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; padding: 6px 10px; cursor: pointer; transition: opacity 0.15s; }
+.cf-ccy-btn:hover { opacity: 0.85; }
 .cf-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
 .cf-kpi { background: var(--bg-card); border-radius: 12px; padding: 14px 16px; }
 .cf-kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
@@ -2124,6 +2126,7 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
     <button class="cf-nav-btn" id="cfPrevMonth">‹</button>
     <div class="cf-nav-label" id="cfMonthLabel">—</div>
     <button class="cf-nav-btn" id="cfNextMonth">›</button>
+    <button class="cf-ccy-btn" id="cfCcyBtn">CHF</button>
   </div>
 
   <!-- KPI row -->
@@ -2804,6 +2807,8 @@ await initUserMenu();
       storeSet(CURRENCY_KEY, currencyEl.value);
       renderAllNetWorth();
       renderSubs();
+      _cfCcySync();
+      if (_cfInited) { renderCfAll(); refreshCfSavings(); }
     });
   }
 
@@ -3952,9 +3957,28 @@ await initUserMenu();
   let _cfSnapshot = null;
   let _cfPrevSnapshot = null;
 
+  const CF_CCYS = ['CHF','EUR','USD','CAD','GBP','DZD'];
+  function _cfCcySync() {
+    const ccy = localStorage.getItem('nw_currency') ? JSON.parse(localStorage.getItem('nw_currency')) : 'CHF';
+    const btn = document.getElementById('cfCcyBtn');
+    if (btn) btn.textContent = ccy;
+    if (currencyEl && currencyEl.value !== ccy) currencyEl.value = ccy;
+  }
+
   async function initCashFlow() {
     document.getElementById('cfPrevMonth').addEventListener('click', () => { _cfMonth--; if (_cfMonth < 1) { _cfMonth = 12; _cfYear--; } loadCashFlow(); });
     document.getElementById('cfNextMonth').addEventListener('click', () => { _cfMonth++; if (_cfMonth > 12) { _cfMonth = 1; _cfYear++; } loadCashFlow(); });
+    const cfCcyBtn = document.getElementById('cfCcyBtn');
+    _cfCcySync();
+    cfCcyBtn.addEventListener('click', () => {
+      const cur = localStorage.getItem('nw_currency') ? JSON.parse(localStorage.getItem('nw_currency')) : 'CHF';
+      const next = CF_CCYS[(CF_CCYS.indexOf(cur) + 1) % CF_CCYS.length];
+      localStorage.setItem('nw_currency', JSON.stringify(next));
+      _cfCcySync();
+      renderCfAll();
+      refreshCfSavings();
+      window.haptic && window.haptic('light');
+    });
     document.getElementById('cfAddIncomeBtn').addEventListener('click',  () => openCfModal('income'));
     document.getElementById('cfAddExpenseBtn').addEventListener('click', () => openCfModal('expense'));
     CfData.subscribeCashFlow(() => loadCashFlow());
