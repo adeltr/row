@@ -2333,6 +2333,7 @@ await initUserMenu();
         };
         renderAllNetWorth();
         if (typeof renderSubs === 'function') renderSubs();
+        if (_cfInited) renderCfAll();
       }
     } catch (e) {}
   }
@@ -3929,7 +3930,13 @@ await initUserMenu();
 
   function cfFmt(n) {
     const ccy = localStorage.getItem('nw_currency') ? JSON.parse(localStorage.getItem('nw_currency')) : 'CHF';
-    return (ccy || 'CHF') + ' ' + Number(n || 0).toLocaleString('fr-CH', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const rate = exchangeRates[ccy] || 1;
+    const num = (Number(n) || 0) * rate;
+    return (ccy || 'CHF') + ' ' + num.toLocaleString('fr-CH', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+  function cfFmtEntry(e) {
+    if (e.entered_currency && e.entered_amount != null) return e.entered_currency + ' ' + Number(e.entered_amount).toLocaleString('fr-CH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    return cfFmt(e.amount);
   }
   function esc2(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -4009,7 +4016,7 @@ await initUserMenu();
           <span style="font-size:10px;color:var(--text-tertiary);margin-left:6px">${CAT_LABELS_FR[e.category] || e.category}</span>
         </span>
         ${e.is_recurring ? '<span class="cf-entry-recur">récurrent</span>' : ''}
-        <span class="cf-entry-amt">${cfFmt(e.amount)}</span>
+        <span class="cf-entry-amt">${cfFmtEntry(e)}</span>
         <div class="cf-entry-btns">
           <button class="cf-entry-btn" data-id="${e.id}" data-dir="income" data-action="edit">✏️</button>
           <button class="cf-entry-btn" data-id="${e.id}" data-action="del">🗑</button>
@@ -4044,7 +4051,7 @@ await initUserMenu();
           ${rows.map(e => `
           <div class="cf-entry-row">
             <span class="cf-entry-name" title="${esc2(e.notes||'')}">${esc2(e.name)}${e.is_recurring ? ' <span style="font-size:9px;color:var(--text-tertiary)">(récurrent)</span>' : ''}</span>
-            <span class="cf-entry-amt">${cfFmt(e.amount)}</span>
+            <span class="cf-entry-amt">${cfFmtEntry(e)}</span>
             <div class="cf-entry-btns">
               <button class="cf-entry-btn" data-id="${e.id}" data-dir="expense" data-action="edit">✏️</button>
               <button class="cf-entry-btn" data-id="${e.id}" data-action="del">🗑</button>
@@ -4166,6 +4173,9 @@ await initUserMenu();
     _cfEditId = entry ? entry.id : null;
     const isEdit = !!entry;
     const cats = direction === 'income' ? INCOME_CATS : EXPENSE_CATS;
+    const defaultCcy = entry?.entered_currency || (localStorage.getItem('nw_currency') ? JSON.parse(localStorage.getItem('nw_currency')) : 'CHF');
+    const displayAmount = entry ? (entry.entered_amount != null ? entry.entered_amount : entry.amount) : '';
+    const CCYS = ['CHF','EUR','USD','CAD','GBP','DZD'];
     const ov = document.createElement('div');
     ov.className = 'cf-modal-overlay';
     ov.innerHTML = `
@@ -4176,16 +4186,22 @@ await initUserMenu();
           <input class="cf-modal-input" id="cfMName" type="text" placeholder="ex. Salaire principal" value="${esc2(entry?.name||'')}">
         </div>
         <div class="cf-modal-row">
-          <div class="cf-modal-field">
+          <div class="cf-modal-field" style="flex:3">
             <div class="cf-modal-label">Montant</div>
-            <input class="cf-modal-input" id="cfMAmount" type="number" step="0.01" placeholder="0.00" value="${entry?.amount||''}">
+            <input class="cf-modal-input" id="cfMAmount" type="number" step="0.01" placeholder="0.00" value="${displayAmount}">
           </div>
-          <div class="cf-modal-field">
-            <div class="cf-modal-label">Catégorie</div>
-            <select class="cf-modal-input" id="cfMCat">
-              ${cats.map(c => `<option value="${c}" ${entry?.category===c?'selected':''}>${CAT_ICONS[c]} ${CAT_LABELS_FR[c]}</option>`).join('')}
+          <div class="cf-modal-field" style="flex:2">
+            <div class="cf-modal-label">Devise</div>
+            <select class="cf-modal-input" id="cfMCcy">
+              ${CCYS.map(c => `<option value="${c}" ${c===defaultCcy?'selected':''}>${c}</option>`).join('')}
             </select>
           </div>
+        </div>
+        <div class="cf-modal-field">
+          <div class="cf-modal-label">Catégorie</div>
+          <select class="cf-modal-input" id="cfMCat">
+            ${cats.map(c => `<option value="${c}" ${entry?.category===c?'selected':''}>${CAT_ICONS[c]} ${CAT_LABELS_FR[c]}</option>`).join('')}
+          </select>
         </div>
         <div class="cf-modal-field">
           <label class="cf-recur-toggle">
@@ -4211,12 +4227,15 @@ await initUserMenu();
     }
     document.getElementById('cfMSave').addEventListener('click', async () => {
       const name   = document.getElementById('cfMName').value.trim();
-      const amount = parseFloat(document.getElementById('cfMAmount').value);
+      const enteredAmt = parseFloat(document.getElementById('cfMAmount').value);
+      const ccy = document.getElementById('cfMCcy').value;
       const category = document.getElementById('cfMCat').value;
       const is_recurring = document.getElementById('cfMRecur').checked;
       const notes  = document.getElementById('cfMNotes').value.trim();
-      if (!name || isNaN(amount) || amount <= 0) return;
-      const fields = { name, amount, category, direction, is_recurring, notes: notes || null, month: _cfMonth, year: _cfYear };
+      if (!name || isNaN(enteredAmt) || enteredAmt <= 0) return;
+      const rate = exchangeRates[ccy] || 1;
+      const amountChf = Math.round((enteredAmt / rate) * 100) / 100;
+      const fields = { name, amount: amountChf, entered_amount: enteredAmt, entered_currency: ccy, category, direction, is_recurring, notes: notes || null, month: _cfMonth, year: _cfYear };
       if (isEdit) await CfData.updateEntry(entry.id, fields);
       else        await CfData.addEntry(fields);
       ov.remove();
