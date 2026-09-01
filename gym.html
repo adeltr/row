@@ -981,8 +981,21 @@ img, video, canvas, svg { max-width: 100%; }
 .wt-area { fill: url(#wtFill); }
 .wt-line { fill: none; stroke: var(--good); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .wt-avg-line { fill: none; stroke: rgba(110,231,183,0.45); stroke-width: 1.5; stroke-dasharray: 4 3; opacity: 0.6; }
-.wt-dot { fill: var(--good); stroke: var(--bg-card); stroke-width: 1.5; }
-.wt-dot-today { fill: #fff; stroke: var(--good); stroke-width: 2; }
+.wt-dot { fill: var(--good); stroke: var(--bg-card); stroke-width: 1.5; cursor: pointer; pointer-events: all; }
+.wt-dot-today { fill: #fff; stroke: var(--good); stroke-width: 2; cursor: pointer; pointer-events: all; }
+.wt-hit { fill: transparent; stroke: none; cursor: pointer; pointer-events: all; }
+.wt-crosshair { stroke: var(--accent-gold); stroke-width: 1; stroke-dasharray: 3 2; opacity: 0.6; pointer-events: none; }
+.wt-tooltip {
+  position: absolute; bottom: calc(100% + 4px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card, #1c1c1e); border: 1px solid var(--border-strong, rgba(255,255,255,0.12));
+  border-radius: 8px; padding: 5px 11px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--text-1);
+  white-space: nowrap; pointer-events: none; z-index: 10;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  transition: opacity 0.15s;
+}
+.wt-tooltip.hidden { opacity: 0; pointer-events: none; }
 .wt-meta {
   text-align: center; font-size: 11px; color: var(--text-3);
   margin-top: 8px;
@@ -2812,7 +2825,8 @@ img, video, canvas, svg { max-width: 100%; }
           <div class="wt-delta hidden" id="wtDelta"></div>
           <div class="wt-streak hidden" id="wtStreak">🔥<span id="wtStreakNum">0 day streak</span></div>
           <div class="wt-empty" id="wtEmpty">Log your first weight to start tracking.</div>
-          <div class="wt-chart-wrap hidden" id="wtChartWrap">
+          <div class="wt-chart-wrap hidden" id="wtChartWrap" style="position:relative">
+            <div class="wt-tooltip hidden" id="wtTooltip"></div>
             <div class="wt-chart-yaxis">
               <span id="wtYAxisMax">—</span>
               <span id="wtYAxisMin">—</span>
@@ -4589,6 +4603,7 @@ await initUserMenu();
   }
 
   let wtEntries = [];  // loaded in initState()
+  let _wtRecent = [];  // last-rendered slice, for tooltip interaction
 
   function wtSaveEntry(weight) {
     const key = wtDateKey(new Date());
@@ -4662,7 +4677,8 @@ await initUserMenu();
   }
 
   function wtRenderChart() {
-    const recent = wtEntries.slice(-30);
+    _wtRecent = wtEntries.slice(-30);
+    const recent = _wtRecent;
     const weights = recent.map(e => e.weight);
     const min = Math.min.apply(null, weights);
     const max = Math.max.apply(null, weights);
@@ -4686,15 +4702,46 @@ await initUserMenu();
     let html = '<path class="wt-avg-line" d="' + avgPath + '"></path>'
              + '<path class="wt-area" d="' + areaPath + '"></path>'
              + '<path class="wt-line" filter="url(#wtGlow)" d="' + linePath + '"></path>';
+    // Crosshair placeholder (updated dynamically)
+    html += '<line class="wt-crosshair" id="wtCrosshair" x1="0" y1="20" x2="0" y2="110" style="display:none"/>';
+    // Visible dots
     points.forEach((p, i) => {
       const cls = (i === points.length - 1) ? 'wt-dot-today' : 'wt-dot';
       const r = (i === points.length - 1) ? 5 : 3;
       html += '<circle class="' + cls + '" cx="' + p.x.toFixed(2) + '" cy="' + p.y.toFixed(2) + '" r="' + r + '"/>';
     });
+    // Invisible wider hit targets on top
+    points.forEach((p, i) => {
+      html += '<circle class="wt-hit" cx="' + p.x.toFixed(2) + '" cy="' + p.y.toFixed(2) + '" r="14" data-wi="' + i + '"/>';
+    });
     $('wtChartContent').innerHTML = html;
     $('wtYAxisMax').textContent = yMax.toFixed(1);
     $('wtYAxisMin').textContent = yMin.toFixed(1);
     $('wtMeta').textContent = wtEntries.length + ' ' + (wtEntries.length === 1 ? 'entry' : 'entries') + ' · last ' + recent.length + ' days';
+    // Tooltip interaction
+    let _wtTipTimer = null;
+    $('wtChartContent').querySelectorAll('.wt-hit').forEach(el => {
+      const show = () => {
+        const i = parseInt(el.dataset.wi);
+        const entry = _wtRecent[i];
+        if (!entry) return;
+        const tip = $('wtTooltip');
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const [y, m, d] = entry.dateKey.split('-');
+        tip.textContent = months[parseInt(m)-1] + ' ' + parseInt(d) + ' ' + y + '  ·  ' + entry.weight.toFixed(1) + ' ' + state.units;
+        tip.classList.remove('hidden');
+        // Move crosshair
+        const cr = document.getElementById('wtCrosshair');
+        if (cr) { cr.setAttribute('x1', points[i].x.toFixed(2)); cr.setAttribute('x2', points[i].x.toFixed(2)); cr.style.display = ''; }
+        clearTimeout(_wtTipTimer);
+        _wtTipTimer = setTimeout(() => {
+          tip.classList.add('hidden');
+          if (cr) cr.style.display = 'none';
+        }, 2500);
+      };
+      el.addEventListener('click', show);
+      el.addEventListener('touchstart', show, { passive: true });
+    });
   }
 
   function wtRenderDelta() {

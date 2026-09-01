@@ -2333,6 +2333,7 @@ await initUserMenu();
         };
         renderAllNetWorth();
         if (typeof renderSubs === 'function') renderSubs();
+        refreshCfSavings();
         if (_cfInited) renderCfAll();
       }
     } catch (e) {}
@@ -3864,7 +3865,7 @@ await initUserMenu();
       const color = net >= 0 ? 'var(--success)' : 'var(--danger)';
       const mons = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       el.style.color = color;
-      el.textContent = sign + ' CHF ' + Math.abs(net).toLocaleString('fr-CH', { maximumFractionDigits: 0 }) + ' cash flow ' + mons[now.getMonth()];
+      el.textContent = sign + ' ' + cfFmt(Math.abs(net)) + ' cash flow ' + mons[now.getMonth()];
     } catch { el.textContent = ''; }
   }
 

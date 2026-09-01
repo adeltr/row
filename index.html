@@ -1513,10 +1513,41 @@ body.tb-no-scroll { overflow: hidden; }
   <!-- ══ ROUTINE panel ══ -->
   <div data-goals-panel="routine">
 
+    <!-- ROUTINE TRACKER -->
     <div class="section">
-      <div class="section-title">To Do List</div>
+      <div class="section-title">Routine Tracker</div>
+      <div class="gm-card">
+        <div id="rtChallengeWrap"></div>
+        <div class="rt-toolbar">
+          <button type="button" class="rt-add-habit-btn" id="rtAddHabitBtn">+ Add Habit</button>
+          <button type="button" class="rt-start-btn"     id="rtStartChallengeBtn">🏆 Start Challenge</button>
+        </div>
+        <div class="rt-grid-wrap">
+          <div class="rt-grid" id="rtGrid">
+            <div class="skeleton" id="rtGridSkeleton" style="height:120px;border-radius:10px;margin:4px"></div>
+          </div>
+        </div>
+        <div class="rt-pager" id="rtPager">
+          <button type="button" class="rt-load-more" id="rtLoadMore">Load more ▾</button>
+          <button type="button" class="rt-load-less" id="rtLoadLess" style="display:none">↑ Last 10 days</button>
+        </div>
+      </div>
+    </div>
 
-      <!-- TODAY -->
+  </div><!-- /routine panel -->
+
+  <!-- ══ MONTHLY panel ══ -->
+  <div data-goals-panel="monthly" hidden>
+
+    <!-- 3-way segmented control: DAILY / MONTHLY / THIS YEAR -->
+    <div class="obj-tabs" style="margin-top:8px">
+      <button type="button" class="obj-tab active" id="objTabDaily">DAILY</button>
+      <button type="button" class="obj-tab"        id="objTabMonth">MONTHLY</button>
+      <button type="button" class="obj-tab"        id="objTabYear">THIS YEAR</button>
+    </div>
+
+    <!-- DAILY — to-do list -->
+    <div class="obj-tab-panel active" id="objPanelDaily">
       <div class="gm-card" id="gmCardToday">
         <div class="gm-header">
           <div class="gm-header-left">
@@ -1561,47 +1592,19 @@ body.tb-no-scroll { overflow: hidden; }
       </div>
     </div>
 
-    <!-- ROUTINE TRACKER -->
-    <div class="section">
-      <div class="section-title">Routine Tracker</div>
+    <!-- MONTHLY — objectives -->
+    <div class="obj-tab-panel" id="objPanelMonth">
       <div class="gm-card">
-        <div id="rtChallengeWrap"></div>
-        <div class="rt-toolbar">
-          <button type="button" class="rt-add-habit-btn" id="rtAddHabitBtn">+ Add Habit</button>
-          <button type="button" class="rt-start-btn"     id="rtStartChallengeBtn">🏆 Start Challenge</button>
-        </div>
-        <div class="rt-grid-wrap">
-          <div class="rt-grid" id="rtGrid">
-            <div class="skeleton" id="rtGridSkeleton" style="height:120px;border-radius:10px;margin:4px"></div>
-          </div>
-        </div>
-        <div class="rt-pager" id="rtPager">
-          <button type="button" class="rt-load-more" id="rtLoadMore">Load more ▾</button>
-          <button type="button" class="rt-load-less" id="rtLoadLess" style="display:none">↑ Last 10 days</button>
-        </div>
+        <button type="button" class="obj-new-btn" id="objNewMonthBtn">+ New Monthly Objective</button>
+        <div id="objMonthList"></div>
       </div>
     </div>
 
-  </div><!-- /routine panel -->
-
-  <!-- ══ MONTHLY panel ══ -->
-  <div data-goals-panel="monthly" hidden>
-
-    <div class="section">
-      <div class="section-title">Objectives</div>
+    <!-- THIS YEAR — yearly objectives -->
+    <div class="obj-tab-panel" id="objPanelYear">
       <div class="gm-card">
-        <div class="obj-tabs">
-          <button type="button" class="obj-tab active" id="objTabMonth">This Month</button>
-          <button type="button" class="obj-tab"        id="objTabYear">This Year</button>
-        </div>
-        <div class="obj-tab-panel active" id="objPanelMonth">
-          <button type="button" class="obj-new-btn" id="objNewMonthBtn">+ New Monthly Objective</button>
-          <div id="objMonthList"></div>
-        </div>
-        <div class="obj-tab-panel" id="objPanelYear">
-          <button type="button" class="obj-new-btn" id="objNewYearBtn">+ New Yearly Objective</button>
-          <div id="objYearList"></div>
-        </div>
+        <button type="button" class="obj-new-btn" id="objNewYearBtn">+ New Yearly Objective</button>
+        <div id="objYearList"></div>
       </div>
     </div>
 
@@ -1631,6 +1634,9 @@ await initUserMenu();
 function switchGoalsTab(name, animate = false) {
   localStorage.setItem('goals:active_tab', name);
   document.querySelectorAll('.goals-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  // Hide day-ring when on time blocks so full width is available
+  const dayRing = document.querySelector('.day-ring-wrap');
+  if (dayRing) dayRing.hidden = (name === 'timeblocks');
   document.querySelectorAll('[data-goals-panel]').forEach(p => {
     if (p.dataset.goalsPanel === name) {
       p.removeAttribute('hidden');
@@ -2457,21 +2463,25 @@ const ANTHROPIC_API_KEY = '';
     bg.querySelector('#omTitle').focus();
   }
 
-  // Objectives tab toggle (with animation)
+  // Objectives sub-tab toggle (DAILY / MONTHLY / THIS YEAR)
   function switchObjTab(which) {
-    const isMonth = (which === 'month');
-    document.getElementById('objTabMonth').classList.toggle('active', isMonth);
-    document.getElementById('objTabYear').classList.toggle('active', !isMonth);
-    const show = document.getElementById(isMonth ? 'objPanelMonth' : 'objPanelYear');
-    const hide = document.getElementById(isMonth ? 'objPanelYear' : 'objPanelMonth');
-    hide.classList.remove('active');
-    show.classList.add('active');
-    show.classList.remove('tab-slide-in');
-    void show.offsetWidth;
-    show.classList.add('tab-slide-in');
-    setTimeout(() => show.classList.remove('tab-slide-in'), 300);
+    ['daily','month','year'].forEach(t => {
+      const tabId = { daily:'objTabDaily', month:'objTabMonth', year:'objTabYear' }[t];
+      const panId = { daily:'objPanelDaily', month:'objPanelMonth', year:'objPanelYear' }[t];
+      document.getElementById(tabId)?.classList.toggle('active', t === which);
+      document.getElementById(panId)?.classList.toggle('active', t === which);
+    });
+    const panId = { daily:'objPanelDaily', month:'objPanelMonth', year:'objPanelYear' }[which];
+    const show = document.getElementById(panId);
+    if (show) {
+      show.classList.remove('tab-slide-in');
+      void show.offsetWidth;
+      show.classList.add('tab-slide-in');
+      setTimeout(() => show.classList.remove('tab-slide-in'), 300);
+    }
     if (typeof window.haptic === 'function') window.haptic('light');
   }
+  document.getElementById('objTabDaily').addEventListener('click', () => switchObjTab('daily'));
   document.getElementById('objTabMonth').addEventListener('click', () => switchObjTab('month'));
   document.getElementById('objTabYear').addEventListener('click',  () => switchObjTab('year'));
   document.getElementById('objNewMonthBtn').addEventListener('click', () => openObjModal(null, 'month'));
