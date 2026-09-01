@@ -1689,15 +1689,19 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 .cf-cat-group.open .cf-cat-entries { display: block; }
 .cf-add-btn { display: flex; align-items: center; gap: 6px; background: none; border: 1px dashed var(--border-strong); border-radius: 9px; color: var(--text-tertiary); font-size: 12px; font-weight: 600; padding: 8px 14px; cursor: pointer; width: 100%; margin-top: 10px; transition: background 0.12s, color 0.12s; }
 .cf-add-btn:hover { background: var(--overlay-hover); color: var(--text-primary); }
-.cf-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-@media (max-width: 600px) { .cf-charts-grid { grid-template-columns: 1fr; } }
-.cf-chart-card { background: var(--bg-card); border-radius: 14px; padding: 16px; }
-.cf-chart-title { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 12px; }
-.cf-topcat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.cf-topcat-name { font-size: 12px; color: var(--text-secondary); width: 110px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cf-topcat-bar-wrap { flex: 1; background: var(--overlay-hover); border-radius: 4px; height: 8px; overflow: hidden; }
-.cf-topcat-bar { height: 8px; border-radius: 4px; background: var(--accent-gold); }
-.cf-topcat-amt { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); flex-shrink: 0; min-width: 60px; text-align: right; }
+.cf-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+@media (max-width: 640px) { .cf-charts-grid { grid-template-columns: 1fr; } }
+.cf-chart-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 16px 18px; }
+.cf-chart-title { font-size: 9px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 14px; }
+.cf-bar-legend { display: flex; gap: 14px; margin-bottom: 10px; }
+.cf-bar-legend-item { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--text-tertiary); text-transform: uppercase; }
+.cf-bar-legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.cf-topcat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.cf-topcat-name { font-size: 12px; color: var(--text-secondary); width: 100px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cf-topcat-bar-wrap { flex: 1; background: rgba(255,255,255,0.06); border-radius: 6px; height: 6px; overflow: hidden; }
+.cf-topcat-bar { height: 6px; border-radius: 6px; background: linear-gradient(90deg, #d4a853, #f2c063); transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+.cf-topcat-amt { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); flex-shrink: 0; min-width: 56px; text-align: right; }
+.cf-topcat-pct { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); flex-shrink: 0; width: 30px; text-align: right; }
 .cf-auto-import { font-size: 11px; color: var(--text-tertiary); padding: 6px 0 0; display: flex; align-items: center; gap: 6px; }
 
 /* ── Entry modal ────────────────────────────────────────────── */
@@ -2163,13 +2167,18 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
     <div class="cf-chart-card">
       <div class="cf-chart-title">Répartition des dépenses</div>
       <div id="cfDonutWrap" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-        <svg id="cfDonutSvg" viewBox="0 0 120 120" width="110" height="110" aria-hidden="true"></svg>
+        <svg id="cfDonutSvg" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true" style="flex-shrink:0"></svg>
         <div id="cfDonutLegend" style="flex:1;min-width:80px"></div>
       </div>
     </div>
     <div class="cf-chart-card">
       <div class="cf-chart-title">Tendance mensuelle (6 mois)</div>
-      <svg id="cfBarSvg" viewBox="0 0 260 120" width="100%" height="120" aria-hidden="true" preserveAspectRatio="none"></svg>
+      <div class="cf-bar-legend">
+        <span class="cf-bar-legend-item"><span class="cf-bar-legend-dot" style="background:#6BE3A4"></span>Revenus</span>
+        <span class="cf-bar-legend-item"><span class="cf-bar-legend-dot" style="background:#FF6B6B"></span>Dépenses</span>
+        <span class="cf-bar-legend-item"><span class="cf-bar-legend-dot" style="background:#d4a853;border-radius:0"></span>Épargne</span>
+      </div>
+      <svg id="cfBarSvg" viewBox="0 0 260 150" width="100%" height="150" aria-hidden="true" preserveAspectRatio="none"></svg>
     </div>
   </div>
 
@@ -4123,11 +4132,11 @@ await initUserMenu();
     const svg = document.getElementById('cfDonutSvg');
     const legend = document.getElementById('cfDonutLegend');
     const total = Object.values(breakdown).reduce((s, v) => s + v, 0);
-    if (!total) { svg.innerHTML = ''; legend.innerHTML = '<div style="color:var(--text-tertiary);font-size:11px">Aucune dépense</div>'; return; }
+    if (!total) { svg.innerHTML = ''; legend.innerHTML = '<div style="color:var(--text-tertiary);font-size:11px;padding-top:4px">Aucune dépense</div>'; return; }
     const PALETTE = ['#d4a853','#6BE3A4','#7DD3FC','#B794F4','#FF6B6B','#F2C063','#E07658','#80CBC4'];
     const cats = Object.entries(breakdown).sort((a,b) => b[1]-a[1]);
-    let angle = -90; // start at top
-    const cx = 60, cy = 60, r = 46, rIn = 28;
+    let angle = -90;
+    const cx = 60, cy = 60, r = 48, rIn = 30;
     let paths = '', legendHtml = '';
     cats.forEach(([cat, val], i) => {
       const sweep = (val / total) * 360;
@@ -4139,10 +4148,17 @@ await initUserMenu();
       const xi2 = cx + rIn * Math.cos(a2), yi2 = cy + rIn * Math.sin(a2);
       const large = sweep > 180 ? 1 : 0;
       const color = PALETTE[i % PALETTE.length];
-      paths += `<path d="M${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} L${xi2},${yi2} A${rIn},${rIn} 0 ${large} 0 ${xi1},${yi1} Z" fill="${color}" opacity="0.9"/>`;
-      legendHtml += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="width:10px;height:10px;border-radius:3px;background:${color};flex-shrink:0"></span><span style="font-size:10px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${CAT_LABELS_FR[cat]||cat}</span></div>`;
+      const pct = Math.round(val / total * 100);
+      paths += `<path d="M${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${large} 1 ${x2.toFixed(2)},${y2.toFixed(2)} L${xi2.toFixed(2)},${yi2.toFixed(2)} A${rIn},${rIn} 0 ${large} 0 ${xi1.toFixed(2)},${yi1.toFixed(2)} Z" fill="${color}" opacity="0.92" stroke="var(--bg-card)" stroke-width="1"/>`;
+      legendHtml += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="width:8px;height:8px;border-radius:2px;background:${color};flex-shrink:0"></span><span style="flex:1;font-size:10px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${CAT_LABELS_FR[cat]||cat}</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary);flex-shrink:0">${pct}%</span></div>`;
       angle += sweep;
     });
+    // Center label: total amount
+    const totalFmt = cfFmt(total);
+    const parts = totalFmt.split(' ');
+    const ccy = parts[0], amt = parts.slice(1).join(' ');
+    paths += `<text x="60" y="55" text-anchor="middle" font-size="7.5" fill="rgba(255,255,255,0.4)" font-family="var(--font-mono,monospace)" letter-spacing="0.06em">${ccy}</text>`;
+    paths += `<text x="60" y="67" text-anchor="middle" font-size="13" font-weight="700" fill="rgba(255,255,255,0.88)" font-family="inherit">${amt}</text>`;
     svg.innerHTML = paths;
     legend.innerHTML = legendHtml;
   }
@@ -4150,31 +4166,41 @@ await initUserMenu();
   async function renderCfBar() {
     const history = await CfData.loadSnapshotHistory(6);
     const svg = document.getElementById('cfBarSvg');
-    const W = 260, H = 120, PAD = 20, BAR_W = 22, GAP = 4;
+    const W = 260, H = 150, PAD_T = 12, PAD_B = 22, BAR_W = 18, GAP = 3;
+    const chartH = H - PAD_T - PAD_B;
     const maxVal = Math.max(...history.map(s => Math.max(Number(s.total_income||0), Number(s.total_expenses||0))), 1);
-    const scaleY = (v) => H - PAD - (v / maxVal) * (H - PAD * 2);
-    const slotW = W / history.length;
+    const scaleY = (v) => PAD_T + chartH - (v / maxVal) * chartH;
+    const slotW = W / (history.length || 1);
+    let defs = `<defs>
+      <linearGradient id="cfIncGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6BE3A4"/><stop offset="100%" stop-color="#6BE3A4" stop-opacity="0.45"/></linearGradient>
+      <linearGradient id="cfExpGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF6B6B"/><stop offset="100%" stop-color="#FF6B6B" stop-opacity="0.45"/></linearGradient>
+    </defs>`;
     let rects = '', lines = '';
     history.forEach((s, i) => {
       const x = i * slotW + slotW / 2;
       const inc = Number(s.total_income || 0);
       const exp = Number(s.total_expenses || 0);
-      const incH = inc / maxVal * (H - PAD * 2);
-      const expH = exp / maxVal * (H - PAD * 2);
-      rects += `<rect x="${x - BAR_W - GAP/2}" y="${scaleY(inc)}" width="${BAR_W}" height="${incH}" rx="3" fill="#6BE3A4" opacity="0.8"/>`;
-      rects += `<rect x="${x + GAP/2}" y="${scaleY(exp)}" width="${BAR_W}" height="${expH}" rx="3" fill="#FF6B6B" opacity="0.7"/>`;
+      const incH = (inc / maxVal) * chartH;
+      const expH = (exp / maxVal) * chartH;
+      const yInc = scaleY(inc);
+      const yExp = scaleY(exp);
+      rects += `<rect x="${(x - BAR_W - GAP/2).toFixed(1)}" y="${yInc.toFixed(1)}" width="${BAR_W}" height="${incH.toFixed(1)}" rx="4" fill="url(#cfIncGrad)"/>`;
+      rects += `<rect x="${(x + GAP/2).toFixed(1)}" y="${yExp.toFixed(1)}" width="${BAR_W}" height="${expH.toFixed(1)}" rx="4" fill="url(#cfExpGrad)"/>`;
       const label = MONTHS_FR[s.month - 1].slice(0, 3);
-      rects += `<text x="${x}" y="${H - 4}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.35)" font-family="inherit">${label}</text>`;
+      rects += `<text x="${x.toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.3)" font-family="var(--font-mono,monospace)">${label}</text>`;
     });
-    // Net savings line
-    const pts = history.map((s, i) => {
+    // Savings dots + line
+    const savPts = history.map((s, i) => {
       const x = i * slotW + slotW / 2;
-      const net = Number(s.net_savings || 0);
-      const y = scaleY(Math.max(net, 0));
-      return `${x},${y}`;
-    }).join(' ');
-    if (pts) lines = `<polyline points="${pts}" fill="none" stroke="${'#d4a853'}" stroke-width="2" stroke-dasharray="4 2" opacity="0.9"/>`;
-    svg.innerHTML = rects + lines;
+      const net = Math.max(Number(s.net_savings || 0), 0);
+      return { x, y: scaleY(net) };
+    });
+    if (savPts.length > 1) {
+      const pStr = savPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+      lines += `<polyline points="${pStr}" fill="none" stroke="#d4a853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>`;
+      savPts.forEach(p => { lines += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2.5" fill="#d4a853" opacity="0.95"/>`; });
+    }
+    svg.innerHTML = defs + rects + lines;
   }
 
   function renderCfTopCats() {
@@ -4182,14 +4208,19 @@ await initUserMenu();
     const breakdown = CfData.computeCategoryBreakdown(expenses);
     const top = CfData.computeTopCategories(breakdown, 5);
     const el = document.getElementById('cfTopCats');
-    if (!top.length) { el.innerHTML = '<div style="color:var(--text-tertiary);font-size:11px">Aucune dépense ce mois</div>'; return; }
+    if (!top.length) { el.innerHTML = '<div style="color:var(--text-tertiary);font-size:11px;padding:4px 0">Aucune dépense ce mois</div>'; return; }
+    const totalExp = top.reduce((s, t) => s + t.total, 0);
     const max = top[0].total;
-    el.innerHTML = top.map(t => `
-      <div class="cf-topcat-row">
+    el.innerHTML = top.map(t => {
+      const pct = Math.round(t.total / totalExp * 100);
+      const barPct = Math.round(t.total / max * 100);
+      return `<div class="cf-topcat-row">
         <span class="cf-topcat-name">${CAT_ICONS[t.category]||'📦'} ${CAT_LABELS_FR[t.category]||t.category}</span>
-        <div class="cf-topcat-bar-wrap"><div class="cf-topcat-bar" style="width:${Math.round(t.total/max*100)}%"></div></div>
+        <div class="cf-topcat-bar-wrap"><div class="cf-topcat-bar" style="width:${barPct}%"></div></div>
+        <span class="cf-topcat-pct">${pct}%</span>
         <span class="cf-topcat-amt">${cfFmt(t.total)}</span>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   // ── Entry modal ────────────────────────────────────────────────────────────
