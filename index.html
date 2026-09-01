@@ -2504,23 +2504,29 @@ const ANTHROPIC_API_KEY = '';
   }
 
   async function loadRoutineTracker() {
-    _habits = await HabitsData.loadHabits();
-    _rtDays = getRtDays(_rtLoadedDays);
-    if (_rtDays.length) {
-      const start = _rtDays[_rtDays.length - 1];
-      const end   = _rtDays[0];
-      const [logs, notes, challenges] = await Promise.all([
-        HabitsData.loadHabitLogs(start, end),
-        HabitsData.loadDayNotes(start, end),
-        HabitsData.loadActiveChallenges(),
-      ]);
-      _habitLogs = {};
-      logs.forEach(l => { _habitLogs[l.habit_id + ':' + l.date] = l; });
-      _dayNotes = {};
-      notes.forEach(n => { _dayNotes[n.date] = n; });
-      _activeChallenges = challenges;
+    const skeleton = document.getElementById('rtGridSkeleton');
+    try {
+      _habits = await HabitsData.loadHabits();
+      _rtDays = getRtDays(_rtLoadedDays);
+      if (_rtDays.length) {
+        const start = _rtDays[_rtDays.length - 1];
+        const end   = _rtDays[0];
+        const [logs, notes, challenges] = await Promise.all([
+          HabitsData.loadHabitLogs(start, end),
+          HabitsData.loadDayNotes(start, end),
+          HabitsData.loadActiveChallenges(),
+        ]);
+        _habitLogs = {};
+        logs.forEach(l => { _habitLogs[l.habit_id + ':' + l.date] = l; });
+        _dayNotes = {};
+        notes.forEach(n => { _dayNotes[n.date] = n; });
+        _activeChallenges = challenges;
+      }
+      renderRoutineTracker();
+    } catch (err) {
+      if (skeleton) { skeleton.style.background = 'rgba(239,68,68,0.08)'; skeleton.textContent = 'Erreur de chargement — réessayez.'; skeleton.style.display = 'flex'; skeleton.style.alignItems = 'center'; skeleton.style.justifyContent = 'center'; skeleton.style.fontSize = '12px'; skeleton.style.color = 'var(--danger-text, #fca5a5)'; }
+      console.error('loadRoutineTracker failed:', err);
     }
-    renderRoutineTracker();
   }
 
   function renderRoutineTracker() {

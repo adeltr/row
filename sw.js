@@ -1,4 +1,4 @@
-const CACHE_NAME = 'allin-v1';
+const CACHE_NAME = 'allin-v2';
 const SHELL_ASSETS = [
   '/',
   '/index.html',
