@@ -963,65 +963,36 @@ img, video, canvas, svg { max-width: 100%; }
   border-radius: 12px; margin-bottom: 4px;
 }
 
-.wt-chart-wrap { position: relative; margin: 18px 0 4px; background: rgba(110,231,183,0.03); border: 1px solid rgba(110,231,183,0.08); border-radius: 12px; padding: 12px 0 4px; }
-.wt-chart-yaxis {
-  position: absolute; left: 0; top: 12px; bottom: 24px; width: 38px;
-  display: flex; flex-direction: column; justify-content: space-between;
-  padding: 0 4px 0 6px;
-}
-.wt-chart-yaxis span {
-  font-size: 9px; color: var(--text-4);
-  font-family: var(--font-mono); line-height: 1;
-}
-.wt-chart {
-  height: 160px; display: block;
-  margin-left: 38px; width: calc(100% - 38px);
-}
-.wt-grid { stroke: rgba(255,255,255,0.05); stroke-width: 1; }
-.wt-grid-mid { stroke: rgba(255,255,255,0.03); stroke-width: 1; stroke-dasharray: 3 4; }
+/* Chart — dark full-bleed panel */
+.wt-chart-wrap { position: relative; margin: 22px -20px 0; background: #050d08; border-top: 1px solid rgba(110,231,183,0.07); overflow: hidden; }
+.wt-chart-yaxis { display: none; } /* labels now live inside SVG */
+.wt-chart { height: 220px; display: block; width: 100%; }
+.wt-grid { stroke: rgba(255,255,255,0.045); stroke-width: 1; }
 .wt-area { fill: url(#wtFill); }
-.wt-line { fill: none; stroke: var(--good); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.wt-avg-line { fill: none; stroke: rgba(110,231,183,0.35); stroke-width: 1.5; stroke-dasharray: 5 3; }
-.wt-dot { fill: var(--good); stroke: var(--bg-card); stroke-width: 2; cursor: pointer; pointer-events: all; transition: r 0.1s; }
-.wt-dot-today { fill: #fff; stroke: var(--good); stroke-width: 2.5; cursor: pointer; pointer-events: all; filter: drop-shadow(0 0 4px rgba(110,231,183,0.8)); }
+.wt-line { fill: none; stroke: #6ee7b7; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.wt-avg-line { fill: none; stroke: rgba(110,231,183,0.25); stroke-width: 1.5; stroke-dasharray: 5 3; }
+.wt-dot { fill: #6ee7b7; stroke: #050d08; stroke-width: 2; cursor: pointer; pointer-events: all; }
+.wt-dot-today { fill: #fff; stroke: #6ee7b7; stroke-width: 2.5; cursor: pointer; pointer-events: all; filter: drop-shadow(0 0 7px rgba(110,231,183,0.95)); }
 .wt-hit { fill: transparent; stroke: none; cursor: pointer; pointer-events: all; }
-.wt-crosshair { stroke: rgba(212,168,83,0.7); stroke-width: 1; stroke-dasharray: 3 3; pointer-events: none; }
-.wt-xlabels text { font-size: 8px; fill: rgba(255,255,255,0.25); font-family: var(--font-mono,monospace); }
+.wt-crosshair { stroke: rgba(212,168,83,0.5); stroke-width: 1; stroke-dasharray: 3 3; pointer-events: none; }
+.wt-ylabel { font-size: 9px; fill: rgba(255,255,255,0.25); font-family: var(--font-mono,monospace); }
+.wt-xlabel { font-size: 9px; fill: rgba(255,255,255,0.2); font-family: var(--font-mono,monospace); }
 .wt-tooltip {
   position: absolute; transform: translateX(-50%);
-  background: rgba(28,28,30,0.95);
-  border: 1px solid rgba(110,231,183,0.25);
-  border-radius: 10px; padding: 6px 13px;
-  font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: #fff;
+  background: rgba(5,13,8,0.97);
+  border: 1px solid rgba(110,231,183,0.4);
+  border-radius: 10px; padding: 7px 14px;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: #6ee7b7;
   white-space: nowrap; pointer-events: none; z-index: 20;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(110,231,183,0.1);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.8);
   transition: opacity 0.15s;
 }
-.wt-tooltip::after {
-  content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
-  width: 8px; height: 5px; background: rgba(28,28,30,0.95);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-}
 .wt-tooltip.hidden { opacity: 0; pointer-events: none; }
-.wt-meta {
-  text-align: center; font-size: 11px; color: var(--text-3);
-  margin-top: 8px;
-}
-.wt-legend {
-  display: flex; justify-content: center; gap: 18px; margin-top: 10px;
-}
-.wt-legend-item {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 10px; letter-spacing: 0.18em; font-weight: 600;
-  color: var(--text-3);
-}
-.wt-legend-dot {
-  width: 14px; height: 2px; background: var(--good); border-radius: 1px;
-}
-.wt-legend-dot-avg {
-  background: transparent; border-top: 2px dashed rgba(110,231,183,0.45);
-  height: 2px;
-}
+.wt-meta { position: absolute; bottom: 32px; right: 12px; font-size: 9px; color: rgba(255,255,255,0.18); font-family: var(--font-mono); letter-spacing: 0.04em; pointer-events: none; }
+.wt-legend { display: flex; justify-content: center; gap: 20px; margin: 0 -20px; padding: 10px 20px 12px; background: #050d08; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px; margin-bottom: -18px; }
+.wt-legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: 9.5px; letter-spacing: 0.15em; font-weight: 700; color: rgba(255,255,255,0.32); }
+.wt-legend-dot { width: 16px; height: 2px; background: #6ee7b7; border-radius: 1px; }
+.wt-legend-dot-avg { background: transparent; border-top: 2px dashed rgba(110,231,183,0.38); height: 2px; }
 
 /* Composition estimate */
 .wt-comp {
@@ -2832,29 +2803,25 @@ img, video, canvas, svg { max-width: 100%; }
           <div class="wt-delta hidden" id="wtDelta"></div>
           <div class="wt-streak hidden" id="wtStreak">🔥<span id="wtStreakNum">0 day streak</span></div>
           <div class="wt-empty" id="wtEmpty">Log your first weight to start tracking.</div>
-          <div class="wt-chart-wrap hidden" id="wtChartWrap" style="position:relative">
+          <div class="wt-chart-wrap hidden" id="wtChartWrap">
             <div class="wt-tooltip hidden" id="wtTooltip"></div>
-            <div class="wt-chart-yaxis">
-              <span id="wtYAxisMax">—</span>
-              <span id="wtYAxisMid">—</span>
-              <span id="wtYAxisMin">—</span>
-            </div>
-            <svg class="wt-chart" viewBox="0 0 320 160" preserveAspectRatio="none">
+            <svg class="wt-chart" viewBox="0 0 360 220" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="wtFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.3"/>
-                  <stop offset="70%" stop-color="#6ee7b7" stop-opacity="0.06"/>
+                  <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.35"/>
+                  <stop offset="60%" stop-color="#6ee7b7" stop-opacity="0.08"/>
                   <stop offset="100%" stop-color="#6ee7b7" stop-opacity="0"/>
                 </linearGradient>
-                <filter id="wtGlow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <filter id="wtGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
               </defs>
-              <line class="wt-grid" x1="0" y1="10" x2="320" y2="10"></line>
-              <line class="wt-grid" x1="0" y1="75" x2="320" y2="75"></line>
-              <line class="wt-grid" x1="0" y1="140" x2="320" y2="140"></line>
-              <g id="wtXLabels" class="wt-xlabels"></g>
+              <line class="wt-grid" x1="0" y1="18" x2="360" y2="18"></line>
+              <line class="wt-grid" x1="0" y1="112" x2="360" y2="112"></line>
+              <line class="wt-grid" x1="0" y1="196" x2="360" y2="196"></line>
+              <g id="wtYLabels"></g>
+              <g id="wtXLabels"></g>
               <g id="wtChartContent"></g>
             </svg>
-            <div class="wt-meta" id="wtMeta">0 entries</div>
+            <div class="wt-meta" id="wtMeta"></div>
           </div>
           <div class="wt-legend hidden" id="wtLegend">
             <span class="wt-legend-item"><span class="wt-legend-dot"></span>DAILY</span>
@@ -4689,63 +4656,69 @@ await initUserMenu();
   function wtRenderChart() {
     _wtRecent = wtEntries.slice(-30);
     const recent = _wtRecent;
+    const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const weights = recent.map(e => e.weight);
-    const min = Math.min.apply(null, weights);
-    const max = Math.max.apply(null, weights);
-    const pad = Math.max((max - min) * 0.18, 0.6);
-    const yMin = min - pad, yMax = max + pad;
-    const xLeft = 6, xRight = 314, yTop = 10, yBot = 140;
-    const xRange = xRight - xLeft, yRange = yBot - yTop;
-    const xFor = (i) => recent.length === 1 ? (xLeft + xRange / 2) : xLeft + (i / (recent.length - 1)) * xRange;
-    const yFor = (w) => yBot - ((w - yMin) / (yMax - yMin)) * yRange;
+    const wMin = Math.min.apply(null, weights);
+    const wMax = Math.max.apply(null, weights);
+    const pad = Math.max((wMax - wMin) * 0.18, 0.6);
+    const yMin = wMin - pad, yMax = wMax + pad;
+    // SVG viewBox: 0 0 360 220
+    // data area: x from 44 to 352, y from 18 to 196 (leaving room for labels)
+    const xLeft = 44, xRight = 352, yTop = 18, yBot = 196;
+    const xFor = (i) => recent.length === 1 ? ((xLeft + xRight) / 2) : xLeft + (i / (recent.length - 1)) * (xRight - xLeft);
+    const yFor = (w) => yBot - ((w - yMin) / (yMax - yMin)) * (yBot - yTop);
     const points = recent.map((e, i) => ({ x: xFor(i), y: yFor(e.weight) }));
     const linePath = wtSmoothPath(points);
-    const areaPath = linePath + ' L ' + points[points.length - 1].x.toFixed(2) + ' ' + yBot + ' L ' + points[0].x.toFixed(2) + ' ' + yBot + ' Z';
+    const areaPath = linePath + ' L' + xRight.toFixed(1) + ',' + yBot + ' L' + xLeft.toFixed(1) + ',' + yBot + ' Z';
+
     // 7d moving avg
     const avgPoints = recent.map((_, i) => {
-      const start = Math.max(0, i - 6);
-      const win = recent.slice(start, i + 1);
-      const avg = win.reduce((s, p) => s + p.weight, 0) / win.length;
-      return { x: xFor(i), y: yFor(avg) };
+      const win = recent.slice(Math.max(0, i - 6), i + 1);
+      return { x: xFor(i), y: yFor(win.reduce((s, p) => s + p.weight, 0) / win.length) };
     });
-    const avgPath = wtSmoothPath(avgPoints);
-    let html = '<path class="wt-avg-line" d="' + avgPath + '"></path>'
-             + '<path class="wt-area" d="' + areaPath + '"></path>'
-             + '<path class="wt-line" filter="url(#wtGlow)" d="' + linePath + '"></path>';
+
+    let html = '<path class="wt-avg-line" d="' + wtSmoothPath(avgPoints) + '"/>'
+             + '<path class="wt-area" d="' + areaPath + '"/>'
+             + '<path class="wt-line" filter="url(#wtGlow)" d="' + linePath + '"/>';
+
     // Crosshair
-    html += '<line class="wt-crosshair" id="wtCrosshair" x1="0" y1="10" x2="0" y2="140" style="display:none"/>';
-    // Dots (skip dense ones — show every Nth if more than 20 entries)
-    const showDot = recent.length <= 20 ? () => true : (_, i) => (i % Math.ceil(recent.length / 20) === 0 || i === points.length - 1);
+    html += '<line class="wt-crosshair" id="wtCrosshair" x1="0" y1="' + yTop + '" x2="0" y2="' + yBot + '" style="display:none"/>';
+
+    // Dots — skip dense clusters
+    const step = recent.length > 20 ? Math.ceil(recent.length / 18) : 1;
     points.forEach((p, i) => {
-      if (!showDot(null, i)) return;
       const isLast = i === points.length - 1;
-      const cls = isLast ? 'wt-dot-today' : 'wt-dot';
-      const r = isLast ? 5.5 : 3;
-      html += '<circle class="' + cls + '" cx="' + p.x.toFixed(2) + '" cy="' + p.y.toFixed(2) + '" r="' + r + '"/>';
+      if (!isLast && i % step !== 0) return;
+      html += '<circle class="' + (isLast ? 'wt-dot-today' : 'wt-dot') + '" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + (isLast ? 6 : 3.5) + '"/>';
     });
-    // Invisible hit targets (all points)
+
+    // Hit targets (every point)
     points.forEach((p, i) => {
-      html += '<circle class="wt-hit" cx="' + p.x.toFixed(2) + '" cy="' + p.y.toFixed(2) + '" r="16" data-wi="' + i + '"/>';
+      html += '<circle class="wt-hit" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="18" data-wi="' + i + '"/>';
     });
+
     $('wtChartContent').innerHTML = html;
 
+    // Y-axis labels inside SVG
+    const yMid = (yMax + yMin) / 2;
+    const yLabelData = [[yMax, yFor(yMax)], [yMid, yFor(yMid)], [yMin, yFor(yMin)]];
+    $('wtYLabels').innerHTML = yLabelData.map(([v, y]) =>
+      '<text class="wt-ylabel" x="6" y="' + (y + 3.5).toFixed(1) + '" text-anchor="start">' + v.toFixed(1) + '</text>'
+    ).join('');
+
     // X-axis date labels
-    const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const labelStep = Math.max(1, Math.ceil(recent.length / 5));
+    const lblStep = Math.max(1, Math.ceil(recent.length / 5));
     let xlHtml = '';
     points.forEach((p, i) => {
-      if (i % labelStep !== 0 && i !== points.length - 1) return;
+      if (i % lblStep !== 0 && i !== points.length - 1) return;
       const [, m, d] = recent[i].dateKey.split('-');
-      const lbl = MONTHS_SHORT[parseInt(m) - 1] + ' ' + parseInt(d);
-      xlHtml += '<text x="' + p.x.toFixed(1) + '" y="156" text-anchor="middle">' + lbl + '</text>';
+      xlHtml += '<text class="wt-xlabel" x="' + p.x.toFixed(1) + '" y="214" text-anchor="middle">'
+              + MONTHS_SHORT[parseInt(m) - 1] + ' ' + parseInt(d) + '</text>';
     });
     $('wtXLabels').innerHTML = xlHtml;
 
-    // Y-axis labels
-    $('wtYAxisMax').textContent = yMax.toFixed(1);
-    $('wtYAxisMid').textContent = ((yMax + yMin) / 2).toFixed(1);
-    $('wtYAxisMin').textContent = yMin.toFixed(1);
-    $('wtMeta').textContent = wtEntries.length + (wtEntries.length === 1 ? ' entry' : ' entries') + ' · last ' + recent.length + ' days';
+    // Meta text
+    $('wtMeta').textContent = wtEntries.length + (wtEntries.length === 1 ? ' entry' : ' entries') + ' · last ' + recent.length + ' shown';
 
     // Tooltip interaction
     let _wtTipTimer = null;
@@ -4756,31 +4729,21 @@ await initUserMenu();
         if (!entry) return;
         const tip = $('wtTooltip');
         const [yr, mo, dy] = entry.dateKey.split('-');
-        tip.textContent = MONTHS_SHORT[parseInt(mo)-1] + ' ' + parseInt(dy) + ' ' + yr + '  ·  ' + entry.weight.toFixed(1) + ' ' + state.units;
-        // Position tooltip at dot's actual screen location
+        tip.textContent = MONTHS_SHORT[parseInt(mo) - 1] + ' ' + parseInt(dy) + ' ' + yr + '  ·  ' + entry.weight.toFixed(1) + ' ' + state.units;
+        // Map SVG coord → screen coord (preserveAspectRatio=none, full-width)
         const wrapEl = $('wtChartWrap');
         const svgEl = wrapEl.querySelector('svg');
-        const xPct = points[i].x / 320;
-        const yPct = points[i].y / 160;
-        const marginLeft = 38;
-        const svgW = svgEl.offsetWidth;
-        const svgH = svgEl.offsetHeight;
-        const dotX = marginLeft + xPct * svgW;
-        const dotY = svgEl.offsetTop + yPct * svgH;
-        const tipEstW = 160;
-        const clampedX = Math.min(wrapEl.offsetWidth - tipEstW / 2 - 6, Math.max(tipEstW / 2 + 6, dotX));
-        tip.style.left = clampedX + 'px';
-        tip.style.top = Math.max(2, dotY - 46) + 'px';
+        const dotX = (points[i].x / 360) * svgEl.offsetWidth;
+        const dotY = (points[i].y / 220) * svgEl.offsetHeight;
+        const tipW = 170;
+        tip.style.left = Math.min(svgEl.offsetWidth - tipW / 2 - 6, Math.max(tipW / 2 + 6, dotX)) + 'px';
+        tip.style.top = Math.max(4, dotY - 48) + 'px';
         tip.style.bottom = 'auto';
         tip.classList.remove('hidden');
-        // Crosshair
         const cr = document.getElementById('wtCrosshair');
-        if (cr) { cr.setAttribute('x1', points[i].x.toFixed(2)); cr.setAttribute('x2', points[i].x.toFixed(2)); cr.style.display = ''; }
+        if (cr) { cr.setAttribute('x1', points[i].x.toFixed(1)); cr.setAttribute('x2', points[i].x.toFixed(1)); cr.style.display = ''; }
         clearTimeout(_wtTipTimer);
-        _wtTipTimer = setTimeout(() => {
-          tip.classList.add('hidden');
-          if (cr) cr.style.display = 'none';
-        }, 2500);
+        _wtTipTimer = setTimeout(() => { tip.classList.add('hidden'); if (cr) cr.style.display = 'none'; }, 2500);
       };
       el.addEventListener('click', show);
       el.addEventListener('touchstart', show, { passive: true });
